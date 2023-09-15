@@ -1,0 +1,301 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+    <link rel="stylesheet" type="text/css" href="superfishDCXAF-v1.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="styleDCXAF-v1.css" />
+    
+    <script type="text/javascript" language="javascript" src="jqueryDCXAF-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="hoverIntentDCXAF-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="superfishDCXAF-v1.js"></script>
+    <script type="text/JavaScript" language="javascript" src="formchange-detect.js"></script>
+    <script type="text/javascript" language="javascript" src="handlerDCXAF-v1.js"></script>
+    
+    <title>BRANSON DCX GUI</title>
+<script language="javascript"  type="text/javascript">
+var restoreFlag = false, pageRefresh = false, PageRefTo = null, RestoreMsg = "Parameters Restored";
+var http = getHTTPObject();
+function HandleModifyRFOnLoad() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+		var i, j,results, GroupVal, SingleVal;
+		results = http.responseText.split("@");
+		var UserType = results[0].split("/");
+		SetUserType(UserType[0]);
+		SetToken(UserType[1], restoreFlag);
+		SetSystemType(UserType[2]);
+		if (UserType[2] == '2' ||  UserType[2] == '3' || UserType[2] == '5')
+			UseID("RFSwtFBDiv").style.display = "inline";
+		for (i = 1; i < results.length; i++) {
+			GroupVal = results[i].split(":");
+			try {
+				SingleVal = GroupVal[1].split(",");
+				switch(SingleVal[0])
+				{
+					case "TT":
+						UseID(GroupVal[0]).value = SingleVal[1];
+						if (SingleVal.length > 2)
+							UseID(GroupVal[0] + 'MaxMin').value = SingleVal[2] + ',' + SingleVal[3];
+						break;
+					case "RB":
+						UseID(GroupVal[0] + '_' + SingleVal[1]).checked = true;
+						if ((GroupVal[0] == "RFSwitch") && (SingleVal[1] == 0 || SingleVal[1] == 1))
+							DisableSwitching(SingleVal[1]);
+						break;
+					default: break;
+				}                        
+			}catch(err){}
+		}
+		if (restoreFlag) {
+			alert(RestoreMsg);
+			restoreFlag = false;
+		}
+		RefreshAttribute(document.main_form);
+	}
+}
+function ModifyRFOnLoad() {
+    window.history.forward(1);
+    var ModifyRFOnLoadUrl = "func=" + Func.ConfigurationRFSwitchGetDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+    ModifyRFOnLoadUrl += SendCookies();
+    http.open("POST", ModifyRFOnLoadUrl, true);
+    http.onreadystatechange = HandleModifyRFOnLoad;
+    http.send(null);
+}
+function HandleModifyRFSave() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+        if (http.responseText == "OK") {
+            alert("Saved");
+            SetToken(1,0);
+            RefreshAttribute(document.main_form);
+			if (PageRefTo != null)
+				SubmitForm(PageRefTo);
+        }
+        else {
+            SetToken(0,0);
+            alert(Notoken);
+        }
+    }
+}
+function formvalidate() {
+    var validationstring = "", Delay;
+	validationstring += IfValid("Relay Switching Time","SwitchTime");
+	validationstring += IfValid("Switch Delay Time","SwitchDelay");
+	validationstring += IfValid("Feedback Timeout","FBTimeout");
+    if (!validationstring)
+        return true;
+    else {
+        alert(validationstring);
+        return false;
+    }
+}
+function ModifyRFSave() {
+    if (formvalidate()) {
+        var SaveString = "func=" + Func.ConfigurationRFSwitchPostDatahandler + "cmd=" + Command.REQ_NONE + "?param=&RFSwitch=";
+		for(var i = 0; UseID('RFSwitch_' + i) != null ; i++)
+			SaveString += ((UseID('RFSwitch_' + i).checked)?i:''); 
+        SaveString += "&FeedBack=";
+		for(var i = 0; UseID('FeedBack_' + i) != null ; i++)
+			SaveString += ((UseID('FeedBack_' + i).checked)?i:''); 
+        SaveString += "&DirectSW=" + ((UseID('DirectSW_0').checked)?"0":"1");
+        SaveString += "&FBTimeout=" + UseID('FBTimeout').value;
+        SaveString += "&SwitchDelay=" + UseID('SwitchDelay').value;
+        SaveString += "&SwitchTime=" + UseID('SwitchTime').value;
+		SaveString += "&Codded=" + ((UseID('Codded_1').checked)?'1':'0');     
+		SaveString += SendCookies();
+        http.open("POST", SaveString, true);
+        http.onreadystatechange = HandleModifyRFSave;
+        http.send(null);
+    }
+}
+function ModifyRFCancel() {
+    pageRefresh = true;
+    SubmitForm('RFSwitch.html');
+}
+function ModifyRFRestore() {
+    var ret = confirm(strRestoreDefault);
+    if (ret == true) {
+        window.history.forward(1);
+        var ModifyRFRestoreUrl = "func=" + Func.ConfigurationRFSwitchGetDatahandler + "cmd=" + Command.REQ_RESTORE + "?param=";
+        ModifyRFRestoreUrl += SendCookies();
+        http.open("POST", ModifyRFRestoreUrl, true);
+        restoreFlag = true;
+        http.onreadystatechange = HandleModifyRFOnLoad;
+        http.send(null);
+    }
+}
+function SubmitForm(hrefpage) {
+    if (pageRefresh == false) {
+        var ret;
+        if (IsFormModified(document.main_form)) {
+            ret = confirm(formChangeMessage);
+            if (ret == true){
+				PageRefTo = hrefpage;
+				ModifyRFSave();
+				return;
+			}
+        }
+    }
+    if (hrefpage == "index.html")
+        location.href = hrefpage;
+    else {
+        SubmitCookies(hrefpage);
+        document.temp_form.submit();
+    }
+}
+jQuery(function () {
+	UseID('header').innerHTML = MainHeader;
+	SetTabAttribute(3,6);
+    jQuery('ul.sf-menu').superfish();
+});
+function DisableSwitching(DisableFlag) {
+    if (DisableFlag == 0) {
+        UseID("FeedBack_0").disabled = "disabled";
+        UseID("FeedBack_1").disabled = "disabled";
+        UseID("FeedBack_2").disabled = "disabled";
+        UseID("FeedBack_3").disabled = "disabled";
+        UseID("FBTimeout").disabled = "disabled";
+        UseID("SwitchDelay").disabled = "disabled";
+        UseID("SwitchTime").disabled = "disabled";
+        UseID("DirectSW_0").disabled = "disabled";
+        UseID("DirectSW_1").disabled = "disabled";
+      	UseID("Codded_0").disabled = "disabled";
+        UseID("Codded_1").disabled = "disabled";
+    }
+    else {
+        UseID("FeedBack_0").disabled = false;
+        UseID("FeedBack_1").disabled = false;
+        UseID("FeedBack_2").disabled = false;
+        UseID("FeedBack_3").disabled = false;
+        UseID("FBTimeout").disabled = false;
+        UseID("SwitchDelay").disabled = false;
+        UseID("SwitchTime").disabled = false;
+        UseID("DirectSW_0").disabled = false;
+        UseID("DirectSW_1").disabled = false;
+        UseID("Codded_0").disabled = false;
+        UseID("Codded_1").disabled = false;
+    }
+	if(DisableFlag == 1){
+		if(UseID("FeedBack_1").checked == true)
+			UseID("FeedBack_0").checked = true;
+        UseID("FeedBack_1").disabled = "disabled";
+	}
+}
+</script>
+</head>
+<body onload="ModifyRFOnLoad()">
+<form name="temp_form" method="post" action="Weld.html">
+<input type="hidden" name="lang" id="lang" />
+<input type="hidden" name="usrid" id="usrid" />
+<input type="hidden" name="passcode" id="passcode" />
+	<input type="hidden" name="uniqueid" id="uniqueid" />	
+</form>
+<form name="main_form">
+<div id="wrapper">
+	<div id="header"></div>
+	<div id="PageHeader"></div>
+	<div id="content">
+		<div class="contentBoxWrapper50">
+			<div class="contentBoxHeader">RF Switch</div>
+			<div class="gradientBox">
+				<div class="checkbox">
+				<input type="radio" id ="RFSwitch_0" name="Switch" value="0" onclick="DisableSwitching(0)" /></div>
+				<div class="textLabelBigLeft">No RF Switching</div>
+				<input type="hidden" id="hStandard" />
+				<div class="clearit"></div>   
+				<div id="RFSwtFBDiv" style= "display:none">
+					<div class="checkbox">
+					<input type="radio" id ="RFSwitch_1" name="Switch" value="0" onclick="DisableSwitching(1)"/></div>
+					<div class="textLableAuto">RF Switching via Fieldbus</div>
+				</div>
+				<div class="clearit"></div>        	
+				<div class="checkbox">
+				<input type="radio" id ="RFSwitch_2" name="Switch" value="0" onclick="DisableSwitching(2)"/></div>
+				<div class="textLableAuto">RF Switching via Digital I/O</div>
+				<div class="clearit"></div>
+			</div>
+		</div>
+		<div class="contentBoxWrapper50">
+			<div class="contentBoxHeader">RF SELECTION</div>
+			<div class="gradientBox">
+				<div class="checkbox">
+				<input type="radio" id ="Codded_0" name="Codded" value="0"/></div>
+				<div class="textLabelBigLeft">Uncoded</div>
+				<div class="clearit"></div>
+				<div class="checkbox">
+				<input type="radio" id ="Codded_1" name="Codded" value="0"/></div>
+				<div class="textLabelBigLeft">Coded</div>
+				<div class="clearit"></div><br/>
+			</div><br/>
+		</div>
+		<div class="clearit"></div>   
+		<div class="contentBoxWrapper50">
+			<div class="contentBoxHeader">FEEDBACK</div>
+			<div class="gradientBox">
+				<div class="checkbox">
+				<input type="radio" id ="FeedBack_0" name="FeedBack" value="0"/></div>
+				<div class="textLabelBigLeft">No Feedback</div>
+				<input type="hidden" id="Standard" />
+				<div class="clearit"></div>
+				<div class="checkbox">
+				<input type="radio" id ="FeedBack_1" name="FeedBack" value="0"/></div>
+				<div class="textLabelBigLeft">Status Feedback</div>
+				<div class="clearit"></div>
+				<div class="checkbox">
+				<input type="radio" id ="FeedBack_2" name="FeedBack" value="0"/></div>
+				<div class="textLabelBigLeft">Uncoded Feedback</div>
+				<div class="clearit"></div>
+				<div class="checkbox">
+				<input type="radio" id ="FeedBack_3" name="FeedBack" value="0"/></div>
+				<div class="textLabelBigLeft">Coded Feedback</div>
+				<div class="clearit"></div>
+				<div class="textLableAuto">Feedback Timeout (ms)</div>
+				<input type="text" class="textInputSS" id="FBTimeout"/>
+				<input type="hidden" id="FBTimeoutMaxMin" />
+				<div class="clearit"></div>
+			</div>
+		</div>
+		<div class="contentBoxWrapper50">
+			<div class="contentBoxHeader">SWITCH OPTION</div>
+			<div class="gradientBox">
+				<div class="textLabelBigLeft">Switch Delay (ms)</div>
+				<input type="text" class="textInput" id="SwitchDelay"/>
+				<input type="hidden" id="SwitchDelayMaxMin" />
+				<div class="clearit"></div>
+				<div class="checkbox">
+				<input type="radio" id ="DirectSW_0" name="DirectSW" value="0"/></div>
+				<div class="textLabelBigLeft">Direct Switch</div>
+				<div class="clearit"></div>
+				<div class="checkbox">
+				<input type="radio" id ="DirectSW_1" name="DirectSW" value="0"/></div>
+				<div class="textLabelBigLeft">Switch with OFF </div>
+				<input type="hidden" id="AutomaticSwitch"/>
+				<div class="clearit"></div>
+				<div class="textLableAuto">Relay Switch Time (ms)</div>
+				<input type="text" class="textInputS" id="SwitchTime"/>
+				<input type="hidden" id="SwitchTimeMaxMin" />
+				<div class="clearit"></div>
+			</div>
+		</div>
+		<div class="clearit"></div>
+		<div id="contentButtonBank">
+			<input name="Save" type="button" class="button" value="Save" onclick="PageRefTo=null; ModifyRFSave();"/>
+			<input name="Cancel" type="button" class="button" value="Cancel" onclick="ModifyRFCancel()"/>
+			<input name="RestoreDefaults" type="button" class="button" value="Restore Defaults" onclick="ModifyRFRestore()"/>
+		</div>
+	</div>
+	<div id="footer"></div>
+</div>
+</form>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitStickyFooter();
+    });
+</script>
+</html>

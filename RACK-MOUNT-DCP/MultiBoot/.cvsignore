@@ -1,0 +1,10 @@
+obj-*
+*.bin
+*.map
+MultiBoot-DCP1D.hex
+MultiBoot-WC.hex
+MultiBoot-M54455EVB.hex
+MultiBoot-WC.txt
+MultiBoot-Platform1A.hex
+MultiBoot-LITEKIT.hex
+MultiBoot-CPU-1.hex

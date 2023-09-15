@@ -1,0 +1,314 @@
+/*
+$Header:   D:/databases/VMdb/archives/DCX/Weld Controller/WC/Application/SysConfig.h_v   1.26   30 Jul 2015 08:11:32   RJamloki  $
+*/
+/****************************************************************************/
+/*                                                                          */
+/*                                                                          */
+/*      Copyright (c) Branson Ultrasonics Corporation, 1995,96, 2009        */
+/*     This program is the property of Branson Ultrasonics Corporation      */
+/*   Copying of this software is expressly forbidden, without the prior     */
+/*   written consent of Branson Ultrasonics Corporation.                    */
+/*                                                                          */
+/*                                                                          */
+/*                                                                          */
+/*************************                         **************************/
+/*****************************************************************************
+$Log:   D:/databases/VMdb/archives/DCX/Weld Controller/WC/Application/SysConfig.h_v  $
+ * 
+ *    Rev 1.26   30 Jul 2015 08:11:32   RJamloki
+ * Added SetDigTuneWithHornScan in System Configuration structure
+ * 
+ *    Rev 1.25   29 Jul 2015 07:55:00   RJamloki
+ * Added ClearMemoryBeforeSeek and ClearMemoryWithReset in system configuration
+ * 
+ *    Rev 1.24   13 Mar 2014 15:55:06   rjamloki
+ * FRAM is accessed through pointers. Removed compiler allocation of FRAM
+ * 
+ *    Rev 1.23   06 Dec 2013 09:40:12   rjamloki
+ * S and V loop constants incorporated.
+ * 
+ *    Rev 1.22   24 Sep 2013 06:28:42   rjamloki
+ * Watch dog removed.
+ * 
+ *    Rev 1.21   03 Sep 2013 18:08:20   ygupta
+ * Moved to tip from 1.19.1.3.1.0
+ * 
+ *    Rev 1.19.1.3.1.0   24 Aug 2013 17:14:12   amaurya
+ * Code review and tracker issue fixes.
+ * 
+ *    Rev 1.19.1.3   17 Jul 2013 06:21:42   amaurya
+ * Fixed WeldTime Issue on History page and added diagnostic code.
+ * 
+ *    Rev 1.19.1.2   08 Jul 2013 08:55:28   amaurya
+ * Fixed tracker issue for Ver3.0y.
+ * 
+ *    Rev 1.19.1.1   27 Jun 2013 05:57:04   amaurya
+ * System crash fixes.
+ * 
+ *    Rev 1.19.1.0   20 Mar 2013 09:39:10   ygupta
+ * RF Switch Changes, Requirement Changes
+ * 
+ *    Rev 1.20   20 Mar 2013 08:19:12   ygupta
+ * RF Switch Changes, Requirement Changes
+ * 
+ *    Rev 1.19   15 Mar 2013 10:52:28   ygupta
+ * Issues Resolved, Requirement Changes
+ * 
+ *    Rev 1.18   18 Feb 2013 03:10:44   ygupta
+ * FieldBus Changes
+ * 
+ *    Rev 1.17   29 Jan 2013 02:23:50   ygupta
+ * WebPages CleanUp, Code Review and CleanUp
+ * 
+ *    Rev 1.16   16 Jan 2013 06:29:54   ygupta
+ * Level2 Code with Profibus
+ * 
+ *    Rev 1.15   11 Jan 2013 02:54:44   ygupta
+ * Level2 Requirement Changes
+ * 
+ *    Rev 1.14   18 Dec 2012 07:38:54   ygupta
+ * Changes for Multiple Overload alarm in case of 15V lost
+ * 
+ *    Rev 1.13   24 Nov 2012 08:05:24   amaurya
+ * Added changes for 40KHz supply.
+ * 
+ *    Rev 1.12   08 Nov 2012 01:21:10   rjamloki
+ * Website changes
+ * 
+ *    Rev 1.11   05 Nov 2012 08:59:48   amaurya
+ * State Machine changes
+ * 
+ *    Rev 1.10   26 Oct 2012 06:44:34   rjamloki
+ * sysconfig file
+ * 
+ *    Rev 1.9   26 Oct 2012 02:39:48   rjamloki
+ * Website Related files Added
+ * 
+ *    Rev 1.7   21 Sep 2012 01:34:10   rjamloki
+ * Added State machine
+ * 
+ *    Rev 1.6   10 Sep 2012 03:12:36   rjamloki
+ * Modbus changed implementation with unions and code cleanup
+ * 
+ *    Rev 1.5   29 Aug 2012 13:28:08   rjamloki
+ * WC Modbus checkin and related changes
+ * 
+ *    Rev 1.4   05 Jul 2012 04:47:16   ygupta
+ * Cleanup after review summary on database and BSP.
+ * 
+ *    Rev 1.3   02 Jul 2012 13:04:12   ygupta
+ * Code cleanup for meeting coding standard. and updates after review. All varibles name in upper case. 
+ * 
+ *    Rev 1.2   29 Jun 2012 12:16:20   ygupta
+ * First Compilable code, First check in after review, Needs more clanup
+ * 
+ *    Rev 1.1   20 Jun 2012 10:28:16   ygupta
+ * Moved PS frequency and power to Sys Config structure. Removed enum for power. Added Data and Time format enums in sys config structure.
+ *
+ */
+
+#ifndef SYSCONFIG_H_
+#define SYSCONFIG_H_
+
+#include "Portable.h"
+#include "CyGOS.h"
+#include "DhcpServer.h"
+//#include "TYP_DEF.h"
+#include "portable.h"
+
+//Hard coded checksum to calculate the validity of System configuration data
+#define SYSTEMCONFIGVALIDCHECKSUM 0x13ADF8BA
+//IPs define on ethernet interface 1
+#define DEFAULTIPDHCPSERVER			 100, 100, 1,   101
+#define DEFAULTPOOLSTARTDHCPSERVER 	 100, 100, 1,   1
+#define DEFAULTGATEWAYDHCPSERVER	 0,   0,   0,   0
+#define DEFAULTIPSTATIC 	 	192,168,10,100
+#define DEFAULTGATEWAYSTATIC 	192,168, 10 ,1
+#define DEFDHCPSERVERID_LEN  	4
+#define DEFAULTPOOLSIZE      	64
+#define DEFAULTLEASETIME     	600
+#define DEFAULTRENEWTIME     	120
+#define DEFAULTREBINDTIME    	300
+#define DEFAULTNETMASK 		 	255, 255, 255, 0
+
+//WC's fixed static IP on DCP interface
+#define IPDCPINTERFACE 		 	192, 167, 10, 100
+#define GATEWAYDCPINTERFACE  	192, 167, 10, 1
+
+//fixed static pre known DCP IP. Needed for modbus communication and Firmware upgrade on DCP
+#define DCPIP 192, 167, 10, 105
+#define DEFAULT_WELDHISTORYSAMPLERATE 100
+
+//PS available frequencies
+enum FREQUENCY
+{
+	FREQ_20KHZ = 20,
+	FREQ_30KHZ = 30,
+	FREQ_40KHZ = 40,
+};
+
+//system type to be set from manufacturing webpage goes into MAC chip RW area
+enum SYSTEMTYPE
+{
+   SYSTEM_UNKNOWN,
+	SYSTEM_ADVANCED,
+	SYSTEM_FIELDBUS,
+	SYSTEM_ADVANCED_HD,
+	SYSTEM_FIELDBUS_HD,
+	//add for balun in future if required
+};
+
+//The enum represents format of date while showing event, alarm and preset information on web pages
+enum DateFormat
+{
+	DFormatUnknown,
+	DFormat1, //DDMMYY
+	DFormat2, //MMDDYY
+};
+
+//The format of time while showing event, alarm and preset information on web pages
+enum TimeFormat
+{
+	TFormatUnknown,
+	TFormat1, //12Hour
+	TFormat2, //24Hour
+};
+
+//Language in which strings should be shown on web pages currently only English language is supported
+enum Language
+{
+	English,
+	German,
+	Spanish,
+	Italian,
+	French,
+	ChineseSimplified,
+	ChineseTraditional,
+	Japanese,
+	Korean,
+};
+
+enum DCPSpeedControl
+{
+   SPEEDCONTROL_STANDARD = 2,//S and V compatible fixed 1000 microsecond loop time
+   SPEEDCONTROL_CUSTOM = 3,//Configurable Loop time. Default 100 microsecond.
+   SPEEDCONTROL_MAX = SPEEDCONTROL_CUSTOM,
+};
+
+enum RFSwitching
+{
+   NORFSWITCHING,
+   RFSWITCHING_FB,
+   RFSWITCHING_DIO,
+};
+
+enum RFSwitchingFeedBack
+{
+   NOFEEDBACK,
+   STATUSFEEDBACK,
+   UNCODEDFEEDBACK,
+   CODEDFEEDBACK,
+};
+
+enum RFSwitchingOutput
+{
+   UNCODED,
+   CODED
+};
+
+enum RFSwitchOption
+{
+   DIRECTSWITCH,
+   SWITCHWITHOFF,
+};
+enum RFSwitchingStatus
+{
+   SWITCHINGINPROGRESS,
+   SWITCHINGDONE,
+   SWITCHINGABORTED_FAILED,
+   SWITCHINGNOTDONE,
+};
+
+struct RFSwitchingConfig
+{
+   RFSwitching RFSwitchingType;
+   RFSwitchingFeedBack RFFeedback;
+   UINT16 FeedBackTimeOut;
+   UINT16 RFSwitchDelay;
+   RFSwitchOption RFOption;
+   UINT16 RelaySwitchTime;
+   RFSwitchingOutput RFOutputType;
+};
+
+struct FieldBusAddr{
+   UINT8 Addr1;
+   UINT8 Addr2;
+   UINT8 Addr3;
+   UINT8 Addr4;
+};
+
+struct SystemConfiguration
+{
+	UINT32  DCXCRC;		// to be assigned at run time. Here for log purpose
+	ip_addr SystemIP;		// IP address in case of DHCP server
+	ip_addr SystemIPStatic;	// IP address in case of static configuration
+	ip_addr Netmask;		// Net mask in case of static IP
+	ip_addr Gw;				// gateway in case of static IP
+	NetworkConfiguration CurrNetworkConfig;	// current configuration
+	//DCP side IP
+	ip_addr IPDCP;			// IP address on DCP interface
+	ip_addr NetmaskDCP;	// Net mask on DCP interface
+	ip_addr GwDCP;			// gateway on DCP interface
+	DhcpServerConfiguration DhcpConfig;
+	UINT16  WeldHistorySampleStoreRate;//Discuss
+	DateFormat Dateformat;
+	TimeFormat Timeformat;
+	BOOLEAN TweakRangeEnabled;
+	UINT32  ActivePreset;
+	Language CurrLang;//For future??
+	UINT8   PowerupOption;
+	FieldBusAddr FBAddr;
+	UINT32  SystemConfigurationValidCheckSum;
+	///////website compilation
+	BOOLEAN Externalstatus;
+	BOOLEAN ErrorFlag;
+	BOOLEAN AlarmFlag;
+	BOOLEAN ExternalPresetFlag;
+	BOOLEAN PresetChanged;
+	RFSwitchingConfig RFSwitch;
+	UINT8   PbAddress;
+	//// FB /////
+	ip_addr FBSystemIP; // IP address in case of static configuration
+	ip_addr FBNetmask;     // Net mask in case of static IP
+	ip_addr FBGw;          // gateway in case of static IP
+	NetworkConfiguration FBCurrNetworkConfig;   // current configuration
+	DCPSpeedControl DcpSpeedControl;
+	BOOLEAN ClearMemoryBeforeSeek;//Whether to clear memory before seek
+	BOOLEAN ClearMemoryWithReset;//whether to clear memory on reset
+	BOOLEAN SetDigTuneWithHornScan;//whether to set digital tune equal to resonance frequency after scan
+	UINT8   DummyPlaceholder[8];//place holder
+};
+
+struct CounterSt
+{
+   UINT32 PowerOnHours;
+   UINT32 SonicsOnHours;
+   UINT32 LifeTimeCycleCount;
+   UINT32 GeneralAlarmCount;
+};
+
+struct TestPoints{
+	UINT32 TPChkSum;
+	UINT32 TTP[128];
+	UINT32 ITP[512];
+};
+
+struct TestPointsOld{
+	UINT32 TPChkSum;
+	UINT32 TTP[300];
+	UINT32 ITP[300];
+};
+
+extern SystemConfiguration * Sysconfig;
+extern CounterSt * SysCounters;
+#endif /* SYSCONFIG_H_ */

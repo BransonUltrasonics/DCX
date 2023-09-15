@@ -1,0 +1,400 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="pragma" content="no-cache" />
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+    <link rel="stylesheet" type="text/css" href="superfishDCXAFRackMt-v1.css" media="screen" />
+    <script type="text/javascript" language="javascript" src="jqueryDCXAFRackMt-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="hoverIntentDCXAFRackMt-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="superfishDCXAFRackMt-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="handlerDCXAFRackMt-v1.js"></script>
+    <script type="text/javascript"></script>
+    <script type="text/JavaScript" language="javascript" src="formchange-detectDCXAFRackMt-v1.js"></script>
+    <title>BRANSON DCX GUI</title>
+    <link rel="stylesheet" type="text/css" href="styleDCXAFRackMt-v1.css" />
+</head>
+<script language="javascript" type="text/javascript">
+var TimeArr = new Array(),PageRefTo = null;
+var restoreFlag = false, pageRefresh = false, RestoreMsg = "Parameters Restored";
+var TimePat13 = /^(\d{1})[.](\d{1,3})$/;
+var ABTimeArr = new Array();
+var http = getHTTPObject();
+function HandleModifyWeldOnLoad() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {		
+		var i, j, GroupVal, SingleVal, results;
+		results = http.responseText.split("@");
+		var UserType = results[0].split("/");
+		SetUserType(UserType[0]);
+		SetToken(UserType[1], restoreFlag);
+		SetSystemType(UserType[2]);
+		for (i = 1; i < results.length; i++) {
+			GroupVal = results[i].split(":");
+			try {
+				SingleVal = GroupVal[1].split(",");
+				switch(SingleVal[0]){
+					case "CB": UseID(GroupVal[0]).checked = (SingleVal[1] == "1");
+						break;
+					case "TT": if(GroupVal[0] == "Energy")
+									UseID(GroupVal[0]).value = ((SingleVal[1] / 10) < 1000)? (SingleVal[1] / 10).toFixed(1): (SingleVal[1] / 10);
+							   else
+									UseID(GroupVal[0]).value = SingleVal[1];
+						if (SingleVal.length > 2){
+							if(GroupVal[0] == "Energy")
+								UseID(GroupVal[0] + 'MaxMin').value = (SingleVal[2] / 10) + ',' + (SingleVal[3] / 10);
+							else
+								UseID(GroupVal[0] + 'MaxMin').value = SingleVal[2] + ',' + SingleVal[3]; 
+						}
+						break;
+					case "RB": UseID(GroupVal[0] + '_' + SingleVal[1]).checked = true;
+						break;
+					default: break;
+				}                        
+			} catch (err) { }
+		}
+		if (restoreFlag) {
+			alert(RestoreMsg);
+			restoreFlag = false;
+		}
+		CheckForDisableControlsOnLoad();
+		FormatParams();
+		if(UseID("FreqOffsetFlag_1").checked == true)
+			UseID("FreqOffset").disabled = true;
+		RefreshAttribute(document.main_form);
+	}
+}
+function ModifyWeldOnLoad() {
+	window.history.forward(1);
+	var ModifyWeldOnLoadUrl = "func=" + Func.SetupWeldGetDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+	ModifyWeldOnLoadUrl += SendCookies();
+	http.open("POST", ModifyWeldOnLoadUrl, true);
+	http.onreadystatechange = HandleModifyWeldOnLoad;
+	http.send(null);
+}
+function HandleModifyWeldSave() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {		
+		if (http.responseText == "TOKENNOTAVAILABLE") {
+			SetToken(0,0);
+			alert(Notoken);
+		}
+		else if (http.responseText == "OK") {
+			alert("Saved");
+			SetToken(1,0);
+			RefreshAttribute(document.main_form);
+			if (PageRefTo != null)
+				SubmitForm(PageRefTo);
+		}
+		else 
+			alert("Error Cannot be Saved");
+	}
+}
+
+function IfValidABTime(ElID,Msg){
+	var returnstr = true;
+	var TimeStr = UseID(ElID).value;
+	var temp = UseID(ElID + "MaxMin").value.split(",");
+	var minVal = FormatTime(parseInt(temp[0], 10));
+	var maxVal = FormatTime(parseInt(temp[1], 10));
+	matchArray = TimeStr.match(TimePat13);
+	
+	if(!Msg) Msg = ElID;
+	if (matchArray == null) 
+		returnstr = "* " + Msg + "(s) format should be X.YYY\n";
+	else {
+		currVal = (TimeStr * 1000);
+		if ((currVal < (minVal * 1000)) || (currVal > (maxVal * 1000)))
+			returnstr = "* " + Msg + "(s) should be between " + minVal + " and " + maxVal + "\n";
+	}
+	return returnstr;
+}
+
+function formvalidate() {
+	var temp,validationstring = "";
+	for (var i = 0; i < UseName("Time").length; i++){
+		temp = IfValidTime(UseName("Time").item(i).id);
+		if (temp == true) {
+		    var FloatVal = parseFloat(UseName("Time").item(i).value).toFixed(3);
+		    var TempTime = FloatVal.toString().split(".");		   
+		    TimeArr[i] = parseInt((TempTime[0] * 1000), 10) + parseInt(TempTime[1], 10);
+		}
+		else
+			validationstring += temp;
+	}
+	validationstring += IfValidEnergy("Energy","Energy");
+	validationstring += IfValid("Peak Power","PeakPower");
+	validationstring += IfValidFreq("Frequency Offset","FreqOffset");
+	validationstring += IfValid("Digital Tune Frequency","DigTune");
+	temp = IfValidABTime("ABDelay","ABDelay");
+	if (temp == true) {
+	    var FloatVal = parseFloat(UseID("ABDelay").value).toFixed(3);
+	    var TempTime = FloatVal.toString().split(".");		   
+	    ABTimeArr[0] = parseInt((TempTime[0] * 1000), 10) + parseInt(TempTime[1], 10);
+	}
+	else
+		validationstring += temp;
+		
+	temp = IfValidABTime("ABTime","ABTime");
+	if (temp == true) {
+	    var FloatVal = parseFloat(UseID("ABTime").value).toFixed(3);
+	    var TempTime = FloatVal.toString().split(".");		   
+	    ABTimeArr[1] = parseInt((TempTime[0] * 1000), 10) + parseInt(TempTime[1], 10);
+	}
+	else
+		validationstring += temp;
+	
+	
+	if (!validationstring)
+		return true;
+	else {
+		alert(validationstring);
+		return false;
+	}
+}
+function ModifyWeldSave() { 
+	if (formvalidate()) {
+	    var TempEnergy = UseID('Energy').value;
+		TempEnergy = ((parseFloat(TempEnergy) < 1000) ? parseFloat(TempEnergy).toFixed(1): TempEnergy);
+		UseID('Energy').value = TempEnergy;
+		var SaveString = "func=" + Func.SetupWeldPostDatahandler + "cmd=" + Command.REQ_NONE + "?param=WELD:&WeldTime=";
+		SaveString += TimeArr[0];
+		SaveString += "&Energy=" + (UseID('Energy').value * 10);
+		SaveString += "&PeakPower=" + UseID('PeakPower').value;
+		SaveString += "&ABDelay=" + ABTimeArr[0];
+		SaveString += "&ABTime=" + ABTimeArr[1];
+		SaveString += "&EBFlag=" + (UseID('EBFlag').checked ? "1" : "0");
+		SaveString += "&FreqOffset=" + UseID('FreqOffset').value;
+		SaveString += "&DigTune=" + UseID('DigTune').value;
+		SaveString += "&HoldTime=" + TimeArr[2];
+		SaveString += "&ScrubTime=" + TimeArr[1];
+		SaveString += "&EndofWeld=" + (UseID('EndofWeld').checked ? "1" : "0");
+		SaveString += "&ClrMemBfrSeek=" + (UseID('ClrMemBfrSeek').checked ? "1" : "0");
+		SaveString += "&ClrMemWithRst=" + (UseID('ClrMemWithRst').checked ? "1" : "0");
+		SaveString += "&SetDigTuneWithScan=" + (UseID('SetDigTuneWithScan').checked ? "1" : "0");
+		SaveString += "&WeldMode=";
+		for(var i = 0; UseID('WeldMode_' + i) != null ; i++)
+			SaveString += ((UseID('WeldMode_' + i).checked)?i:''); 
+		SaveString += "&ABFlag=" + ((UseID('ABFlag_0').checked)? "0" : "1");
+		SaveString += "&FreqOffsetFlag=" + ((UseID('FreqOffsetFlag_0').checked)? "0": "1");
+		SaveString += SendCookies();		
+		http.open("POST", SaveString, true);
+		http.onreadystatechange = HandleModifyWeldSave;
+		http.send(null);
+	}
+}
+function FormatParams() {
+	var ParamIds = ['WeldTime', 'HoldTime', 'ScrubTime', 'ABDelay', 'ABTime'];
+	for (indx = 0; indx < ParamIds.length; indx++) {
+		UseID(ParamIds[indx]).value = FormatTime(parseInt(UseID(ParamIds[indx]).value, 10));
+	}
+}
+function ModifyWeldCancel() {
+	pageRefresh = true;
+	SubmitForm('Weld.html');
+}
+function ModifyWeldRestore() {
+	var ret = confirm(strRestoreDefault);
+	if (ret == true) {
+		window.history.forward(1);
+		var ModifyWeldRestoreUrl = "func=" + Func.SetupWeldGetDatahandler + "cmd=" + Command.REQ_RESTORE + "?param=";
+		ModifyWeldRestoreUrl += SendCookies();
+		http.open("POST", ModifyWeldRestoreUrl, true);
+		restoreFlag = true;
+		http.onreadystatechange = HandleModifyWeldOnLoad;
+		http.send(null);
+	}
+}
+function SubmitForm(hrefpage) {
+	if (pageRefresh == false) {
+		var ret;
+		if (IsFormModified(document.main_form)) {
+			ret = confirm(formChangeMessage);
+			if (ret == true){
+				PageRefTo = hrefpage;
+				ModifyWeldSave();
+				return;
+			}
+		}
+	}
+	if (hrefpage == "index.html")
+		location.href = hrefpage;
+	else {
+		SubmitCookies(hrefpage);
+		document.temp_form.submit();
+	}
+}
+function CheckForDisableControlsOnLoad() {
+	var ModeIds = ["WeldMode_0", "WeldMode_1", "WeldMode_2", "WeldMode_3", "WeldMode_4"];
+	for (indx = 0; indx < ModeIds.length; indx++) {
+		if (UseID(ModeIds[indx]).checked == true)
+			OnModeSelect(indx);
+	}
+	var BurstIds = ["ABFlag_0", "ABFlag_1"];
+	for (indx = 0; indx < BurstIds.length; indx++) {
+		if (UseID(BurstIds[indx]).checked == true)
+			OnBurstSelect(indx);
+	}
+}
+function OnModeSelect(WeldMode) {
+	var n = 5;
+	var WeldModeId = ["dummy", 'WeldTime', 'Energy', 'PeakPower', 'ScrubTime'];
+	for (indx = 1; indx < n; indx++) {
+		UseID(WeldModeId[indx]).disabled = true;
+
+	}
+	if (WeldMode != 0) {
+		UseID(WeldModeId[WeldMode]).disabled = false;
+	}
+}
+function OnBurstSelect(ABFlag) {
+	var m = 2
+	var Name = ["ABDelay", "ABTime"];
+	for (indx = 0; indx < m; indx++) {
+		UseID(Name[indx]).disabled = true;
+	}
+	if (ABFlag != 0) {
+		UseID("ABDelay").disabled = false;
+		UseID("ABTime").disabled = false;
+	}
+}
+jQuery(function () {
+	UseID('header').innerHTML = MainHeader;
+	jQuery('ul.sf-menu').superfish();
+	SetTabAttribute(0,1);
+});
+</script>
+<body onload="ModifyWeldOnLoad()">
+    <form name="temp_form" method="post" action="Weld.html">
+    <input type="hidden" name="lang" id="lang" />
+    <input type="hidden" name="usrid" id="usrid" />
+    <input type="hidden" name="passcode" id="passcode" />
+	<input type="hidden" name="uniqueid" id="uniqueid" />	
+    </form>
+    <form name="main_form">
+    <div id="wrapper">
+        <div id="header"></div>
+        <div id="PageHeader"></div>
+        <div id="content">
+            <div class="contentBoxWrapper50">
+                <div class="contentBoxHeader">MODE</div>
+                <div class="gradientBox">
+                    <div class="checkbox">
+                    <input type="radio" id="WeldMode_0" name="Weldmode" value="0" onclick="OnModeSelect(0)"/></div>
+                    <div class="textLabelBigLeft">Continuous</div>
+                    <div class="clearit"></div>
+                    <div class="checkbox">
+                    <input type="radio" id="WeldMode_1" name="Weldmode" value="0" onclick="OnModeSelect(1)" /></div>
+                    <div class="textLabelBigLeft">Time(s)</div>
+                    <input name="Time" type="text" class="textInput" id="WeldTime" />
+                    <input type="hidden" id="WeldTimeMaxMin" />
+                    <div class="clearit"></div>
+                    <div class="checkbox">
+                    <input type="radio" id="WeldMode_2" name="Weldmode" value="0" onclick="OnModeSelect(2)" /></div>
+                    <div class="textLabelBigLeft">Energy(J)</div>
+                    <input type="text" class="textInput" id="Energy" />
+                    <input type="hidden"id="EnergyMaxMin" />
+                    <div class="clearit"></div>
+                    <div class="checkbox">
+                    <input type="radio" id="WeldMode_3" name="Weldmode" value="0" onclick="OnModeSelect(3)" /></div>
+                    <div class="textLabelBigLeft">Peak Power(%)</div>
+                    <input type="text" class="textInput" id="PeakPower" />
+                    <input type="hidden" id="PeakPowerMaxMin" />
+                    <div class="clearit"></div>
+                    <div class="checkbox">
+                    <input type="radio" id="WeldMode_4" name="Weldmode" value="0" onclick="OnModeSelect(4)" /></div>
+                    <div class="textLabelBigLeft">Ground Detect(s)</div>
+                    <input name="Time" type="text" class="textInput" id="ScrubTime" />
+                    <input type="hidden" id="ScrubTimeMaxMin" />
+                    <div class="clearit"></div>
+                </div>
+            </div>
+            <div class="contentBoxWrapper50">
+                <div class="contentBoxHeader">AFTERBURST</div>
+                <div class="gradientBox">
+                    <div class="checkbox">
+                    <input type="radio" id="ABFlag_0" name="ABFlag" value="0" onclick="OnBurstSelect(0)" /></div>
+                    <div class="textLabelBigLeft">OFF</div>
+                    <div class="clearit"></div>
+                    <div class="checkbox">
+                    <input type="radio" id="ABFlag_1" name="ABFlag" value="0" onclick="OnBurstSelect(1)" /></div>
+                    <div class="textLabelBigLeft">ON</div>
+                    <div class="clearit"></div>
+                    <div class="textLabelRight">Delay(s)</div>
+                    <input name="AbTime" type="text" class="textInput" id="ABDelay" />
+                    <input type="hidden" id="ABDelayMaxMin" />
+                    <div class="clearit"></div>
+                    <div class="textLabelRight">Time(s)&nbsp</div>
+                    <input name="AbTime" type="text" class="textInput" id="ABTime" />
+					<input type="hidden" id="ABTimeMaxMin" />
+                    <div class="clearit"></div><br /><br />
+                </div>
+            </div>
+            <div class="clearit"></div>
+            <div class="contentBoxWrapper50">
+                <div class="contentBoxHeader">FREQUENCY</div>
+                <div class="gradientBox">
+                    <div class="textLabelBigLeft">Digital Tune (Hz) </div>
+                    <input type="text" class="textInput" id="DigTune" />
+                    <input type="hidden" id="DigTuneMaxMin" />
+                    <div class="clearit"></div>
+                    <div class="checkbox">
+                    <input type="radio" id="FreqOffsetFlag_0" name="FreqoffFlag" value="0" Onclick="UseID('FreqOffset').disabled = false;"/></div>
+                    <div class="textLabelBigLeft">Internal Offset(Hz)</div>
+                    <input type="text" class="textInput" id="FreqOffset" />
+                    <input type="hidden" id="FreqOffsetMaxMin" />
+                    <div class="clearit"></div>
+                    <div class="checkbox">
+                    <input type="radio" id="FreqOffsetFlag_1" name="FreqoffFlag" value="0" Onclick="UseID('FreqOffset').disabled = true;"/></div>
+                    <div class="textLabelBigLeft">External Offset</div>
+                    <div class="clearit"></div>
+                    <div class="checkboxLeft">
+                    <input type="checkbox" id="EndofWeld" /></div>
+                    <div class="textLabelBigLeft">End of Weld Store</div>
+                    <div class="clearit"></div>
+					<div class="checkboxLeft">
+					<input  type="checkbox"  id="ClrMemWithRst"/></div>
+					<div class="textLableAuto">Clear memory with Reset</div>
+					<div class="clearit"></div>					<div class="checkboxLeft">
+					<input  type="checkbox"  id="ClrMemBfrSeek"/></div>
+					<div class="textLableAuto">Clear memory before Seek</div>
+					<div class="clearit"></div>
+                    <div class="checkboxLeft">
+                    <input type="checkbox" id="SetDigTuneWithScan" /></div>
+                    <div class="textLabelBigLeft">Set with Horn Scan</div>
+                    <div class="clearit"></div>
+                </div>
+            </div>
+            <div class="contentBoxWrapper50">
+                <div class="contentBoxHeader">OTHER</div>
+                <div class="gradientBox">
+                    <div class="checkboxLeft">
+                    <input type="checkbox" id="EBFlag" /></div>
+                    <div class="textLabelBigLeft">Energy Brake</div>
+                    <div class="clearit"></div>
+                    <div class="textLabelBigLeft">Hold Time(s)</div>
+                    <input name="Time" type="text" class="textInput" id="HoldTime" />
+                    <input type="hidden" id="HoldTimeMaxMin" />
+                    <div class="clearit"></div><br /><br />
+                </div>
+            </div>
+        </div>
+        <div class="clearit"></div>
+        <div id="contentButtonBank">
+            <input name="Save" type="button" class="button" value="Save" onclick="PageRefTo=null; ModifyWeldSave();" />
+            <input name="Cancel" type="button" class="button" value="Cancel" onclick="ModifyWeldCancel()" />
+            <input name="RestoreDefaults" type="button" class="button" value="Restore Defaults" onclick="ModifyWeldRestore()" />
+        </div>
+        <div class="clearit"></div>
+        <div id="footer"></div>
+    </div>
+</form>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitStickyFooter();
+   });
+</script>
+</html>

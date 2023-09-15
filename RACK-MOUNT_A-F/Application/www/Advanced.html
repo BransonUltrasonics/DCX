@@ -1,0 +1,437 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+	<link rel="stylesheet" type="text/css" href="superfishDCXAFRackMt-v1.css" media="screen"/>
+	<script type="text/javascript" src="jqueryDCXAFRackMt-v1.js"></script>
+	<script type="text/javascript" src="hoverIntentDCXAFRackMt-v1.js"></script>
+	<script type="text/javascript" src="superfishDCXAFRackMt-v1.js"></script>
+	<script type="text/javascript" language="javascript" src="handlerDCXAFRackMt-v1.js"></script> 
+	<script type="text/javascript"></script>
+	<script type="text/JavaScript" language="javascript" src="formchange-detectDCXAFRackMt-v1.js"></script>
+	<title>BRANSON DCX GUI</title>
+	<link href="styleDCXAFRackMt-v1.css" rel="stylesheet" type="text/css"/>
+<script language="javascript"  type="text/javascript">
+    var restoreFlag = false, pageRefresh = false, PageRefTo = null, RestoreMsg = "Parameters Restored";
+var http = getHTTPObject(); 
+function HandleModifyAdvancedOnLoad() {
+    if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+		var i, j,results, GroupVal, SingleVal;
+		results = http.responseText.split("@");
+		var UserType = results[0].split("/");
+		SetUserType(UserType[0]);
+		SetToken(UserType[1], restoreFlag);
+		SetSystemType(UserType[2]);
+		for (i = 1; i < results.length; i++) {
+			GroupVal = results[i].split(":");
+			try {
+				SingleVal = GroupVal[1].split(",");
+				switch(SingleVal[0])
+				{
+					case "DD": UseID(GroupVal[0] + ":dd").selectedIndex = parseInt(SingleVal[1]);
+						break;
+					case "TT": UseID(GroupVal[0]).value = SingleVal[1];
+						if (SingleVal.length > 2)
+							UseID(GroupVal[0] + 'MaxMin').value = SingleVal[2] + ',' + SingleVal[3];
+						break;
+					case "RB": UseID(GroupVal[0] + '_' + SingleVal[1]).checked = true;
+						break;
+					default: break;
+				}                        
+			} catch (err) { }
+		}
+		if (restoreFlag) {
+			alert(RestoreMsg);
+			restoreFlag = false;
+		}
+		RefreshAttribute(document.main_form);
+    }
+}
+function ModifyAdvancedOnLoad() {
+    window.history.forward(1);
+    var ModifyAdvancedOnLoadUrl = "func=" + Func.SetupAdvancedGetDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+    ModifyAdvancedOnLoadUrl += SendCookies();
+    http.open("POST", ModifyAdvancedOnLoadUrl, true);
+    http.onreadystatechange = HandleModifyAdvancedOnLoad;
+    http.send(null);
+}
+function HandleModifyAdvancedSave() {
+    if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {    	
+        if (http.responseText == "TOKENNOTAVAILABLE") {
+			SetToken(0,0);
+            alert(Notoken);
+        }
+        else if (http.responseText == "OK") {
+            alert("Saved");
+            SetToken(1,0);
+            RefreshAttribute(document.main_form);
+			if (PageRefTo != null)
+				SubmitForm(PageRefTo);
+        }
+        else 
+            alert("Error Cannot be Saved");
+    }
+}
+function formvalidate() {
+    var validationstring = "";
+	validationstring += IfValid("Weld Amplitude LoopC1","WeldAmplitudeLoopC1");
+	validationstring += IfValid("Weld Amplitude LoopC2","WeldAmplitudeLoopC2");
+	validationstring += IfValid("Weld PhaseLoopI","WeldPhaseLoopI");
+	validationstring += IfValid("Weld PhaseLoopCF","WeldPhaseLoopCF");
+	validationstring += IfValid("Weld PhaseLimitTime","WeldPhaseLimitTime");
+	validationstring += IfValid("Weld PhaseLimit","WeldPhaseLimit");
+	validationstring += IfValid("Frequency Window Size","FreqWindowSize");
+	validationstring += IfValid("Weld Frequency Low","WeldFreqLow");
+	validationstring += IfValid("Weld Frequency High","WeldFreqHigh");
+	validationstring += IfValid("Weld Amplitude LoopC1 New","WeldAmplitudeLoopC1New");
+	validationstring += IfValid("Weld Amplitude LoopC2 New","WeldAmplitudeLoopC2New");
+	validationstring += IfValid("Weld PhaseloopI New","WeldPhaseloopINew");
+	validationstring += IfValid("Weld PhaseloopP New","WeldPhaseloopPNew");
+	validationstring += IfValid("Blindtime Seek","InitPara2");
+	validationstring += IfValid("Blindtime Weld","InitPara3");
+	validationstring += IfValid("DDS Switchtime","InitPara4");
+	validationstring += IfValid("Seek Amplitude","InitPara5");
+	validationstring += IfValid("Weld Amplitude","InitPara6");	
+	for(var i = 7; UseID('InitPara' + i) != null ; i++)
+		validationstring += IfValid('InitPara' + i,'InitPara' + i);
+	validationstring += IfValid("Weld FreqLow New","WeldFreqLowNew");
+	validationstring += IfValid("Weld PhaseloopCF New","WeldPhaseloopCFNew");
+	validationstring += IfValid("Phase Limit Time New","PhaseLimitTimeNew");
+	validationstring += IfValid("Phase Limit New","PhaseLimitNew");
+	validationstring += IfValid("Weld Frequency High New","WeldFreqHighNew");
+    if(!validationstring)
+        return true;
+    else{
+        alert(validationstring);
+        return false;
+    }
+}
+function ModifyAdvancedSave() {
+    if (formvalidate()) {
+        var SaveString = "func=" + Func.SetupAdvancedPostDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+		SaveString += "&LoopControl=";
+		for(var i = 0; UseID('LoopControl_' + i) != null ; i++)
+			SaveString += ((UseID('LoopControl_' + i).checked)?i:'');
+		SaveString += "&WELD:&WeldAmplitudeLoopC1=" + UseID('WeldAmplitudeLoopC1').value;
+        SaveString += "&WeldAmplitudeLoopC2=" + UseID('WeldAmplitudeLoopC2').value;
+        SaveString += "&WeldPhaseLoopI=" + UseID('WeldPhaseLoopI').value;
+        SaveString += "&WeldPhaseLoopCF=" + UseID('WeldPhaseLoopCF').value;
+        SaveString += "&WeldPhaseLimitTime=" + UseID('WeldPhaseLimitTime').value;
+        SaveString += "&WeldPhaseLimit=" + UseID('WeldPhaseLimit').value;
+        SaveString += "&FreqWindowSize=" + UseID('FreqWindowSize').value;
+        SaveString += "&WeldFreqLow=" + UseID('WeldFreqLow').value;
+        SaveString += "&WeldFreqHigh=" + UseID('WeldFreqHigh').value;
+        SaveString += "&WeldAmplitudeLoopC1New=" + UseID('WeldAmplitudeLoopC1New').value;
+        SaveString += "&WeldAmplitudeLoopC2New=" + UseID('WeldAmplitudeLoopC2New').value;
+        SaveString += "&WeldPhaseloopINew=" + UseID('WeldPhaseloopINew').value;
+        SaveString += "&WeldPhaseloopPNew=" + UseID('WeldPhaseloopPNew').value;
+        SaveString += "&InitPara1=" + UseID('InitPara1:dd').selectedIndex;
+		for(var i = 2; UseID('InitPara' + i) != null ; i++)
+			SaveString += "&InitPara" + i + "=" + UseID('InitPara' + i).value;
+		for(var i = 1; UseID('Parameter' + i) != null ; i++)
+			SaveString += "&Parameter" + i + "=" + UseID('Parameter' + i).value;
+        SaveString += "&WeldPhaseloopCFNew=" + UseID('WeldPhaseloopCFNew').value;
+        SaveString += "&PhaseLimitTimeNew=" + UseID('PhaseLimitTimeNew').value;
+        SaveString += "&PhaseLimitNew=" + UseID('PhaseLimitNew').value;
+        SaveString += "&WeldFreqLowNew=" + UseID('WeldFreqLowNew').value;
+        SaveString += "&WeldFreqHighNew=" + UseID('WeldFreqHighNew').value;
+        SaveString += SendCookies();
+        http.open("POST", SaveString, true);
+        http.onreadystatechange = HandleModifyAdvancedSave;
+        http.send(null);
+    }
+}
+function ModifyAdvancedCancel() {
+    pageRefresh = true;
+    SubmitForm('Advanced.html');
+}
+function ModifyAdvancedRestore() {
+    var ret = confirm(strRestoreDefault);
+    if (ret == true) {
+        window.history.forward(1);
+        var ModifyAdvancedRestoreUrl = "func=" + Func.SetupAdvancedGetDatahandler + "cmd=" + Command.REQ_RESTORE + "?param=";
+        ModifyAdvancedRestoreUrl += SendCookies();
+        http.open("POST", ModifyAdvancedRestoreUrl, true);
+        restoreFlag = true;
+        http.onreadystatechange = HandleModifyAdvancedOnLoad;
+        http.send(null);
+    }
+}
+function SubmitForm(hrefpage) {
+    if (pageRefresh == false) {
+        var ret;
+        if (IsFormModified(document.main_form)) {
+            ret = confirm(formChangeMessage);
+            if (ret == true){
+				PageRefTo = hrefpage;
+				ModifyAdvancedSave();
+                return;
+			}
+        }
+    }
+    if (hrefpage == "index.html")
+        location.href = hrefpage;
+    else {
+        SubmitCookies(hrefpage);
+        document.temp_form.submit();
+    }
+}
+function CheckInput(Txt, ID) {
+    UseID(ID).value = Txt.value;
+}
+jQuery(function () {
+	UseID('header').innerHTML = MainHeader;
+	SetTabAttribute(0,6);
+    jQuery('ul.sf-menu').superfish();
+});
+</script>
+</head>
+<body onload='ModifyAdvancedOnLoad()'>
+<form name="temp_form" method="post" action="Advanced.html">
+	<input type="hidden" name="lang" id="lang" />
+	<input type="hidden" name="usrid" id="usrid" />
+	<input type="hidden" name="passcode" id="passcode" />
+	<input type="hidden" name="uniqueid" id="uniqueid" />
+</form>
+<form name="main_form">
+<div id="wrapper">
+  <div id="header"></div>
+  <div id="PageHeader"></div>
+  <div id="content">
+      <table>
+      <tr>
+      <td class="td-top">
+  	    <div class="contentBoxWrapper">
+    	    <div class="contentBoxHeader">LOOP CONTROL</div>
+    	    <div class="gradientBox">
+    		    <div class="checkbox">
+                <input type="radio" id ="LoopControl_0" name="LoopControl" value="0"/></div>
+                <div class="textLabelBigLeft">Standard</div>
+                <div class="clearit"></div>
+    		    <div class="checkbox">
+                <input type="radio" id ="LoopControl_1" name="LoopControl" value="0"/></div>
+                <div class="textLabelBigLeft">PI Values</div>
+                <div class="clearit"></div>
+    		    <div class="checkbox">
+                <input type="radio" id ="LoopControl_2" name="LoopControl" disabled="disabled" value="0"/></div>
+                <div class="textLabelBigLeft">HD Values</div>
+                <div class="clearit"></div>
+	        </div>
+        </div>
+    </td>
+    </tr>
+    <tr>
+    <td class="td-top">
+	    <div class="contentBoxWrapper">
+    	    <div class="contentBoxHeader">STANDARD</div>
+     	    <div class="gradientBox">
+		        <div class="textLabelBigLeft">Amplitude Loop C1</div>
+                <input type="text" class="textInputSS" id="WeldAmplitudeLoopC1"/>
+                <input type="hidden" id="WeldAmplitudeLoopC1MaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textLabelBigLeft">Amplitude Loop C2</div>
+                <input type="text" class="textInputSS" id="WeldAmplitudeLoopC2"/>
+                <input type="hidden" id="WeldAmplitudeLoopC2MaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textLabelBigLeft">Phase Loop</div>
+                <input type="text" class="textInputSS" id="WeldPhaseLoopI"/>
+                <input type="hidden" id="WeldPhaseLoopIMaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textLabelBigLeft">Phase Loop CF</div>
+                <input type="text" class="textInputSS" id="WeldPhaseLoopCF"/>
+                <input type="hidden" id="WeldPhaseLoopCFMaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textLabelBigLeft">Frequency Low (Hz)</div>
+                <input type="text" class="textInputSS" id="WeldFreqLow" onchange="CheckInput(this, 'WeldFreqLowNew')"/>
+                <input type="hidden" id="WeldFreqLowMaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textLabelBigLeft">Frequency High (Hz)</div>
+                <input type="text" class="textInputSS" id="WeldFreqHigh" onchange="CheckInput(this, 'WeldFreqHighNew')"/>
+                <input type="hidden" id="WeldFreqHighMaxMin"/><div class="clearit"></div>
+			    <div class="textLabelBigLeft">Phase Limit Time (ms)</div>
+                <input type="text" class="textInputSS" id="WeldPhaseLimitTime"  onchange="CheckInput(this, 'PhaseLimitTimeNew')"/>
+                <input type="hidden" id="WeldPhaseLimitTimeMaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textLabelBigLeft">Phase Limit</div>
+                <input type="text" class="textInputSS" id="WeldPhaseLimit"  onchange="CheckInput(this, 'PhaseLimitNew')"/>
+                <input type="hidden" id="WeldPhaseLimitMaxMin"/>
+                <div class="clearit"></div>
+	      </div>
+        </div>
+    </td>
+    <td class="td-top">
+	    <div class="contentBoxWrapper">
+    	    <div class="contentBoxHeader">PI VALUES</div>
+    	    <div class="gradientBox">
+			    <div class="textbigLable">Amplitude Proportional Gain</div>
+                <input type="text" class="textInputSS" id="WeldAmplitudeLoopC1New"/>
+                <input type="hidden" id="WeldAmplitudeLoopC1NewMaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textbigLable">Amplitude Integral Gain</div>
+                <input type="text" class="textInputSS" id="WeldAmplitudeLoopC2New"/>
+                <input type="hidden" id="WeldAmplitudeLoopC2NewMaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textbigLable">Phase Integral Gain</div>
+                <input type="text" class="textInputSS" id="WeldPhaseloopINew"/>
+                <input type="hidden" id="WeldPhaseloopINewMaxMin" />
+                <div class="clearit"></div>
+			    <div class="textbigLable">Phase Proportional Gain</div>
+                <input type="text" class="textInputSS" id="WeldPhaseloopPNew"/>
+                <input type="hidden" id="WeldPhaseloopPNewMaxMin" />
+                <div class="clearit"></div>
+			    <div class="textbigLable">Frequency Window Size</div>
+                <input type="text" class="textInputSS" id="FreqWindowSize"/>
+                <input type="hidden" id="FreqWindowSizeMaxMin"/>
+                <div class="clearit"></div>
+		        <div class="textbigLable">PF of Phase Control Loop</div>
+                <input type="text" class="textInputSS" id="WeldPhaseloopCFNew"/>
+                <input type="hidden" id="WeldPhaseloopCFNewMaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textbigLable">Frequency Low (Hz)</div>
+                <input type="text" class="textInputSS" id="WeldFreqLowNew" onchange="CheckInput(this, 'WeldFreqLow')"/>
+                <input type="hidden" id="WeldFreqLowNewMaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textbigLable">Frequency High (Hz)</div>
+                <input type="text" class="textInputSS" id="WeldFreqHighNew" onchange="CheckInput(this, 'WeldFreqHigh')"/>
+                <input type="hidden" id="WeldFreqHighNewMaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textbigLable">Phase Limit Time (ms)</div>
+                <input type="text" class="textInputSS" id="PhaseLimitTimeNew" onchange="CheckInput(this, 'WeldPhaseLimitTime')"/>
+                <input type="hidden" id="PhaseLimitTimeNewMaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textbigLable">Phase Limit</div>
+                <input type="text" class="textInputSS" id="PhaseLimitNew" onchange="CheckInput(this, 'WeldPhaseLimit')"/>
+                <input type="hidden" id="PhaseLimitNewMaxMin"/>
+                <div class="clearit"></div>
+            </div>
+        </div>
+    </td>
+    </tr>
+    <tr>
+    <td class="td-top">
+        <div class="contentBoxWrapper">
+            <div class="contentBoxHeader">HD Values</div>
+            <div class="gradientBox"> 	
+		        <div class="dropdown">
+		            <select id="InitPara1:dd" size="1" >
+				        <option>Mode</option>
+				        <option>Amplitude loop ON, Std.-DDS</option>					
+				        <option> Amplitude loop OFF, Std.-DDS</option>
+				        <option>Amplitude loop ON, Sync.-DDS</option>
+				        <option>Amplitude loop OFF, Sync.-DDS</option>
+			        </select>				
+			    </div>
+                <div class="clearit"></div>
+	   		    <div class="textInputS">Blindtime Seek </div>
+                <input type="text" class="textInputS" id="InitPara2" />
+                <input type="hidden" id="InitPara2MaxMin"/><div class="clearit"></div>
+        	    <div class="textInputS">Blindtime Weld</div>
+                <input type="text" class="textInputS" id="InitPara3" />
+                <input type="hidden" id="InitPara3MaxMin" />
+                <div class="clearit"></div>
+        	    <div class="textInputS">DDS Switchtime</div>
+                <input type="text" class="textInputS" id="InitPara4"/>
+                <input type="hidden" id="InitPara4MaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textInputS">Seek Amplitude</div>
+                <input type="text" class="textInputS" id="InitPara5"/>
+                <input type="hidden" id="InitPara5MaxMin"/>
+                <div class="clearit"></div>
+        	    <div class="textInputS">Weld Amplitude</div>
+                <input type="text" class="textInputS" id="InitPara6"/>
+                <input type="hidden" id="InitPara6MaxMin"/>
+                <div class="clearit"></div>
+        	    <div class="textInputS">Parameter7</div>
+                <input type="text" class="textInputS" id="InitPara7"/>
+                <input type="hidden" id="InitPara7MaxMin"/>
+                <div class="clearit"></div>
+                <div class="textInputS">Parameter8</div>
+                <input type="text" class="textInputS" id="InitPara8"/>
+                <input type="hidden" id="InitPara8MaxMin"/>
+                <div class="clearit"></div>
+          	    <div class="textInputS">Parameter9</div>
+                <input type="text" class="textInputS" id="InitPara9"/>
+                <input type="hidden" id="InitPara9MaxMin"/>
+                <div class="clearit"></div>
+        	    <div class="textInputS">Parameter10</div>
+                <input type="text" class="textInputS" id="InitPara10"/>
+                <input type="hidden" id="InitPara10MaxMin"/>
+                <div class="clearit"></div>
+                <div class="textInputS">Parameter11</div>
+                <input type="text" class="textInputS" id="InitPara11"/>
+                <input type="hidden" id="InitPara11MaxMin"/>
+                <div class="clearit"></div>
+	   		    <div class="textInputS">Parameter12 </div>
+                <input type="text" class="textInputS" id="InitPara12" />
+                <input type="hidden" id="InitPara12MaxMin"/>
+                <div class="clearit"></div>
+        	    <div class="textInputS">Parameter13</div>
+                <input type="text" class="textInputS" id="InitPara13" />
+                <input type="hidden" id="InitPara13MaxMin" />
+                <div class="clearit"></div>
+        	    <div class="textInputS">Parameter14</div>
+                <input type="text" class="textInputS" id="InitPara14"/>
+                <input type="hidden" id="InitPara14MaxMin"/>
+                <div class="clearit"></div>
+			    <div class="textInputS">Parameter15</div>
+                <input type="text" class="textInputS" id="InitPara15"/>
+                <input type="hidden" id="InitPara15MaxMin"/>
+                <div class="clearit"></div>	
+		    </div>
+		</div>
+    </td>
+    <td class="td-top">
+        <div class="contentBoxWrapper">
+	        <div class="contentBoxHeader">STATUS Parametrs</div>
+    	    <div class="gradientBox">
+			    <div class="textInputS">Status 1</div>
+                <input type="text" disabled ="disabled" class="textInputS" id="Parameter1"/>
+                <input type="hidden" id="hParameter1"/>
+                <div class="clearit"></div>
+			    <div class="textInputS">Status 2</div>
+                <input type="text" disabled ="disabled" class="textInputS"  id="Parameter2"/>
+                <input type="hidden" id="hParameter2"/>
+                <div class="clearit"></div>
+			    <div class="textInputS">Status 3</div>
+                <input type="text" disabled ="disabled" class="textInputS" id="Parameter3"/>
+                <input type="hidden" id="hParameter3"/>
+                <div class="clearit"></div>
+			    <div class="textInputS">Status 4</div>
+                <input type="text" disabled ="disabled" class="textInputS" id="Parameter4"/>
+                <input type="hidden" id="hParameter4"/>
+                <div class="clearit"></div>
+			    <div class="textInputS">Status 5</div>
+                <input type="text" disabled ="disabled" class="textInputS" id="Parameter5"/>
+                <input type="hidden" id="hParameter5"/>
+                <div class="clearit"></div>
+                <br/><br/>&nbsp&nbsp&nbsp
+			    <input name="Refresh" type="button" class="button" value="Refresh" onclick="ModifyAdvancedCancel()"/>
+            </div>
+        </div>
+    </td>
+    </tr>
+    </table>
+	<div class="clearit"></div>
+    <div id="contentButtonBank">
+    	<input name="Save" type="button" class="button" value="Save" onclick="PageRefTo=null;ModifyAdvancedSave();"/>
+    	<input name="Cancel" type="button" class="button" value="Cancel" onclick="ModifyAdvancedCancel()"/>
+    	<input name="RestoreDefaults" type="button" class="button" value="Restore Defaults" onclick="ModifyAdvancedRestore()"/>
+    </div>
+    </div>
+  <div class="clearit"></div>
+  <div id="footer"></div>
+</div>
+</form>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitStickyFooter();
+    });
+</script>
+</html>

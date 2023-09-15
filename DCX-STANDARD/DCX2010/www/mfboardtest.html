@@ -1,0 +1,458 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+<title>BRANSON DCX GUI</title>
+<link href="styleDCXSV-v1.css" rel="stylesheet" type="text/css" />
+<!--[if IE 6]><link href="ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if IE 7]><link href="ie7.css" rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if IE 6]>
+<script src="DD_belatedPNGDCXSV-v1.js"></script>
+<script>
+  /* EXAMPLE */
+  DD_belatedPNG.fix('#headerLogo');
+  
+  /* string argument can be any CSS selector */
+  /* .png_bg example is unnecessary */
+  /* change it to what suits you! */
+</script>
+<![endif]-->
+<script language="javascript"  type="text/javascript">
+var timerid = 0;      
+var state = 0;
+var msCount;
+var MFBOARDTEST_POLL = 1, WAIT_MFBOARDTEST_POLL = 2, MFBOARDTEST_POLL_TIMEOUT = 3;
+var responseTimeout = 2, pollTimeout = 2;
+var freqMin = 100, freqMax = 10000;
+
+var InputIDsArr=["PIN1_IMG" , "PIN27_IMG", "PIN29_IMG","PIN31_IMG" , "PIN33_IMG", "SIGN_IMG",
+                     "PIN15_VALUE","PIN17_VALUE","PIN21_VALUE","PIN25_VALUE","PHASE_VALUE"];
+function TimerCallBack()
+{
+    switch(state)
+    {
+        case MFBOARDTEST_POLL:
+            SendMFBoardTestPoll();
+            msCount = responseTimeout;
+            state = WAIT_MFBOARDTEST_POLL;
+        break;
+        case WAIT_MFBOARDTEST_POLL:
+           if(--msCount <= 0)           
+           {
+            alert("responsetimeoutdiv");
+            EnableDiv("responsetimeoutdiv");           
+           }
+        break;
+        case MFBOARDTEST_POLL_TIMEOUT:
+            if(--msCount <= 0)
+               state = MFBOARDTEST_POLL;
+        break;   
+    }
+}
+
+
+function getHTTPObject() {
+  var xmlhttp; 
+  if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+    try {
+      xmlhttp = new XMLHttpRequest();
+    } catch (e) {
+      xmlhttp = false;
+    }
+  }
+  return xmlhttp;
+}
+
+var http = getHTTPObject(); // We create the HTTP Object
+
+function getCookie(c_name)
+{
+if (document.cookie.length>0)
+  {
+  c_start=document.cookie.indexOf(c_name + "=");
+  if (c_start!=-1)
+    {
+    c_start=c_start + c_name.length+1;
+    c_end=document.cookie.indexOf(";",c_start);
+    if (c_end==-1) c_end=document.cookie.length;
+    return unescape(document.cookie.substring(c_start,c_end));
+    }
+  }
+return "";
+}
+
+function GetLanguageAndUserID(hrefpage)
+{
+    document.getElementById("lang").value= getCookie('LANGUAGE');
+	document.getElementById("userid1").value= getCookie('USERID');
+	document.temp_form.action = hrefpage;
+	document.temp_form.submit();    
+}
+
+function UpdateInputStates(res)
+{
+    var inputs = res.split(",");
+    for(i = 0;i < inputs.length; i++)
+    {
+        var id = InputIDsArr[i].split("_")
+        if(id[1] == "IMG")
+        {
+            SetLedStatus(InputIDsArr[i], inputs[i]);
+        }
+        else if(id[1] == "VALUE")
+        {
+            document.getElementById(InputIDsArr[i]).innerHTML = inputs[i];
+        }
+    }
+}
+
+function HandleMFBoardTestPollResponse()
+{
+    if (http.readyState == 4)
+    {
+        var res = http.responseText.split("@");
+        if(res[0] == "OK")
+        {
+            DisableDiv();
+            UpdateInputStates(res[1]);
+        }
+        else if(res[0] == "BUSY")
+            EnableDiv("sysbusydiv");
+            
+        mscount = pollTimeout;
+        state = MFBOARDTEST_POLL_TIMEOUT;
+    }
+}
+
+function SendMFBoardTestPoll()
+{
+   var pollurl = "func=20cmd=22?param=";      
+   pollurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+   http.open("POST", pollurl, true);
+   http.onreadystatechange = HandleMFBoardTestPollResponse;
+   http.send(null);
+}
+
+/* Removes leading whitespaces*/
+function LTrim( value ) {
+	
+	var re = /\s*((\S+\s*)*)/;
+	return value.replace(re, "$1");
+	
+}
+
+/* Removes ending whitespaces*/
+function RTrim( value ) {
+	
+	var re = /((\s*\S+)*)\s*/;
+	return value.replace(re, "$1");
+	
+}
+
+/* Removes leading and ending whitespaces*/
+function trim( value ) {
+	
+	return LTrim(RTrim(value));
+	
+}
+
+function isInteger(s){    
+    var i;
+    if(s.length <= 0)    
+       return false;
+     
+    for (i = 0; i < s.length; i++){   
+        /* Check that current character is number.*/
+        var c = s.charAt(i);
+        if (((c < "0") || (c > "9"))) 
+            return false;
+    }
+    /* All characters are numbers.*/
+    return true;
+}
+
+function ValidateFrequency()
+{
+    var frqVal = document.getElementById("testFreq").value;
+    var retVal = true;
+    frqVal = trim(frqVal);
+    document.getElementById("testFreq").value = frqVal;    
+    if((frqVal.length == 0) || (isInteger(frqVal) == false))
+        retVal = false
+    else
+    {
+        var intFrq = parseInt(frqVal);
+        if((intFrq < freqMin) || (intFrq > freqMax))
+            retVal = false;
+    }
+    
+    if(retVal == false)
+    {   
+        alert("Please enter the frequency between " + freqMin + " and " + freqMax);
+        document.getElementById("testFreq").focus();
+    }
+    return retVal;
+}
+
+function handleRefreshResponse()
+{
+    if (http.readyState == 4)
+    {        
+        var res = http.responseText;
+        if(res == "OK")
+        {
+            DisableDiv();
+            mscount = pollTimeout;
+            state = MFBOARDTEST_POLL_TIMEOUT;
+        }
+        else
+            EnableDiv("sysbusydiv");
+   }
+}
+
+function OnRefresh()
+{
+   if(ValidateFrequency() == false)
+        return;
+    
+   var idArr =["PIN3_CB", "PIN5_CB", "PIN9_CB","PIN11_CB"];
+   var arrSrvr = ["&olrst:", "&stop:", "&phaseA:" ,"&phaseB:"];	
+        
+   var refreshurl = "func=20cmd=23?param=testFreq:";
+   refreshurl += document.getElementById("testFreq").value;   
+   for(i =0; i < idArr.length; i++)
+   {
+    refreshurl += arrSrvr[i];
+    refreshurl += (document.getElementById(idArr[i]).checked?"1":"0");
+   }
+   
+   refreshurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));                    
+   http.open("POST", refreshurl, true);  
+   http.onreadystatechange = handleRefreshResponse;
+   http.send(null);
+}
+
+function EnableDiv(divType)
+{   
+    DisableDiv();
+    document.getElementById('fade_div').style.display = 'block';
+    document.getElementById(divType).style.display = 'block';
+    document.getElementById('fade_div').style.width = screen.width - 30;
+    var temp = (parseInt(document.getElementById('fade_div').style.width)
+    - parseInt(document.getElementById(divType).style.width)) / 2;
+        
+    document.getElementById(divType).style.left = temp + "Px";
+}
+
+
+function SetLedStatus(ID, status)
+{   
+    if(status == "1")
+        document.getElementById(ID).src = "greenDot.gif"
+    else if(status == "0")
+        document.getElementById(ID).src = "greyDot.gif"
+}
+
+function DisableDiv()
+{
+    document.getElementById('fade_div').style.display = 'none';
+    document.getElementById('logindiv').style.display = 'none';
+    document.getElementById('sysbusydiv').style.display = 'none';
+    document.getElementById('responsetimeoutdiv').style.display = 'none';
+}
+
+function MfBoardTestOnLoad()
+{
+    window.history.forward(1);      
+    EnableDiv("logindiv");
+}
+
+function handleOkPasswordResponse()
+{    
+    if (http.readyState == 4)
+    {        
+        var res = http.responseText;
+        if(res == "OK")        
+            DisableDiv()
+        else if(res == "BUSY")
+            EnableDiv("sysbusydiv");
+        else if(res == "NOTOK")        
+            alert("Incorrect Password");   
+        else
+            alert("System is not responding");
+            
+        if((res == "OK") || (res == "BUSY"))
+        {
+            if(!timerid)
+            {
+               state = MFBOARDTEST_POLL;
+               timerid = setInterval("TimerCallBack()", 500); 
+            }
+        } 
+     }
+}
+
+function onOKpasswordevent()
+{
+   var okUrl = "func=20cmd=21?param=password:";
+   okUrl += document.getElementById("mftestpassword").value;
+   okUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+  http.open("POST", okUrl, true);
+  http.onreadystatechange = handleOkPasswordResponse;
+  http.send(null);
+}
+function GetUserManual(hrefpage)
+{
+    window.open(hrefpage);
+}
+</script>
+</head>
+<body onload = "MfBoardTestOnLoad()">
+<div id="fade_div" style="width:840px;height:630px;filter:alpha(opacity=50);background-color:#FFFFFF;margin-left:0px;margin-top:210px;z-index:100;display:none;position:absolute">
+<table summary="" border="0" height="600px" width="1100px">
+		<tr><td style="height:600px;width:1100px">&nbsp;</td></tr>
+	</table>
+</div>
+
+<div id="logindiv" style="display:none;position:absolute;width:500px;height:80px; z-index:102;left:300px;top:350px;">
+	<table summary="" cellspacing="3" border="0" style="background-color:#000000;width:500px;height:80px;">
+		<tr>
+		<td>
+		<table summary="" cellspacing="0" border="0" style="background-color:#FFFFFF;width:500px;height:80px;">		    
+		    <tr><td>&nbsp</td></tr>
+			<tr><td style="font-weight:bold;font-size:14pt;text-align:center" id="divtext">ENTER PASSWORD : </td>
+			    <td><input type="password" id='mftestpassword' style="margin-top:2px"/></td>			
+			</tr>
+			<tr>			   
+			    <td align ="center"><input type="button" style="width:80px;height:30px;" id ="bok" value="OK" onclick="onOKpasswordevent()"/></td>
+			    <!--<td align ="center"><input type="button" style="width:80px;height:30px;" value="CANCEL" onclick="onCancelpasswordevent()"></td>-->			    
+			</tr>
+		    <tr><td>&nbsp</td></tr>
+			<tr><td colspan="2" style="color:Red;">Warning: Please ensure that Instrumentation board is not connected with DCP board</td></tr>
+			<tr><td>&nbsp</td></tr>
+		</table>
+		</td>
+		</tr>
+	</table>
+</div>
+<div id="sysbusydiv" style="display:none;position:absolute;width:250px;height:80px; z-index:102;left:435px;top:450px;">
+	<table summary="" cellspacing="3" border="0" style="background-color:#000000;width:250px;height:80px;">
+		<tr>
+		<td>
+		<table summary="" cellspacing="0" border="0" style="background-color:#FFFFFF;width:245px;height:80px;">		    
+			<tr><td id="Td1" style="font-weight:bold;font-size:14pt;text-align:center">INFO : System is busy</td></tr>
+		</table>
+		</td>
+		</tr>
+	</table>
+</div>
+<div id="responsetimeoutdiv" style="display:none;position:absolute;width:250px;height:80px; z-index:102;left:435px;top:450px;">
+	<table summary="" cellspacing="3" border="0" style="background-color:#000000;width:250px;height:80px;">
+		<tr>
+		<td>
+		<table summary="" cellspacing="0" border="0" style="background-color:#FFFFFF;width:245px;height:80px;">		    
+			<tr><td id="Td2" style="font-weight:bold;font-size:14pt;text-align:center">INFO : System not Responding</td></tr>
+		</table>
+		</td>
+		</tr>
+	</table>
+</div>
+<div id="wrapper">
+  <div id="header">
+  	<div id="headerNav">
+   	  <div id="headerLogo">
+       	<!-- <img src="images/bransonLogo.png" alt="Branson" /> //-->
+      </div><!-- end headerLogo //-->
+      <div id="headerLinks">
+      	<span class="user" id = "CurrUser">Current User: Manufacturing</span>  <!--<a href="javascript:GetUserManual('DCXManual.pdf')">User Manual</a> | --><a href="index.html">Logout</a>
+      </div><!-- end HeaderLinks //-->
+    </div><!-- end headerNav //-->
+    <div id="mainNav">
+    	<ul id ="tabmenu">
+        	<li><a href="javascript:GetLanguageAndUserID('ip-setup.html')">IP Setup</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('weld-preset.html')">Weld Preset</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('advanced-preset.html')">Advanced <br/>Preset</a></li>
+            <li class="active"><a href="#">Manufacturing Board Test</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('diagnostic-IO.html')">I/O Diagnostics</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('Seek&WeldGraphs.html')">Seek & </br>Weld Graphs</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('system-information.html')">System <br/>Information</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('IO-configuration.html')">I/O Configuration</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('event-log.html')">Event Log</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('alarm-log.html')">Alarm Log</a></li> 
+			<li><a href="javascript:GetLanguageAndUserID('hornsignature.html')">Horn <br/> Signature</a></li> 
+        </ul>
+    </div><!-- end mainNav //-->
+  </div><!-- end header //-->
+  <div id="content">
+  	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>Digital Inputs</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox">    	    	    
+			<div class="checkbox"><img id="PIN1_IMG" src="greyDot.gif" alt="Off" style="margin-left:20px;"/></div><div class="labelLeft">J9-1 Overload</div><div class="clearit"></div>
+            <div class="checkbox"><img id="PIN27_IMG" src="greyDot.gif" alt="Off" style="margin-left:20px;"/></div><div class="labelLeft">J9-27 Temperature</div><div class="clearit"></div>
+            <div class="checkbox"><img id="PIN29_IMG" src="greyDot.gif" alt="Off" style="margin-left:20px;"/></div><div class="labelLeft">J9-29 Power</div><div class="clearit"></div>
+            <div class="checkbox"><img id="PIN31_IMG" src="greyDot.gif" alt="Off" style="margin-left:20px;"/></div><div class="labelLeft">J9-31 RF Voltage</div><div class="clearit"></div>
+            <div class="checkbox"><img id="PIN33_IMG" src="greyDot.gif" alt="Off" style="margin-left:20px;"/></div><div class="labelLeft">J9-33 RF Current</div><div class="clearit"></div>            
+		</div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->
+      	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>Digital Outputs</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox">
+		  <div class="ieDropFix"><div class="checkbox"><input name="" type="checkbox" style="margin-left:20px;" id = "PIN3_CB"/></div><div class="labelLeft">J9-3 Overload Reset</div><!-- end label //--></div><!-- end isDropFix //--><div class="clearit"></div><!-- end clearit //-->
+   		  <div class="ieDropFix"><div class="checkbox"><input name="" type="checkbox" style="margin-left:20px;" id = "PIN5_CB"/></div><div class="labelLeft">J9-5 Stop</div><!-- end label //--></div><!-- end isDropFix //--><div class="clearit"></div><!-- end clearit //-->
+          <div class="ieDropFix"><div class="checkbox"><input name="" type="checkbox" style="margin-left:20px;" id = "PIN9_CB"/></div><div class="labelLeft">J9-9 Phase B</div><!-- end label //--></div><!-- end isDropFix //--><div class="clearit"></div><!-- end clearit //-->
+          <div class="ieDropFix"><div class="checkbox"><input name="" type="checkbox" style="margin-left:20px;" id = "PIN11_CB"/></div><div class="labelLeft">J9-11 Phase A</div><!-- end label //--></div><!-- end isDropFix //--><div class="clearit"></div><!-- end clearit //-->
+          <br /><br />
+        </div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->
+      	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>Frequency</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox">
+			<div class="ieDropFix"><div class="label">Test Frequency(HZ)</div><input name="" type="text" value = "100" class="textInputS" id="testFreq"/><input type="hidden" id="testFreqMaxMin" name="testFreqMaxMin"/></div><div class="clearit"></div>
+            <div class="ieDropFix"><div class="label">Phase(mV)</div><div class="labelRight" style ="width:80px" id ="PHASE_VALUE">&nbsp&nbsp</div><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->
+            <div class="ieDropFix"><div class="label">Sign</div></div><img id="SIGN_IMG" src="greyDot.gif" alt="Off" style="margin-left:5px;margin-top:12px;"/><div class="clearit"></div><!-- end clearit //-->
+            <br /><br />
+		</div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->  
+    <div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>Analog Inputs</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox">
+			<div class="ieDropFix"><div class="label" style="width:135px">J9-15 Power(mV)</div><div class="labelSmall" style ="width:80px" id="PIN15_VALUE">&nbsp&nbsp</div></div><div class="clearit"></div>
+   			<div class="ieDropFix"><div class="label" style="width:135px">J9-17 Temperature(mV)</div><div class="labelSmall" style ="width:80px" id="PIN17_VALUE">&nbsp&nbsp</div></div><div class="clearit"></div>
+   			<div class="ieDropFix"><div class="label" style="width:135px">J9-21 Amplitude(mV)</div><div class="labelSmall" style ="width:80px" id="PIN21_VALUE">&nbsp&nbsp</div></div><div class="clearit"></div>
+   			<div class="ieDropFix"><div class="label" style="width:135px">J9-25 DC Current(mV)</div><div class="labelSmall" style ="width:80px" id="PIN25_VALUE">&nbsp&nbsp</div></div><div class="clearit"></div>   			
+		</div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->  
+    <div class="clearit"></div><!-- end clearit //-->
+    <div id="contentButtonBank">
+    	<input name="Save" type="button" class="button" value="Refresh" onclick="OnRefresh()"/>    	
+    </div><!-- end contentButtonBank //-->	
+  </div><!-- end content //-->
+  <div class="clearit"></div>
+  <div id="footer"><p>©2011 Branson, All Rights Reserved<br />
+    <img src="Emerson-IA.jpg" alt="Emersin Industrial Automation" /></p></div>
+</div>
+<!-- end wrapper //-->
+<form name="temp_form" method="post" action="mfboardtest.html">
+<input type="hidden" name="lang" id="lang" value="" />
+<input type="hidden" name="userid1" id="userid1" value="" />
+</form>
+</body>
+</html>
+

@@ -1,0 +1,934 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+  <meta http-equiv="cache-control" content="max-age=0" />
+  <meta http-equiv="expires" content="0" />
+  <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+  <meta http-equiv="pragma" content="no-cache" />
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+<title>BRANSON DCX GUI</title>
+<link href="styleDCXHD-v1.css" rel="stylesheet" type="text/css" />
+<!--[if IE 6]><link href="ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if IE 7]><link href="ie7.css" rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if IE 6]>
+<script src="DD_belatedPNGDCXHD-v1.js"></script>
+<script>
+  /* EXAMPLE */
+  DD_belatedPNG.fix('#headerLogo');
+  
+  /* string argument can be any CSS selector */
+  /* .png_bg example is unnecessary */
+  /* change it to what suits you! */
+</script>
+<![endif]-->
+</head>
+<script type="text/JavaScript" language="javascript" src="formchange-detectDCXHD-v1.js"></script>
+<script type="text/JavaScript">
+var userbranson = "1", usermf1 = "3", usermf2 = "4";
+var tab1 = "<li><a href=\"javascript:GetLanguageAndUserID('ip-setup.html')\">IP Setup</a></li>"
+var tab2 = "<li><a  href=\"javascript:GetLanguageAndUserID('weld-preset.html')\">Weld Preset</a></li>";
+var tab3 = "<li class=\"active\"><a  href=\"#\">Advanced Preset</a></li>";
+var tab4 = "<li><a  href=\"javascript:GetLanguageAndUserID('diagnostic-IO.html')\">I/O Diagnostics</a></li>";
+var tab5 = "<li><a href=\"javascript:GetLanguageAndUserID('Seek&WeldGraphs.html')\">Seek & </br>Weld Graphs</a></li>";
+var tab6 = "<li><a  href=\"javascript:GetLanguageAndUserID('system-information.html')\">System Information</a></li>";
+var tab7 = "<li><a  href=\"javascript:GetLanguageAndUserID('IO-configuration.html')\">I/O Configuration</a></li>";
+var tab8 = "<li><a  href=\"javascript:GetLanguageAndUserID('event-log.html')\">Event Log</a></li>";
+var tab9 = "<li><a  href=\"javascript:GetLanguageAndUserID('alarm-log.html')\">Alarm Log</a></li>";
+var tab10 = "<li><a  href=\"javascript:GetLanguageAndUserID('manufacturing.html')\">Manufacturing</a></li>";
+var tab11 = "<li><a  href=\"javascript:GetLanguageAndUserID('mfboardtest.html')\">Manufacturing Board Test</a></li>";
+var tab12 = "<li><a  href=\"javascript:GetLanguageAndUserID('hornsignature.html')\">Horn <br/>Signature</a></li>";
+var tab13 = "<li><a  href=\"javascript:GetLanguageAndUserID('HD-param.html')\">HD Parameters</a></li>";
+var tabBranson = tab1 + tab2 + tab3 + tab4 + tab5 + tab12 + tab6 + tab7 + tab8 + tab9 + tab13;
+var tabMf = tabBranson + tab10;
+var tabBoardtest = tab1 + tab2 + tab3 + tab11 + tab4 + tab5 + tab12 + tab6 + tab7 + tab8 + tab9;
+var TabArr =["", tabBranson, "", tabMf, tabBoardtest];
+var UserArr=["", "Current User: Branson", "","Current User: Manufacturing","Current User: Manufacturing"];
+var strRestoreDefault = "Are you sure you want to restore defaults?";
+
+var restoreFlag = false;
+var pageRefresh = false;
+
+function getHTTPObject() {
+  var xmlhttp;  
+  if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+    try {
+      xmlhttp = new XMLHttpRequest();
+    } catch (e) {
+      xmlhttp = false;
+    }
+  }
+  return xmlhttp;
+}
+
+var http = getHTTPObject(); // We create the HTTP Object
+
+function HandleModifyPresetOnLoadAdv()
+{
+  if (http.readyState == 4 && http.responseText.length!=0) 
+  {  
+    if (http.readyState == 4) 
+    {       
+        var i,j,results2,results3;       
+       
+        results = http.responseText.split("@");
+        if((results[0] == userbranson) || (results[0] == usermf1) ||(results[0] == usermf2))
+        {       
+            document.getElementById('tabmenu').innerHTML = TabArr[parseInt(results[0])];                        
+            document.getElementById("CurrUser").innerHTML = UserArr[parseInt(results[0])];
+        }
+        for(i=1;i<results.length;i++)
+        {            
+            results2 = results[i].split(":");
+            try{
+            if(results2[1]!=null)
+             {
+	            results3 = results2[1].split(",");
+	            if(results3[0] == "S")	     
+                    document.getElementById(results2[0]).innerHTML = results3[1];			     
+                else if((results3[0] == "D") || (results3[0] == "B"))
+                {   
+                    document.getElementById(results2[0]).value = results3[1];
+					if(results3.length>2)
+                    {
+                        document.getElementById(results2[0]+'MaxMin').value = results3[2] + ',' + results3[3];			     
+                    }
+                }
+                else if(results3[0] == "CB")	         
+                   document.getElementById(results2[0]).checked = (results3[1] == 1);
+                else if(results3[0] == "RB")
+                    document.getElementById(results2[0] + '_' + results3[1]).checked = true;
+            }
+            }catch(err){}
+        }
+        if(restoreFlag)
+        {
+            alert("Parameters restored");
+            restoreFlag = false;
+        }      
+        RefreshAttribute(document.main_form);
+    }
+    /*document.getElementById("CurrUser").innerHTML = "Current User: Branson";
+    GetOtherStrings();*/
+  }  
+}
+
+function ModifyPresetAdvOnLoad()
+{
+  window.history.forward(1);
+  var ModifyPresetAdvOnLoadUrl = "func=5cmd=0?param=";
+/*  ModifyPresetAdvOnLoadUrl += "10,11,12,13,14,15,16,17,27,62,97,";
+  ModifyPresetAdvOnLoadUrl += "28,29,23,45,52,53,54,202,56,57,58,59,60,98,99"; */
+  ModifyPresetAdvOnLoadUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+  http.open("POST", ModifyPresetAdvOnLoadUrl, true);
+  http.onreadystatechange = HandleModifyPresetOnLoadAdv;
+  http.send(null);
+}
+
+function HandleModifyPresetSaveAdv()
+{
+  if (http.readyState == 4) 
+  {  
+ // Split the comma delimited response into an array 
+    results = http.responseText.split(",");  
+    if(results[0]=="OK")
+	{
+		alert("Saved");
+		RefreshAttribute(document.main_form);
+	}
+	else
+	{
+		alert("Error Cannot be Saved");
+	}
+  }
+}
+
+function IsNumeric(strString)
+//  check for valid numeric strings	
+{
+   var strValidChars = "0123456789.";
+   var strChar;
+   var blnResult = true;
+
+   if (strString.length == 0) return false;
+
+   //  test strString consists of valid characters listed above
+   for (i = 0; i < strString.length && blnResult == true; i++)
+      {
+      strChar = strString.charAt(i);
+      if (strValidChars.indexOf(strChar) == -1)
+         {
+         blnResult = false;
+         }
+      }
+   return blnResult;
+}
+
+
+function formvalidate()
+{
+    var validationstring="";
+    var bIsBoxChecked = document.getElementById('UseTrueValues').checked;
+
+    if(!bIsBoxChecked)
+    {
+	   if(document.getElementById("AmplitudeloopC1").value.length!=0)
+	   {
+			if(!IsNumeric(document.getElementById("AmplitudeloopC1").value))                        
+			  validationstring += "* AmplitudeloopC1 should be a Number \n"	 
+			else
+			{
+			   var temp = document.getElementById("AmplitudeloopC1MaxMin").value.split(',');
+			   if(document.getElementById("AmplitudeloopC1").value < parseFloat(temp[0]) || document.getElementById("AmplitudeloopC1").value>parseFloat(temp[1]))
+				  validationstring += "* AmplitudeloopC1 should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			}       
+	   }
+	   else   
+		 validationstring += "* Please Enter AmplitudeloopC1\n";
+	 
+	   if(document.getElementById("AmplitudeloopC2").value.length!=0)
+	   {
+			if(!IsNumeric(document.getElementById("AmplitudeloopC2").value))                        
+			  validationstring += "* AmplitudeloopC2 should be a Number \n"	
+			else
+			{
+			   var temp = document.getElementById("AmplitudeloopC2MaxMin").value.split(',');
+			   if(document.getElementById("AmplitudeloopC2").value < parseFloat(temp[0]) || document.getElementById("AmplitudeloopC2").value>parseFloat(temp[1]))
+				  validationstring += "* AmplitudeloopC2 should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			}           
+	   }
+	   else   
+		 validationstring += "* Please Enter AmplitudeloopC2\n";
+	 
+	   if(document.getElementById("Phaseloop").value.length!=0)
+	   {
+			if(!IsNumeric(document.getElementById("Phaseloop").value))                        
+			  validationstring += "* Phaseloop should be a Number \n"
+			else
+			{
+			   var temp = document.getElementById("PhaseloopMaxMin").value.split(',');
+			   if(document.getElementById("Phaseloop").value < parseFloat(temp[0]) || document.getElementById("Phaseloop").value>parseFloat(temp[1]))
+				  validationstring += "* Phaseloop should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			} 	        
+	   }
+	   else   
+		 validationstring += "* Please Enter Phaseloop\n";
+	 
+	   if(document.getElementById("PhaseloopCF").value.length!=0)
+	   {
+			if(!IsNumeric(document.getElementById("PhaseloopCF").value))                        
+			  validationstring += "* PhaseloopCF should be a Number \n"	
+			else
+			{
+			   var temp = document.getElementById("PhaseloopCFMaxMin").value.split(',');
+			   if(document.getElementById("PhaseloopCF").value < parseFloat(temp[0]) || document.getElementById("PhaseloopCF").value>parseFloat(temp[1]))
+				  validationstring += "* PhaseloopCF should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			}        
+	   }
+	   else   
+		 validationstring += "* Please Enter PhaseloopCF\n";
+	 
+	   if(document.getElementById("FreqLow").value.length!=0)
+	   {
+			if(!IsNumeric(document.getElementById("FreqLow").value))                        
+			  validationstring += "* FreqLow should be a Number \n"
+			else
+			{
+			   var temp = document.getElementById("FreqLowMaxMin").value.split(',');           
+			   if(document.getElementById("FreqLow").value < parseFloat(temp[0]) || document.getElementById("FreqLow").value>parseFloat(temp[1]))
+				  validationstring += "* FreqLow should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			} 	        
+	   }
+	   else   
+		 validationstring += "* Please Enter FreqLow\n";
+	 
+	   if(document.getElementById("FreqHigh").value.length!=0)
+	   {
+			if(!IsNumeric(document.getElementById("FreqHigh").value))                        
+			  validationstring += "* FreqHigh should be a Number \n";
+			else
+			{
+			   var temp = document.getElementById("FreqHighMaxMin").value.split(',');
+			   if(document.getElementById("FreqHigh").value < parseFloat(temp[0]) || document.getElementById("FreqHigh").value>parseFloat(temp[1]))
+				  validationstring += "* FreqHigh should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			}         
+	   }
+	   else   
+		 validationstring += "* Please Enter FreqHigh\n";
+		 
+	   if(document.getElementById("PhaseLimitTime").value.length!=0)
+	   {
+			if(!IsNumeric(document.getElementById("PhaseLimitTime").value))                        
+			  validationstring += "* PhaseLimitTime should be a Number \n";
+			else
+			{
+			   var temp = document.getElementById("PhaseLimitTimeMaxMin").value.split(',');
+			   if(document.getElementById("PhaseLimitTime").value < parseFloat(temp[0]) || document.getElementById("PhaseLimitTime").value>parseFloat(temp[1]))
+				  validationstring += "* PhaseLimitTime should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			}         
+	   }
+	   else   
+		 validationstring += "* Please Enter PhaseLimitTime\n";
+		 
+	   if(document.getElementById("PhaseLimit").value.length!=0)
+	   {
+			if(!IsNumeric(document.getElementById("PhaseLimit").value))                        
+			  validationstring += "* PhaseLimit should be a Number \n";
+			else
+			{
+			   var temp = document.getElementById("PhaseLimitMaxMin").value.split(',');
+			   if(document.getElementById("PhaseLimit").value < parseFloat(temp[0]) || document.getElementById("PhaseLimit").value>parseFloat(temp[1]))
+				  validationstring += "* PhaseLimit should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			}         
+	   }
+	   else   
+			validationstring += "* Please Enter PhaseLimitTime\n";
+	}
+	else
+	{
+		if(document.getElementById("FreqWindowSize").value.length!=0)
+		{
+		   var temp = document.getElementById("FreqWindowSizeMaxMin").value.split(',');
+		   if(document.getElementById("FreqWindowSize").value < parseFloat(temp[0]) || document.getElementById("FreqWindowSize").value>parseFloat(temp[1]))
+			  validationstring += "* Frequency Window Size should be between " + temp[0] +" and " + temp[1]+"\n";                                  
+		}
+		else   
+		 validationstring += "* Please Enter Window Size\n";
+	
+		if(document.getElementById("AmplitudeloopC1New").value.length!=0)
+		{
+			if(!IsNumeric(document.getElementById("AmplitudeloopC1New").value))                        
+			  validationstring += "* Amplitude Integral Gain should be a Number \n"	 
+			else
+			{
+			   var temp = document.getElementById("AmplitudeloopC1NewMaxMin").value.split(',');
+			   if(document.getElementById("AmplitudeloopC1New").value < parseFloat(temp[0]) || document.getElementById("AmplitudeloopC1New").value>parseFloat(temp[1]))
+				  validationstring += "* Amplitude Integral Gain should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			}       
+		}
+		else   
+		 validationstring += "* Please Enter Amplitude Integral Gain\n";
+
+		if(document.getElementById("AmplitudeloopC2New").value.length!=0)
+		{
+			if(!IsNumeric(document.getElementById("AmplitudeloopC2New").value))                        
+			  validationstring += "* Amplitude Prop Gain should be a Number \n"	
+			else
+			{
+			   var temp = document.getElementById("AmplitudeloopC2NewMaxMin").value.split(',');
+			   if(document.getElementById("AmplitudeloopC2New").value < parseFloat(temp[0]) || document.getElementById("AmplitudeloopC2New").value>parseFloat(temp[1]))
+				  validationstring += "* Amplitude Prop Gain should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			}           
+		}
+		else   
+		 validationstring += "* Please Enter Amplitude Prop Gain\n";
+
+		if(document.getElementById("PhaseloopNew").value.length!=0)
+		{
+			if(!IsNumeric(document.getElementById("PhaseloopNew").value))                        
+			  validationstring += "* Phase Integral Gain should be a Number \n"
+			else
+			{
+			   var temp = document.getElementById("PhaseloopNewMaxMin").value.split(',');
+			   if(document.getElementById("PhaseloopNew").value < parseFloat(temp[0]) || document.getElementById("PhaseloopNew").value>parseFloat(temp[1]))
+				  validationstring += "* Phase Integral Gain should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			} 	        
+		}
+		else   
+		 validationstring += "* Please Enter Phase Integral Gain\n";
+
+		if(document.getElementById("PhaseloopCFNew").value.length!=0)
+		{
+			if(!IsNumeric(document.getElementById("PhaseloopCFNew").value))                        
+			  validationstring += "* Power Factor of Phase Control Loop should be a Number \n"	
+			else
+			{
+			   var temp = document.getElementById("PhaseloopCFNewMaxMin").value.split(',');
+			   if(document.getElementById("PhaseloopCFNew").value < parseFloat(temp[0]) || document.getElementById("PhaseloopCFNew").value>parseFloat(temp[1]))
+				  validationstring += "* Power Factor of Phase Control Loop should be between " + temp[0] +" to " + temp[1]+"\n";
+			}        
+		}
+		else   
+		 validationstring += "* Please Enter Power Factor of Phase Control Loop\n";
+
+		if(document.getElementById("PhaseloopPropNew").value.length!=0)
+		{
+			if(!IsNumeric(document.getElementById("PhaseloopPropNew").value))                        
+			  validationstring += "* Phase Prop Gain should be a Number \n"
+			else
+			{
+			   var temp = document.getElementById("PhaseloopPropNewMaxMin").value.split(',');
+			   if(document.getElementById("PhaseloopPropNew").value < parseFloat(temp[0]) || document.getElementById("PhaseloopPropNew").value>parseFloat(temp[1]))
+				  validationstring += "* Phase Proportional Gain should be between " + temp[0] +" to " + temp[1]+"\n";				 
+			}
+		}
+		else   
+		 validationstring += "* Please Enter Phase Prop Gain\n";
+
+		if(document.getElementById("FreqLowNew").value.length!=0)
+		{
+			if(!IsNumeric(document.getElementById("FreqLowNew").value))                        
+			  validationstring += "* FreqLow should be a Number \n"
+			else
+			{
+			   var temp = document.getElementById("FreqLowNewMaxMin").value.split(',');           
+			   if(document.getElementById("FreqLowNew").value < parseFloat(temp[0]) || document.getElementById("FreqLowNew").value>parseFloat(temp[1]))
+				  validationstring += "* FreqLow should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			} 	        
+		}
+		else   
+		 validationstring += "* Please Enter FreqLow\n";
+
+		if(document.getElementById("FreqHighNew").value.length!=0)
+		{
+			if(!IsNumeric(document.getElementById("FreqHighNew").value))                        
+			  validationstring += "* FreqHigh should be a Number \n";
+			else
+			{
+			   var temp = document.getElementById("FreqHighNewMaxMin").value.split(',');
+			   if(document.getElementById("FreqHighNew").value < parseFloat(temp[0]) || document.getElementById("FreqHighNew").value>parseFloat(temp[1]))
+				  validationstring += "* FreqHigh should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			}         
+		}
+		else   
+		 validationstring += "* Please Enter FreqHigh\n";
+		 
+		if(document.getElementById("PhaseLimitTimeNew").value.length!=0)
+		{
+			if(!IsNumeric(document.getElementById("PhaseLimitTimeNew").value))                        
+			  validationstring += "* PhaseLimitTime should be a Number \n";
+			else
+			{
+			   var temp = document.getElementById("PhaseLimitTimeNewMaxMin").value.split(',');
+			   if(document.getElementById("PhaseLimitTimeNew").value < parseFloat(temp[0]) || document.getElementById("PhaseLimitTimeNew").value>parseFloat(temp[1]))
+				  validationstring += "* PhaseLimitTime should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			}         
+		}
+		else   
+		 validationstring += "* Please Enter PhaseLimitTime\n";
+		 
+		if(document.getElementById("PhaseLimitNew").value.length!=0)
+		{
+			if(!IsNumeric(document.getElementById("PhaseLimitNew").value))                        
+			  validationstring += "* PhaseLimit should be a Number \n";
+			else
+			{
+			   var temp = document.getElementById("PhaseLimitNewMaxMin").value.split(',');
+			   if(document.getElementById("PhaseLimitNew").value < parseFloat(temp[0]) || document.getElementById("PhaseLimitNew").value>parseFloat(temp[1]))
+				  validationstring += "* PhaseLimit should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+				 
+			}         
+		}
+		else   
+		 validationstring += "* Please Enter PhaseLimitTime\n";
+		 
+	}
+
+   
+    /////////////////////////////////////////////////////////    
+	if(document.getElementById("SeekAmplitudeloopC1").value.length!=0)
+    {
+        if(!IsNumeric(document.getElementById("SeekAmplitudeloopC1").value))                        
+          validationstring += "* SeekAmplitudeloopC1 should be a Number \n"	
+        else
+        {
+           var temp = document.getElementById("SeekAmplitudeloopC1MaxMin").value.split(',');
+           if(document.getElementById("SeekAmplitudeloopC1").value < parseFloat(temp[0]) || document.getElementById("SeekAmplitudeloopC1").value>parseFloat(temp[1]))
+              validationstring += "* SeekAmplitudeloopC1 should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+             
+        }        
+    }
+    else   
+        validationstring += "* Please Enter SeekAmplitudeloopC1\n";
+ 
+   if(document.getElementById("SeekAmplitudeloopC2").value.length!=0)
+   {
+        if(!IsNumeric(document.getElementById("SeekAmplitudeloopC2").value))                        
+          validationstring += "* SeekAmplitudeloopC2 should be a Number \n";	
+        else
+        {
+           var temp = document.getElementById("SeekAmplitudeloopC2MaxMin").value.split(',');
+           if(document.getElementById("SeekAmplitudeloopC2").value < parseFloat(temp[0]) || document.getElementById("SeekAmplitudeloopC2").value>parseFloat(temp[1]))
+              validationstring += "* SeekAmplitudeloopC2 should be between " + temp[0] +" to " + temp[1]+"\n";                                  
+             
+        }        
+   }
+   else   
+     validationstring += "* Please Enter SeekAmplitudeloopC2\n";
+ 
+   if(document.getElementById("SeekPhaseloop").value.length!=0)
+   {
+        if(!IsNumeric(document.getElementById("SeekPhaseloop").value))                        
+          validationstring += "* SeekPhaseloop should be a Number \n";
+        else
+        {
+           var temp = document.getElementById("SeekPhaseloopMaxMin").value.split(',');
+           if(document.getElementById("SeekPhaseloop").value < parseFloat(temp[0]) || document.getElementById("SeekPhaseloop").value>parseFloat(temp[1]))
+              validationstring += "* SeekPhaseloop should be between " + temp[0] +" to " + temp[1]+"\n";                                               
+        } 	        
+   }
+   else   
+     validationstring += "* Please Enter SeekPhaseloop\n";
+ 
+   if(document.getElementById("SeekPhaseloopCF").value.length!=0)
+   {
+        if(!IsNumeric(document.getElementById("SeekPhaseloopCF").value))                        
+          validationstring += "* SeekPhaseloopCF should be a Number \n";
+        else
+        {
+           var temp = document.getElementById("SeekPhaseloopCFMaxMin").value.split(',');
+           if(document.getElementById("SeekPhaseloopCF").value < parseFloat(temp[0]) || document.getElementById("SeekPhaseloopCF").value>parseFloat(temp[1]))
+              validationstring += "* SeekPhaseloopCF should be between " + temp[0] +" to " + temp[1]+"\n";                                               
+        }	        
+   }
+   else   
+     validationstring += "* Please Enter SeekPhaseloopCF\n";
+ 
+   if(document.getElementById("SeekFreqLow").value.length!=0)
+   {
+        if(!IsNumeric(document.getElementById("SeekFreqLow").value))                        
+          validationstring += "* SeekFreqLow should be a Number \n";
+        else
+        {
+           var temp = document.getElementById("SeekFreqLowMaxMin").value.split(',');
+           if(document.getElementById("SeekFreqLow").value < parseFloat(temp[0]) || document.getElementById("SeekFreqLow").value>parseFloat(temp[1]))
+              validationstring += "* SeekFreqLow should be between " + temp[0] +" to " + temp[1]+"\n";                                               
+        }	        
+   }
+   else   
+     validationstring += "* Please Enter SeekFreqLow\n";
+ 
+   if(document.getElementById("SeekFreqHigh").value.length!=0)
+   {
+        if(!IsNumeric(document.getElementById("SeekFreqHigh").value))                        
+          validationstring += "* SeekFreqHigh should be a Number \n";
+        else
+        {
+           var temp = document.getElementById("SeekFreqHighMaxMin").value.split(',');
+           if(document.getElementById("SeekFreqHigh").value < parseFloat(temp[0]) || document.getElementById("SeekFreqHigh").value>parseFloat(temp[1]))
+              validationstring += "* SeekFreqHigh should be between " + temp[0] +" to " + temp[1]+"\n";                                               
+        }	        
+   }
+   else   
+     validationstring += "* Please Enter SeekFreqHigh\n";
+     
+   if(document.getElementById("SeekAmp").value.length!=0)
+   {
+        if(!IsNumeric(document.getElementById("SeekAmp").value))                        
+          validationstring += "* SeekAmp should be a Number \n";
+        else
+        {
+           var temp = document.getElementById("SeekAmpMaxMin").value.split(',');
+           if(document.getElementById("SeekAmp").value < parseFloat(temp[0]) || document.getElementById("SeekAmp").value>parseFloat(temp[1]))
+              validationstring += "* SeekAmp should be between " + temp[0] +" to " + temp[1]+"\n";                                               
+        }	        
+   }
+   else   
+     validationstring += "* Please Enter SeekAmp\n";
+     
+   if(document.getElementById("Amplitude").value.length!=0)
+   {
+        if(!IsNumeric(document.getElementById("Amplitude").value))                        
+          validationstring += "* Amplitude should be a Number \n";
+        else
+        {
+           var temp = document.getElementById("AmplitudeMaxMin").value.split(',');
+           if(document.getElementById("Amplitude").value < parseFloat(temp[0]) || document.getElementById("Amplitude").value>parseFloat(temp[1]))
+              validationstring += "* Amplitude should be between " + temp[0] +" to " + temp[1]+"\n";                                               
+        }	        
+   }
+   else   
+     validationstring += "* Please Enter Amplitude\n";
+     
+   if(document.getElementById("Current").value.length!=0)
+   {
+        if(!IsNumeric(document.getElementById("Current").value))                        
+          validationstring += "* Current should be a Number \n";
+        else
+        {
+           var temp = document.getElementById("CurrentMaxMin").value.split(',');
+           if(document.getElementById("Current").value < parseFloat(temp[0]) || document.getElementById("Current").value>parseFloat(temp[1]))
+              validationstring += "* Current should be between " + temp[0] +" to " + temp[1]+"\n";                                               
+        }	        
+   }
+   else   
+     validationstring += "* Please Enter Current\n";
+ 
+   if(document.getElementById("FreqStart").value.length!=0)
+   {
+        if(!IsNumeric(document.getElementById("FreqStart").value))                        
+          validationstring += "* FreqStart should be a Number \n";
+        else
+        {
+           var temp = document.getElementById("FreqStartMaxMin").value.split(',');
+           if(document.getElementById("FreqStart").value < parseFloat(temp[0]) || document.getElementById("FreqStart").value>parseFloat(temp[1]))
+              validationstring += "* FreqStart should be between " + temp[0] +" to " + temp[1]+"\n";                                               
+        }	        
+   }
+   else   
+     validationstring += "* Please Enter FreqStart\n";
+     
+   if(document.getElementById("FreqEnd").value.length!=0)
+   {
+        if(!IsNumeric(document.getElementById("FreqEnd").value))                        
+          validationstring += "* FreqEnd should be a Number \n";
+        else
+        {
+           var temp = document.getElementById("FreqEndMaxMin").value.split(',');
+           if(document.getElementById("FreqEnd").value < parseFloat(temp[0]) || document.getElementById("FreqEnd").value>parseFloat(temp[1]))
+              validationstring += "* FreqEnd should be between " + temp[0] +" to " + temp[1]+"\n";                                               
+        }	        
+   }
+   else   
+     validationstring += "* Please Enter FreqEnd\n";
+     
+    if(document.getElementById("StepDelay").value.length!=0)
+    {
+        if(!IsNumeric(document.getElementById("StepDelay").value))                        
+            validationstring += "* StepDelay should be a Number \n";
+        else
+        {
+            var temp = document.getElementById("StepDelayMaxMin").value.split(',');
+            if(document.getElementById("StepDelay").value < parseFloat(temp[0]) || document.getElementById("StepDelay").value>parseFloat(temp[1]))
+               validationstring += "* StepDelay should be between " + temp[0] +" to " + temp[1]+"\n";                                               
+        }	        
+    }
+    else   
+        validationstring += "* Please Enter StepDelay\n";
+
+     
+     
+	if(!validationstring)   
+        return true;
+    else
+    {
+		alert(validationstring);
+	    return false;
+	}
+}
+ 
+function ModifyPresetSaveAdv()
+{
+    if(formvalidate())
+    {
+        var SaveString = "func=12cmd=0?param=WELD:AmplitudeloopC1=";
+        SaveString += document.getElementById('AmplitudeloopC1').value;
+        SaveString += "&AmplitudeloopC2=";
+        SaveString += document.getElementById('AmplitudeloopC2').value;
+        SaveString += "&Phaseloop=";
+        SaveString += document.getElementById('Phaseloop').value;
+        SaveString += "&PhaseloopCF=";
+        SaveString += document.getElementById('PhaseloopCF').value;
+        SaveString += "&FreqLow=";
+        SaveString += document.getElementById('FreqLow').value;
+        SaveString += "&FreqHigh=";
+        SaveString += document.getElementById('FreqHigh').value;
+        SaveString += "&PhaseLimitTime=";
+        SaveString += document.getElementById('PhaseLimitTime').value;
+        SaveString += "&PhaseLimit=";
+        SaveString += document.getElementById('PhaseLimit').value;
+
+        SaveString += "%TRUEPI:UseTrueValues=";
+        SaveString += (document.getElementById('UseTrueValues').checked?"true":"false");
+        SaveString += "&AmplitudeloopC1New=";
+        SaveString += document.getElementById('AmplitudeloopC1New').value;
+        SaveString += "&AmplitudeloopC2New=";
+        SaveString += document.getElementById('AmplitudeloopC2New').value;
+        SaveString += "&PhaseloopNew=";
+        SaveString += document.getElementById('PhaseloopNew').value;
+        SaveString += "&PhaseloopPropNew=";
+        SaveString += document.getElementById('PhaseloopPropNew').value;
+		SaveString += "&FreqWindowSize=";
+		SaveString += document.getElementById('FreqWindowSize').value;
+        SaveString += "&PhaseloopCFNew=";
+        SaveString += document.getElementById('PhaseloopCFNew').value;
+        SaveString += "&FreqLowNew=";
+        SaveString += document.getElementById('FreqLowNew').value;
+        SaveString += "&FreqHighNew=";
+        SaveString += document.getElementById('FreqHighNew').value;
+        SaveString += "&PhaseLimitTimeNew=";
+        SaveString += document.getElementById('PhaseLimitTimeNew').value;
+        SaveString += "&PhaseLimitNew=";
+        SaveString += document.getElementById('PhaseLimitNew').value;
+
+        SaveString += "%SEEK:SeekAmplitudeloopC1=";
+        SaveString += document.getElementById('SeekAmplitudeloopC1').value;
+        SaveString += "&SeekAmplitudeloopC2=";
+        SaveString += document.getElementById('SeekAmplitudeloopC2').value;
+        SaveString += "&SeekPhaseloop=";
+        SaveString += document.getElementById('SeekPhaseloop').value;
+        SaveString += "&SeekPhaseloopCF=";
+        SaveString += document.getElementById('SeekPhaseloopCF').value;
+        SaveString += "&SeekFreqLow=";
+        SaveString += document.getElementById('SeekFreqLow').value;
+        SaveString += "&SeekFreqHigh=";
+        SaveString += document.getElementById('SeekFreqHigh').value;
+        SaveString += "&SeekAmp=";
+        SaveString += document.getElementById('SeekAmp').value;
+
+        SaveString += "%SCAN:Amplitude=";
+        SaveString += document.getElementById('Amplitude').value;
+        SaveString += "&Current=";
+        SaveString += document.getElementById('Current').value;
+        SaveString += "&FreqStart=";
+        SaveString += document.getElementById('FreqStart').value;
+        SaveString += "&FreqEnd=";
+        SaveString += document.getElementById('FreqEnd').value;
+        SaveString += "&StepDelay=";
+        SaveString += document.getElementById('StepDelay').value;
+       
+
+	    SaveString += "&PhaseType=" + ((document.getElementById('PhaseType_0').checked)?0:1);  
+        SaveString += ("&lang=" + getCookie('LANGUAGE') + "&userid1=" + getCookie('USERID'));
+        http.open("POST", SaveString, true);
+        http.onreadystatechange = HandleModifyPresetSaveAdv;
+        http.send(null);
+    }
+}
+ 
+function ModifyPresetCancelAdv()
+{
+    pageRefresh = true;
+    GetLanguageAndUserID('advanced-preset.html');
+    //window.location.href = window.location.href;
+}
+ 
+function ModifyPresetRestoreAdv()
+{ 
+    var ret = confirm(strRestoreDefault);   
+    if (ret == true)
+    {
+        window.history.forward(1);
+        var ModifyPresetAdvRestoreUrl = "func=5cmd=1?param=";
+        ModifyPresetAdvRestoreUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+        http.open("POST", ModifyPresetAdvRestoreUrl, true);
+        restoreFlag = true;
+        http.onreadystatechange = HandleModifyPresetOnLoadAdv;
+        http.send(null);
+    }
+}
+
+function HandleGetOtherString()
+{
+    if (http.readyState == 4 && http.responseText.length!=0) 
+    { 
+
+        var results2,results3;
+        var arr = new Array();
+
+        results = http.responseText.split('@'); 
+
+        for(i=0;i<results.length;i++) 
+        {
+            results2 = results[i].split(':');
+            if(results2[1]!=null)
+            {    results3 = results2[1].split(',');
+                 arr.push(results3[1]);        
+            }
+        }
+
+        var arr2 = document.getElementsByTagName("td");    
+
+        for(i=0;i<arr2.length;i++)
+        {
+            if(arr2[i].name != null)
+            {                
+                arr2[i].innerHTML = arr[arr2[i].name];              
+            }  
+        }
+        if(restoreFlag)
+        {
+            alert("Parameters restored");
+            restoreFlag = false;
+        }
+    }
+}
+
+function GetOtherStrings()
+{ 
+    var GetOtherString = "GetOtherString.val?param=46,47,48,49,50,51"; 
+    GetOtherString += ("&lang=" + getCookie('LANGUAGE') + "&userid1=" + getCookie('USERID'));
+    http.open("POST", GetOtherString, true);
+    http.onreadystatechange = HandleGetOtherString;
+    http.send(null);
+}
+ 
+function getCookie(c_name)
+{
+    if (document.cookie.length>0)
+    {
+        c_start=document.cookie.indexOf(c_name + "=");
+        if (c_start!=-1)
+        {
+            c_start=c_start + c_name.length+1;
+            c_end=document.cookie.indexOf(";",c_start);
+            if (c_end==-1) c_end=document.cookie.length;
+                return unescape(document.cookie.substring(c_start,c_end));
+        }
+    }
+    return "";
+}
+ 
+function GetLanguageAndUserID(hrefpage)
+{
+    if(pageRefresh == false)
+    {
+        var ret;
+        if(IsFormModified(document.main_form))
+        {
+            ret = confirm(formChangeMessage);
+            if(ret == false)        
+                return;
+        }
+    }
+    if(hrefpage == "index.html") 
+        window.location.href = hrefpage;    
+    else
+    {
+        document.getElementById("lang").value= getCookie('LANGUAGE');
+	    document.getElementById("userid1").value= getCookie('USERID');
+	    document.temp_form.action = hrefpage;
+	    document.temp_form.submit();    
+	}
+} 
+function GetUserManual(hrefpage)
+{
+    window.open(hrefpage);
+}
+</script>
+<body onload="ModifyPresetAdvOnLoad()">
+
+<form name="temp_form" method="post" action=" ">
+<input type="hidden" name="lang" id="lang" value="" />
+<input type="hidden" name="userid1" id="userid1" value="" />
+</form>
+<form action="" name="main_form">
+<div id="wrapper">
+  <div id="header">
+  	<div id="headerNav">
+   	  <div id="headerLogo">
+       	<!-- <img src="images/bransonLogo.png" alt="Branson" /> //-->
+      </div><!-- end headerLogo //-->
+      <div id="headerLinks">
+      	<span class="user" id ="CurrUser">Current User: </span> <!--<a href="javascript:GetUserManual('DCXManual.pdf')">User Manual</a> | --><a href="javascript:GetLanguageAndUserID('index.html')">Logout</a>
+      </div><!-- end HeaderLinks //-->
+    </div><!-- end headerNav //-->
+    <div id="mainNav">
+    	<ul id = "tabmenu">
+        	<li><a href="javascript:GetLanguageAndUserID('ip-setup.html')">IP Setup</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('weld-preset.html')">Weld Preset</a></li>
+            <li class="active"><a  href="#">Advanced Preset</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('diagnostic-IO.html')">I/O Diagnostics</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('Seek&WeldGraphs.html')">Seek & </br>Weld Graphs</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('hornsignature.html')">Horn <br/> Signature</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('system-information.html')">System Information</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('IO-configuration.html')">I/O Configuration</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('event-log.html')">Event Log</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('alarm-log.html')">Alarm Log</a></li>
+        </ul>
+    </div><!-- end mainNav //-->
+  </div><!-- end header //-->
+  <div id="content">
+  	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>WELD</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox" style="width:290px">
+    		<div class="ieDropFix"><div class="textLabelBigLeft">Amplitude Loop C1</div><!-- end label //--><input name="" type="text" class="textInput" id="AmplitudeloopC1"/><input type="hidden" id="AmplitudeloopC1MaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+   		  	<div class="ieDropFix"><div class="textLabelBigLeft">Amplitude Loop C2</div><!-- end label //--><input name="" type="text" class="textInput" id="AmplitudeloopC2"/><input type="hidden" id="AmplitudeloopC2MaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft">Phase Loop</div><!-- end label //--><input name="" type="text" class="textInput" id="Phaseloop" /><input type="hidden" id="PhaseloopMaxMin" /></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft">Phase Loop CF</div><!-- end label //--><input name="" type="text" class="textInput" id="PhaseloopCF"/><input type="hidden" id="PhaseloopCFMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft">Frequency Low (Hz)</div><!-- end label //--><input name="" type="text" class="textInput" id="FreqLow"/><input type="hidden" id="FreqLowMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+            <div class="ieDropFix"><div class="textLabelBigLeft">Frequency High (Hz)</div><!-- end label //--><input name="" type="text" class="textInput" id="FreqHigh"/><input type="hidden" id="FreqHighMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+          	<div class="ieDropFix"><div class="textLabelBigLeft">Phase Limit Time (ms)</div><!-- end label //--><input name="" type="text" class="textInput" id="PhaseLimitTime"/><input type="hidden" id="PhaseLimitTimeMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft">Phase Limit</div><!-- end label //--><input name="" type="text" class="textInput" id="PhaseLimit"/><input type="hidden" id="PhaseLimitMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+	   
+	  
+	  </div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->
+	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>TRUE P.I. VALUES</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox" style="padding-top:6px;width:290px">
+			<input type="checkbox" name="" id="UseTrueValues"/> Use True Values<br />
+    		<div class="ieDropFix"><div class="textLabelBigLeft" style="width:165px">Amplitude Proportional Gain</div><!-- end label //--><input name="" type="text" class="textInputS" style="width:99px" id="AmplitudeloopC1New"/><input type="hidden" id="AmplitudeloopC1NewMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+	   		<div class="ieDropFix"><div class="textLabelBigLeft" style="width:165px">Amplitude Integral Gain</div><!-- end label //--><input name="" type="text" class="textInputSS" style="width:99px" id="AmplitudeloopC2New" /><input type="hidden" id="AmplitudeloopC2NewMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft" style="width:165px">Phase Integral Gain</div><!-- end label //--><input name="" type="text" class="textInputSS" style="width:99px" id="PhaseloopNew" /><input type="hidden" id="PhaseloopNewMaxMin" /></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft" style="width:165px">Phase Proportional Gain</div><!-- end label //--><input name="" type="text" class="textInputSS" style="width:99px" id="PhaseloopPropNew"/><input type="hidden" id="PhaseloopPropNewMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+			<div class="ieDropFix"><div class="textLabelBigLeft" style="width:165px">Frequency Window Size</div><!-- end label //--><input name="" type="text" class="textInputSS" style="width:99px" id="FreqWindowSize"/><input type="hidden" id="FreqWindowSizeMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft" style="width:165px">PF of Phase Control Loop</div><!-- end label //--><input name="" type="text" class="textInputSS" style="width:99px" id="PhaseloopCFNew"/><input type="hidden" id="PhaseloopCFNewMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft" style="width:165px">Frequency Low (Hz)</div><!-- end label //--><input name="" type="text" class="textInputSS" style="width:99px" id="FreqLowNew"/><input type="hidden" id="FreqLowNewMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+            <div class="ieDropFix"><div class="textLabelBigLeft" style="width:165px">Frequency High (Hz)</div><!-- end label //--><input name="" type="text" class="textInputSS" style="width:99px" id="FreqHighNew"/><input type="hidden" id="FreqHighNewMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+          	<div class="ieDropFix"><div class="textLabelBigLeft" style="width:165px">Phase Limit Time (ms)</div><!-- end label //--><input name="" type="text" class="textInputSS" style="width:99px" id="PhaseLimitTimeNew"/><input type="hidden" id="PhaseLimitTimeNewMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft" style="width:165px">Phase Limit</div><!-- end label //--><input name="" type="text" class="textInputSS" style="width:99px" id="PhaseLimitNew"/><input type="hidden" id="PhaseLimitNewMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+	 </div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->
+      	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>SEEK</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox" style="width:290px">
+    		<div class="ieDropFix"><div class="textLabelBigLeft">Amplitude Loop C1</div><!-- end label //--><input name="" type="text" class="textInput" id="SeekAmplitudeloopC1"/><input type="hidden" id="SeekAmplitudeloopC1MaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+     		<div class="ieDropFix"><div class="textLabelBigLeft">Amplitude Loop C2</div><!-- end label //--><input name="" type="text" class="textInput" id="SeekAmplitudeloopC2"/><input type="hidden" id="SeekAmplitudeloopC2MaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft">Phase Loop</div><!-- end label //--><input name="" type="text" class="textInput" id="SeekPhaseloop"/><input type="hidden" id="SeekPhaseloopMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft">Phase Loop CF</div><!-- end label //--><input name="" type="text" class="textInput" id="SeekPhaseloopCF"/><input type="hidden" id="SeekPhaseloopCFMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+            <div class="ieDropFix"><div class="textLabelBigLeft">Frequency Low (Hz)</div><!-- end label //--><input name="" type="text" class="textInput" id="SeekFreqLow"/><input type="hidden" id="SeekFreqLowMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+            <div class="ieDropFix"><div class="textLabelBigLeft">Frequency High (Hz)</div><!-- end label //--><input name="" type="text" class="textInput" id="SeekFreqHigh"/><input type="hidden" id="SeekFreqHighMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft">Seek Amplitude (%)</div><!-- end label //--><input name="" type="text" class="textInput" id="SeekAmp"/><input type="hidden" id="SeekAmpMaxMin"/></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+    	</div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->
+    <!--div class="clearit"></div><!-- end clearit //-->
+    <div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>HORN SCAN</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox" style="width:290px">
+    		<div class="ieDropFix"><div class="textLabelBigLeft">Amplitude (%)</div><!-- end label //--><input name="" type="text" class="textInput" id="Amplitude"/><input type="hidden" id="AmplitudeMaxMin"/></div><div class="clearit"></div><!-- end clearit //-->
+     		<div class="ieDropFix"><div class="textLabelBigLeft">Current (%)</div><!-- end label //--><input name="" type="text" class="textInput" id="Current"/><input type="hidden" id="CurrentMaxMin"/></div><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft">Frequency Start (Hz)</div><!-- end label //--><input name="" type="text" class="textInput" id="FreqStart"/><input type="hidden" id="FreqStartMaxMin" /></div><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft">Frequency End (Hz)</div><!-- end label //--><input name="" type="text" class="textInput" id="FreqEnd"/><input type="hidden" id="FreqEndMaxMin"/></div><div class="clearit"></div><!-- end clearit //-->
+        	<div class="ieDropFix"><div class="textLabelBigLeft">Step Delay (ms)</div><!-- end label //--><input name="" type="text" class="textInput" id="StepDelay"/><input type="hidden" id="StepDelayMaxMin"/></div><div class="clearit"></div><!-- end clearit //-->
+      <!--   	<div class="ieDropFix"><div class="textLabelBigLeft">Frequency Step (Hz)</div><input name="" type="text" class="textInput" id="FreqStep"/><input type="hidden" id="FreqStepMaxMin"/></div><div class="clearit"></div>//-->
+    	</div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->
+    <div class="clearit"></div><!-- end clearit //-->
+    <div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>Phase Setting</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox" style="width:290px">
+			<div class="ieDropFix"><div class="checkbox"><input type="radio" id ="PhaseType_0" name="PhaseType" value="1" /></div><div  style="width:130px" class="textLabelBigLeft">Phase 180 (deg)</div><!-- end label //--><input type="hidden" id="Standard" /><div class="checkbox"><input type="radio" id ="PhaseType_1" name="PhaseType" value="0" /></div><div style="width:100px" class="textLabelBigLeft">Phase 90 (deg)</div><!-- end label //--></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+    	</div><!-- end gradientBox //-->
+	</div><!-- end gradientBox //-->
+	<div class="clearit"></div><!-- end clearit //-->
+    <div id="contentButtonBank">
+    	<input name="Save" type="button" class="button" value="Save" onclick="ModifyPresetSaveAdv()"/>
+    	<input name="Cancel" type="button" class="button" value="Cancel" onclick="ModifyPresetCancelAdv()"/>
+    	<input name="RestoreDefaults" type="button" class="button" value="Restore Defaults" onclick="ModifyPresetRestoreAdv()"/>
+    </div><!-- end contentButtonBank //-->
+  </div><!-- end content //-->
+  <div id="footer"><p>©2011 Branson, All Rights Reserved<br />
+    <img src="Emerson-IA.jpg" alt="Emersin Industrial Automation" /></p></div>
+</div>
+<!-- end wrapper //-->
+</form>
+</body>
+</html>

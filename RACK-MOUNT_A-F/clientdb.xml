@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.ibm.magnolia.clientmodel:ClientModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:com.ibm.magnolia.clientmodel="http:///com/ibm/magnolia/clientmodel.ecore">
+  <workItemEditorHistory>
+    <internalContents date="2023-03-02T15:49:46.307-0600" description="10430: Web Page Reload 3" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_5zMm8LlDEe20KpFhPd3bbg"/>
+    </internalContents>
+    <internalContents date="2023-01-23T10:15:12.778-0600" description="10206: Web Page Reload 2" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_AeckwJs5Ee2myPu1Os9o-w"/>
+    </internalContents>
+    <internalContents date="2023-01-13T12:24:50.814-0600" description="10160: Web Page Reload" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_d9TIgJNvEe2xSPkCzjwGPg"/>
+    </internalContents>
+    <internalContents date="2022-11-24T17:01:11.374-0600" description="9594: Web Grid Data Do not show in the chrome, firefox and Edge" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_vhiLYGxLEe2zn_wT43x1MQ"/>
+    </internalContents>
+  </workItemEditorHistory>
+  <queries/>
+  <queryViews/>
+</com.ibm.magnolia.clientmodel:ClientModelRoot>

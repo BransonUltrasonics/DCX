@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+    <meta charset="UTF-8">
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+    <link rel="stylesheet" type="text/css" href="superfishDCXAF-v1.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="styleDCXAF-v1.css" />
+    
+    <script type="text/javascript" language="javascript" src="jqueryDCXAF-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="hoverIntentDCXAF-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="superfishDCXAF-v1.js"></script>
+    <script type="text/JavaScript" language="javascript" src="formchange-detect.js"></script>
+    <script type="text/javascript" language="javascript" src="handlerDCXAF-v1.js"></script>
+    
+    <title>BRANSON DCX GUI</title>
+
+<script language="javascript"  type="text/javascript">
+var restoreFlag = false, pageRefresh = false, PageRefTo = null, RestoreMsg = "Parameters Restored";
+var http = getHTTPObject();
+function HandleModifyAlarmOnLoad() {
+	if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+        var i, j, SingleVal, GroupVal;
+        GroupVal = http.responseText.split("@");
+        var UserType = GroupVal[0].split("/");
+        SetUserType(UserType[0]);
+        SetToken(UserType[1], restoreFlag);
+        SetSystemType(UserType[2]);
+        for (i = 1; i < GroupVal.length; i++) {
+            SingleVal = GroupVal[i].split(",");
+            try {
+                var Temp = parseInt(SingleVal[1]).toString(2);
+                SetAlarms(SingleVal[0], Temp);
+            } catch (err) { }
+        }
+        if (restoreFlag) {
+            alert(RestoreMsg);
+            restoreFlag = false;
+        }
+        RefreshAttribute(document.main_form);
+    }
+}
+function SetAlarms(TempId, FlagValue) {
+    var i = 0;
+    for (i = 0; i < 6; i++) {
+        if (FlagValue % 10 == 1)
+            UseID(TempId + "_" + i).checked = true;
+        else
+            UseID(TempId + "_" + i).checked = false;
+        FlagValue = FlagValue / 10;
+        FlagValue = FlagValue - (FlagValue % 1);
+    }
+}
+function ModifyAlarmOnLoad() {
+    window.history.forward(1);
+    var ModifyAlarmOnLoadUrl = "func=" + Func.ConfigurationAlarmGetDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+    ModifyAlarmOnLoadUrl += SendCookies();
+    http.open("POST", ModifyAlarmOnLoadUrl, true);
+    http.onreadystatechange = HandleModifyAlarmOnLoad;
+    http.send(null);
+}
+function FormAlarmString(TempId) {
+    var Overload = 0;
+    for (i = 7; i >= 0; i--) {
+        if ((i < 6) && (UseID(TempId + "_" + i).checked == true))
+            Overload += '1';
+        else
+            Overload += '0';
+    }
+    return parseInt(Overload, 2).toString(10);
+}
+function SaveAlarmConfig() {
+    var SaveString = "func=" + Func.ConfigurationAlarmPostDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+    SaveString += "&OverLoads=" + FormAlarmString("OverLoads");
+    SaveString += "&Cutoff=" + FormAlarmString("Cutoff");
+    SaveString += "&Setup=" + FormAlarmString("Setup");
+    SaveString += "&CycleModify=" + FormAlarmString("CycleModify");
+    SaveString += "&Warning=" + FormAlarmString("Warning");
+    SaveString += "&ProcessLimit=" + FormAlarmString("ProcessLimit");
+    SaveString += "&EQPfailure=" + FormAlarmString("EQPfailure");
+    SaveString += "&NoCycle=" + FormAlarmString("NoCycle");
+    SaveString += "&CommFailure=" + FormAlarmString("CommFailure");
+    SaveString += "&HW=" + FormAlarmString("HW");
+    SaveString += "&NCOverload=" + FormAlarmString("NCOverload");
+    SaveString += SendCookies();
+    http.open("POST", SaveString, true);
+    http.onreadystatechange = HandleModifyAlarmSave;
+    http.send(null);
+}
+function HandleModifyAlarmSave() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+        if (http.responseText == "OK") {
+            alert("Saved");
+            SetToken(1, 0);
+            RefreshAttribute(document.main_form);
+            if (PageRefTo != null)
+                SubmitForm(PageRefTo);
+        }
+        else {
+            SetToken(0, 0);
+            alert(Notoken);
+        }
+    }
+}
+function ModifyAlarmRestore() {
+    var ret = confirm(strRestoreDefault);
+    if (ret == true) {
+        window.history.forward(1);
+        var ModifyAlarmRestoreUrl = "func=" + Func.ConfigurationAlarmGetDatahandler + "cmd=" + Command.REQ_RESTORE + "?param=";
+        ModifyAlarmRestoreUrl += SendCookies();
+        http.open("POST", ModifyAlarmRestoreUrl, true);
+        restoreFlag = true;
+        http.onreadystatechange = HandleModifyAlarmOnLoad;
+        http.send(null);
+    }
+}
+function ModifyAlarmCancel() {
+    pageRefresh = true;
+    SubmitForm('Alarms.html');
+}
+function SubmitForm(hrefpage) {
+    if (pageRefresh == false) {
+        var ret;
+        if (IsFormModified(document.main_form)) {
+            ret = confirm(formChangeMessage);
+            if (ret == true) {
+                PageRefTo = hrefpage;
+                SaveAlarmConfig();
+                return;
+            }
+        }
+    }
+    if (hrefpage == "index.html") 
+        location.href = hrefpage;
+    else {
+		SubmitCookies(hrefpage);
+        document.temp_form.submit();
+    }
+}
+jQuery(function () {
+    UseID('header').innerHTML = MainHeader;
+    SetTabAttribute(3, 5);
+    jQuery('ul.sf-menu').superfish();
+});
+</script>
+</head>
+
+<body onload="ModifyAlarmOnLoad()">
+<form name="temp_form" method="post" action="Alarms.html">
+	<input type="hidden" name="lang" id="lang" />
+	<input type="hidden" name="usrid" id="usrid" />
+	<input type="hidden" name="passcode" id="passcode" />
+	<input type="hidden" name="uniqueid" id="uniqueid" />	
+</form>
+<form name="main_form">
+<div id="wrapper">
+  <div id="header"></div>
+  <div id="PageHeader"></div>
+  <div id="content">
+  	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">ALARM CONFIGURATION</div>
+    	<div class="gradientBox">
+		 <table>
+		    <tr>
+			    <td>
+			        <div class="textLabelBigRight"></div><div class="clearit"></div>
+			        <div class="textLabelBigRight">Overloads</div><div class="clearit"></div>
+			        <div class="textLabelBigRight">Cutoffs</div><div class="clearit"></div>
+			        <div class="textLabelBigRight">Setup</div><div class="clearit"></div>
+			        <div class="textLabelBigRight">Cycle Modified</div><div class="clearit"></div>
+			        <div class="textLabelBigRight">Warnings</div><div class="clearit"></div>
+			        <div class="textLabelBigRight">Process Limits</div><div class="clearit"></div>
+			        <div class="textLabelBigRight">Equipment Failures</div><div class="clearit"></div>
+			        <div class="textLabelBigRight">No Cycle</div><div class="clearit"></div>
+			        <div class="textLabelBigRight">Communication Failure</div><div class="clearit"></div>
+			        <div class="textLabelBigRight">Hardware Failures</div><div class="clearit"></div>
+			        <div class="textLabelBigRight">Non-Cycle Overloads</div><div class="clearit"></div>
+			    </td>
+			    <td> 
+				    <div class="textLabelCenter">Reset<br/>Required </div><div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="OverLoads_5"/> </div>
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Cutoff_5"/></div>
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Setup_5"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="CycleModify_5"/></div>
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Warning_5"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="ProcessLimit_5"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="EQPfailure_5"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="NoCycle_5"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="CommFailure_5"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="HW_5"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="NCOverload_5"/></div> 
+                    <div class="clearit"></div>
+			    </td>
+			    <td >
+				    <div class="textLabelCenter">Log<br/>Alarm </div><div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="OverLoads_4"/></div>
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Cutoff_4"/></div>
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Setup_4"/></div>
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="CycleModify_4"/></div>
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Warning_4"/></div>
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="ProcessLimit_4"/></div>
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="EQPfailure_4" disabled="disabled"/> </div>
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="NoCycle_4"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="CommFailure_4"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="HW_4"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="NCOverload_4"/></div> 
+                    <div class="clearit"></div>
+			    </td>
+			    <td>
+				    <div class="textLabelCenter">General<br/>Alarm</div><div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="OverLoads_3"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Cutoff_3"/></div>
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Setup_3"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="CycleModify_3"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Warning_3"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="ProcessLimit_3"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="EQPfailure_3"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="NoCycle_3"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="CommFailure_3"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="HW_3"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="NCOverload_3"/></div> 
+                    <div class="clearit"></div>			
+			    </td>
+			    <td> 
+				    <div class="textLabelCenter">Custom<br/>Alarm<br/>Output </div><div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="OverLoads_2"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Cutoff_2"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Setup_2"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="CycleModify_2"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Warning_2"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="ProcessLimit_2"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="EQPfailure_2"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="NoCycle_2"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="CommFailure_2"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="HW_2"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="NCOverload_2"/></div> 
+                    <div class="clearit"></div>	
+			    </td>
+			    <td class="ViewHidden">
+				    <div class="textLabelCenter">Alarm<br/>Counter </div><div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="OverLoads_1"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Cutoff_1"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Setup_1"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="CycleModify_1"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Warning_1"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="ProcessLimit_1"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="EQPfailure_1"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="NoCycle_1"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="CommFailure_1"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="HW_1"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="NCOverload_1"/></div> 
+                    <div class="clearit"></div>			
+			    </td>
+			    <td>	  
+				    <div class="textLabelCenter">Cycle<br/>Counter </div><div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="OverLoads_0"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Cutoff_0"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Setup_0"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="CycleModify_0"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="Warning_0"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="ProcessLimit_0"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="EQPfailure_0"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="NoCycle_0"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="CommFailure_0"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="HW_0"/></div> 
+                    <div class="clearit"></div>
+				    <div class="checkboxCenter"><input type="checkbox" id="NCOverload_0"/></div> 
+                    <div class="clearit"></div>			
+			    </td>			
+			</tr>
+			</table>
+	  </div>
+    </div>
+	  <div class="clearit"></div>
+	    <div id="contentButtonBank">
+    	<input name="Save" type="button" class="button" value="Save" onclick="PageRefTo=null;SaveAlarmConfig();"/>
+    	<input name="Cancel" type="button" class="button" value="Cancel" onclick="ModifyAlarmCancel()"/>
+    	<input name="RestoreDefaults" type="button" class="button" value="Restore Defaults" onclick="ModifyAlarmRestore()"/>
+</div>
+  <div id="footer"></div>
+</div>
+</form>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitStickyFooter();
+    });
+</script>
+</html>

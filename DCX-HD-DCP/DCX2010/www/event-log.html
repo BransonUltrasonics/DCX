@@ -1,0 +1,452 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+  <meta http-equiv="cache-control" content="max-age=0" />
+  <meta http-equiv="expires" content="0" />
+  <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+  <meta http-equiv="pragma" content="no-cache" />
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+  <title>BRANSON DCX GUI</title>
+  <link href="styleDCXHD-v1.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="dataTablesDCXHD-v1.css">
+  <script type="text/javascript" src="jqueryDCXHD-v1.js"></script>
+  <script type="text/javascript" charset="utf8" src="dataTablesDCXHD-v1.js"></script>
+<!--[if IE 6]><link href="ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if IE 7]><link href="ie7.css" rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if IE 6]>
+<script src="DD_belatedPNGDCXHD-v1.js"></script>
+<script>
+  /* EXAMPLE */
+  DD_belatedPNG.fix('#headerLogo');
+  
+  /* string argument can be any CSS selector */
+  /* .png_bg example is unnecessary */
+  /* change it to what suits you! */
+</script>
+<![endif]-->
+<style type='text/css'>
+
+/* Scrollable Content Height */
+.scrollContent {
+ height:100px;
+ overflow-x:hidden;
+ overflow-y:auto;
+}
+
+.scrollContent tr {
+ height: 25px;
+ white-space: nowrap;
+}
+
+/* Prevent Mozilla scrollbar from hiding right-most cell content */
+.scrollContent tr td:last-child {
+ padding-right: 20px;
+}
+
+/* Fixed Header Height */
+.fixedHeader tr {
+ position: relative;
+ height: auto;
+ /* this fixes IE header jumping bug when mousing over rows in the tbody */
+ top: expression( this.parentNode.parentNode.parentNode.scrollTop + 'px' );
+}
+
+/* Put border around entire table */
+div.TableContainer {
+ border: 1px solid #7DA87D;
+ overflow-y:auto;
+}
+
+/* Table Header formatting */
+.headerFormat {
+ background-color: white;
+ color: #FFFFFF;
+ margin: 3px;
+ padding: 1px;
+ white-space: nowrap;
+ font-family: Helvetica;
+ font-size: 16px;
+ text-decoration: none;
+ font-weight: bold;
+}
+.headerFormat tr td {
+ border: 1px solid #000000;
+ background-color: #4B708D; --
+}
+
+/* Table Body (Scrollable Content) formatting */
+.bodyFormat tr td {
+	color: #000000;
+	margin: 3px;
+	padding: 1px;
+	border: 0px none;
+	font-family: Helvetica;
+	font-size: 12px;
+}
+
+/* Use to set different color for alternating rows */
+.alternateRow {
+  background-color: #ECF2F6;
+}
+
+/* Styles used for SORTING */
+.point {
+ cursor:pointer;
+}
+
+td.sortedColumn { 
+}
+
+tr.alternateRow td.sortedColumn { 
+}
+
+.total {
+	background-color: #FED362;
+	color: #000000;
+	white-space: nowrap;
+	font-size: 12px;
+	text-decoration: none;
+}
+
+table.scrollTable tr:hover {	
+	font-style: normal;
+}
+
+.hoverMe {	
+	font-style: normal;
+}
+
+</style>
+<script type="text/JavaScript">
+var dataItems = [];
+var userbranson = "1", usermf1 = "3", usermf2 = "4";
+var tab1 = "<li><a href=\"javascript:GetLanguageAndUserID('ip-setup.html')\">IP Setup</a></li>";
+var tab2 = "<li><a  href=\"javascript:GetLanguageAndUserID('weld-preset.html')\">Weld Preset</a></li>";
+var tab3 = "<li><a  href=\"javascript:GetLanguageAndUserID('advanced-preset.html')\">Advanced Preset</a></li>";
+var tab4 = "<li><a  href=\"javascript:GetLanguageAndUserID('diagnostic-IO.html')\">I/O Diagnostics</a></li>";
+var tab5 = "<li><a href=\"javascript:GetLanguageAndUserID('Seek&WeldGraphs.html')\">Seek & </br>Weld Graphs</a></li>";
+var tab6 = "<li><a  href=\"javascript:GetLanguageAndUserID('system-information.html')\">System Information</a></li>";
+var tab7 = "<li><a  href=\"javascript:GetLanguageAndUserID('IO-configuration.html')\">I/O Configuration</a></li>";
+var tab8 = "<li class=\"active\"><a href =\"#\">Event Log</a></li>";
+var tab9 = "<li><a  href=\"javascript:GetLanguageAndUserID('alarm-log.html')\">Alarm Log</a></li>";
+var tab10 = "<li><a  href=\"javascript:GetLanguageAndUserID('manufacturing.html')\">Manufacturing</a></li>";
+var tab11 = "<li><a  href=\"javascript:GetLanguageAndUserID('mfboardtest.html')\">Manufacturing Board Test</a></li>";
+var tab12 = "<li><a  href=\"javascript:GetLanguageAndUserID('hornsignature.html')\">Horn <br/> Signature</a></li>";
+var tab13 = "<li><a  href=\"javascript:GetLanguageAndUserID('HD-param.html')\">HD Parameters</a></li>";
+var tabBranson = tab1 + tab2 + tab3 + tab4 + tab5 + tab12 + tab6 + tab7 + tab8 + tab9 + tab13;
+var tabMf = tabBranson + tab10;
+var tabBoardtest = tab1 + tab2 + tab3 + tab11 + tab4 + tab5 + tab12 + tab6 + tab7 + tab8 + tab9;
+var TabArr =["", tabBranson, "", tabMf, tabBoardtest];
+var UserArr=["", "Current User: Branson", "","Current User: Manufacturing","Current User: Manufacturing"];
+var strRestoreDefault = "Are you sure you want to clear log?";
+// Function to scroll to top before sorting to fix an IE bug
+// Which repositions the header off the top of the screen
+// if you try to sort while scrolled to bottom.
+function GoTop() {
+ document.getElementById('TableContainer').scrollTop = 0;
+}
+
+// For those browsers that fully support the CSS :hover pseudo class the "table.scrollTable tr:hover" definition above 
+// will work fine, but Internet Explorer 6 only supports "hover" for "<a>" tag elements, so we need to use the following 
+// JavaScript to mimic support (at least until IE7 comes out, which does support "hover" for all elements)
+
+// Create a JavaScript function that dynamically assigns mouseover and mouseout events to all 
+// rows in a table which is assigned the "scrollTable" class name,  in order to simulate a "hover" 
+// effect on each of the tables rows
+HoverRow = function() {
+
+ // If an IE browser
+ if (document.all) {
+  var table_rows = 0;
+	
+  // Find the table that uses the "scrollTable" classname
+  var allTableTags=document.getElementsByTagName("table"); 
+  for (i=0; i<allTableTags.length; i++) { 
+   // If this table uses the "scrollTable" class then get a reference to its body and first row
+   if (allTableTags[i].className=="scrollTable") { 
+    table_body = allTableTags[i].getElementsByTagName("tbody");
+    table_rows = table_body[0].getElementsByTagName("tr");
+    i = allTableTags.length + 1; // Force an exit from the loop - only interested in first table match
+   } 
+  } 
+
+  // For each row add a onmouseover and onmouseout event that adds, then remove the "hoverMe" class
+  // (but leaving untouched all other class assignments) to the row in order to simulate a "hover"
+  // effect on the entire row
+  for (var i=0; i<table_rows.length; i++) {
+   // ignore rows with the title and total class assigned to them
+   if (table_rows[i].className != "title" && table_rows[i].className != "total") {
+    table_rows[i].onmouseover=function() {this.className += " hoverMe";}
+    table_rows[i].onmouseout=function() {this.className=this.className.replace(new RegExp(" hoverMe\\b"), "");}
+   }
+  } // End of for loop
+  
+ } // End of "If an IE browser"
+
+}
+// If this browser suports attaching events (IE) then make the HoverRow function run on page load
+// Hote: HoverRow has to be re-run each time the table gets sorted
+if (window.attachEvent) window.attachEvent("onload", HoverRow);
+
+function viewlogonload()
+{
+ window.history.forward(1);
+}
+</script>
+<script type="text/javascript">
+function getHTTPObject() {
+  var xmlhttp; 
+  if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+    try {
+      xmlhttp = new XMLHttpRequest();
+    } catch (e) {
+      xmlhttp = false;
+    }
+  }
+  return xmlhttp;
+}
+
+var http = getHTTPObject(); // We create the HTTP Object
+
+
+function HandlOnLoadResponse()
+{
+ var tdArr = ["<td style=\"width: 80px\">", "<td align=\"left\" style=\"width: 100px\">",
+             "<td align=\"left\" style=\"width: 70px\">" ,"<td align=\"left\" style=\"width: 300px\">",
+             "<td style=\"width: 100px\">","<td style=\"width: 100px\">","<td align=\"left\" style=\"width: 100px\">"];
+  if (http.readyState == 4 && http.responseText.length!=0) 
+  {    
+    if (http.readyState == 4) 
+    {       
+        var i,j,k,results2,results3,results4,results5;       
+       
+        results = http.responseText.split("@");     
+        if((results[0] == userbranson) || (results[0] == usermf1) ||(results[0] == usermf2))
+        {       
+            document.getElementById('tabmenu').innerHTML = TabArr[parseInt(results[0])];                        
+            document.getElementById("CurrUser").innerHTML = UserArr[parseInt(results[0])];       
+        }
+        else
+            document.getElementById("CurrUser").innerHTML = "Current User: " + getCookie('USERID'); 
+                
+        for(i=1; i < results.length; i++)
+        {  
+            results2 = results[i].split("$");
+            try{
+            if(results2[1]!=null)
+             {
+	            results3 = results2[1].split(",");
+	            if(results3[0] == "S")	                                                       
+                    document.getElementById(results2[0]).innerHTML = results3[1];	
+                if(results3[0] == "LOG")		                     
+                {  
+                    results4 = results3[1].split("#");
+					/*
+                    for(j = 0; j < results4.length; j++)
+                    {
+                        results5 = results4[j].split("*");
+                        var table = document.getElementById(results2[0]);  
+                        var rowCount = table.rows.length; 
+                        var row = table.insertRow(rowCount);                       
+                        for(k = 0; k < results5.length; k++)
+                        {                            
+                            var cell1 = row.insertCell(k); 
+                            cell1.innerHTML =  tdArr[k] +  results5[k] + "</td>"; 
+                        }                                                                     
+                    }
+					*/
+
+                  	dataItems = [];
+                  	for (j = 0; j < results4.length; j++) {
+                    	results5 = results4[j].split("*");
+                    	if (is_empty(results5[0])) continue;
+                    	dataItems.push(["" + results5[0] + "", "" + results5[1] + "", "" + results5[2] + "", "" + results5[3] + "", "" + results5[4] + "", "" + results5[5] + "", "" + results5[6] + ""]);
+                  	}
+                  LoadCurrentReport();
+                }
+              }
+            } catch(err){}
+        }       
+    }
+  }
+}
+
+function ViewLogOnLoad()
+{
+  window.history.forward(1);
+  var OnLoadUrl = "func=15cmd=2?param="; 
+  OnLoadUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+  http.open("POST", OnLoadUrl, true);
+  http.onreadystatechange = HandlOnLoadResponse;
+  http.send(null);
+}
+
+function GetEventLogFile(hreflog)
+{
+    document.getElementById("lang").value= getCookie('LANGUAGE');
+	document.getElementById("userid1").value= getCookie('USERID');
+	document.temp_form.action = hreflog;
+	document.temp_form.submit();
+}
+
+function getCookie(c_name)
+{
+if (document.cookie.length>0)
+  {
+  c_start=document.cookie.indexOf(c_name + "=");
+  if (c_start!=-1)
+    {
+    c_start=c_start + c_name.length+1;
+    c_end=document.cookie.indexOf(";",c_start);
+    if (c_end==-1) c_end=document.cookie.length;
+    return unescape(document.cookie.substring(c_start,c_end));
+    }
+  }
+return "";
+}
+
+function GetLanguageAndUserID(hrefpage)
+{
+    document.getElementById("lang").value= getCookie('LANGUAGE');
+	document.getElementById("userid1").value= getCookie('USERID');
+	document.temp_form.action = hrefpage;
+	document.temp_form.submit();
+} 
+
+function OnClickClearLog()
+{
+   var ret = confirm(strRestoreDefault);   
+   if (ret == true)
+   {
+    window.history.forward(1);
+    var OnLoadUrl = "func=15cmd=18?param=";
+    /*OnLoadUrl += "10,11,12,13,14,15,16,17,27,62,97";
+    ModifyPresetOnLoadUrl += "96,97";*/
+    OnLoadUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+    http.open("POST", OnLoadUrl, true);  
+    http.send(null);
+    GetLanguageAndUserID('event-log.html');
+    //window.location.href = window.location.href;
+  }
+}
+
+function OnClickExportToExcel()
+{
+  GetEventLogFile('func=15cmd=3?param=.logdownload');
+}
+function GetUserManual(hrefpage)
+{
+    window.open(hrefpage);
+}
+
+    function LoadCurrentReport() {
+      var oTblReport = $("#eventLog");
+      oTblReport.DataTable({
+        order: [[0, 'desc']],
+        destroy: true,
+        data: dataItems,
+        columns: [
+          { title: "Event #" },
+          { title: "Days" },
+          { title: "Hours" },
+          { title: "Event" },
+          { title: "User" },
+          { title: "Data 1" },
+          { title: "Data 2" }
+        ]
+      });
+    }
+
+    function is_empty(x) {
+      return (                                                           //don't put newline after return
+        (typeof x == 'undefined')
+        ||
+        (x == null)
+        ||
+        (x == false)        //same as: !x
+        ||
+        (x.length == 0)
+        ||
+        (x == 0)            // note this line, you might not need this. 
+        ||
+        (x == "")
+        ||
+        (x.replace(/\s/g, "") == "")
+        ||
+        (!/[^\s]/.test(x))
+        ||
+        (/^\s*$/.test(x))
+      );
+    }
+
+    $(document).ready(function () {
+      ViewLogOnLoad();
+    });
+
+</script>
+</head>
+
+<body>
+<form name="temp_form" method="post" action="event-log.html">
+<input type="hidden" name="lang" id="lang" value="" />
+<input type="hidden" name="userid1" id="userid1" value="" />
+</form>
+
+<div id="wrapper">
+  <div id="header">
+  	<div id="headerNav">
+   	  <div id="headerLogo">
+       	<!-- <img src="images/bransonLogo.png" alt="Branson" /> //-->
+      </div><!-- end headerLogo //-->
+      <div id="headerLinks">
+      	<span class="user" id ="CurrUser">Current User: </span>  <!--<a href="javascript:GetUserManual('DCXManual.pdf')">User Manual</a> | --><a href="index.html">Logout</a>
+      </div><!-- end HeaderLinks //-->
+    </div><!-- end headerNav //-->
+    <div id="mainNav">
+    	<ul id = "tabmenu">
+    	<li><a href="javascript:GetLanguageAndUserID('ip-setup.html')">IP Setup</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('weld-preset.html')">Weld Preset</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('advanced-preset.html')">Advanced Preset</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('diagnostic-IO.html')">I/O Diagnostics</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('Seek&WeldGraphs.html')">Seek & </br>Weld Graphs</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('hornsignature.html')">Horn <br/> Signature</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('system-information.html')">System Information</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('IO-configuration.html')">I/O Configuration</a></li>
+            <li class="active"><a href ="#">Event Log</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('alarm-log.html')">Alarm Log</a></li>
+        </ul>
+    </div><!-- end mainNav //-->
+  </div><!-- end header //-->
+
+  <div id="content">
+      <div class="clearit"></div>
+      
+      <div id="HeaderScroll">
+        <table id="eventLog" class="display" width="100%"></table>
+        <br/>
+      </div>
+      
+      <div class="clearit"></div><!-- end clearit //-->
+
+      <div id="contentButtonBank">
+        <input name="ClearLog" type="button" class="button" value="Clear Log" onclick="OnClickClearLog()" />
+        <input name="CopyToUSB" type="button" class="button" value="Export to Excel" onclick="OnClickExportToExcel()" />
+      </div><!-- end contentButtonBank //-->
+    </div><!-- end content //-->
+
+    <div class="clearit"></div>
+
+    <div id="footer">
+      <p>©2011 Branson, All Rights Reserved<br />
+        <img src="Emerson-IA.jpg" alt="Emersin Industrial Automation" />
+      </p>
+    </div><!-- end clearit //-->
+
+  </div>
+  <!-- end wrapper //-->
+</body>
+</html>

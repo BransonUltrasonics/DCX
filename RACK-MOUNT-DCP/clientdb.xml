@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.ibm.magnolia.clientmodel:ClientModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:com.ibm.magnolia.clientmodel="http:///com/ibm/magnolia/clientmodel.ecore">
+  <workItemEditorHistory>
+    <internalContents date="2023-02-27T10:51:06.010-0600" description="10384: Web Page Reload 2" repository="https://Jazz.bucclm.com/ccm/">
+      <workItem itemId="_3yNWsLa-Ee2OdtKAoN0zGg"/>
+    </internalContents>
+    <internalContents date="2023-02-27T10:50:29.593-0600" description="10196: Web Page Reload" repository="https://Jazz.bucclm.com/ccm/">
+      <workItem itemId="_efe1EJg8Ee20n_7jNaChHQ"/>
+    </internalContents>
+    <internalContents date="2023-01-19T14:52:43.304-0600" description="9635: DCX Web Page Cache issue" repository="https://Jazz.bucclm.com/ccm/">
+      <workItem itemId="_t4scQHTFEe2qRLr60iZ_8g"/>
+    </internalContents>
+  </workItemEditorHistory>
+  <queries/>
+  <queryViews/>
+</com.ibm.magnolia.clientmodel:ClientModelRoot>

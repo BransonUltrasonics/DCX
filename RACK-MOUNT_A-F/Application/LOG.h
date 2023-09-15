@@ -1,0 +1,509 @@
+/*
+$Header:   D:/databases/VMdb/archives/DCX/RackMount/A&F/WC/Application/LOG.h_v   1.0   09 Jun 2015 09:10:32   tayars  $
+*/
+/****************************************************************************/
+/*                                                                          */
+/*                                                                          */
+/*      Copyright (c) Branson Ultrasonics Corporation, 1995,96, 2009        */
+/*     This program is the property of Branson Ultrasonics Corporation      */
+/*   Copying of this software is expressly forbidden, without the prior     */
+/*   written consent of Branson Ultrasonics Corporation.                    */
+/*                                                                          */
+/*                                                                          */
+/*                                                                          */
+/*************************                         **************************/
+/*****************************************************************************
+$Log:   D:/databases/VMdb/archives/DCX/RackMount/A&F/WC/Application/LOG.h_v  $
+ * 
+ *    Rev 1.0   09 Jun 2015 09:10:32   tayars
+ * Initial revision.
+ * 
+ *    Rev 1.36   21 Mar 2014 09:24:48   rjamloki
+ * Tracker issue fixes.
+ * 
+ *    Rev 1.35   13 Mar 2014 15:54:44   rjamloki
+ * FRAM is accessed through pointers. Removed compiler allocation of FRAM
+ * 
+ *    Rev 1.34   04 Mar 2014 07:49:24   rjamloki
+ * Added Software Upgrade, Digital Tune and Memory Offset.
+ * 
+ *    Rev 1.33   06 Nov 2013 05:04:32   rjamloki
+ * LCD Program Verify Debug.
+ * 
+ *    Rev 1.32   25 Oct 2013 11:59:12   ygupta
+ * Disabled Nagle Algo on http connection, Added JSONStopDCX Data service, Tracker fixes, FinalData State renamed to CycleAbort State.
+ * 
+ *    Rev 1.31   01 Oct 2013 03:16:32   ygupta
+ * Change for fieldbus version.
+ * 
+ *    Rev 1.30   24 Aug 2013 17:14:04   amaurya
+ * Code review and tracker issue fixes.
+ * 
+ *    Rev 1.29   10 Jul 2013 07:51:10   amaurya
+ * Fixed powerup DCP Event Log issue.
+ * 
+ *    Rev 1.28   08 Jul 2013 08:53:40   amaurya
+ * Fixed tracker issue for Ver3.0y.
+ * 
+ *    Rev 1.27   31 May 2013 10:37:16   amaurya
+ * Level II testing fixes.
+ * 
+ *    Rev 1.26   21 May 2013 12:25:52   amaurya
+ * Code review fixes.
+ * 
+ *    Rev 1.25   06 May 2013 09:16:50   amaurya
+ * Changes to use actual frequency.
+ * 
+ *    Rev 1.24   26 Apr 2013 11:02:56   amaurya
+ * Fixed traker issue for Ver2.0U.
+ * 
+ *    Rev 1.23   22 Apr 2013 11:30:44   amaurya
+ * Fixed tracker issue of Ver2.0S
+ * 
+ *    Rev 1.22   08 Apr 2013 08:23:46   amaurya
+ * Fixed Tracker issue of Ver2.0P.
+ * 
+ *    Rev 1.21   15 Mar 2013 10:49:52   ygupta
+ * Issues Resolved, Requirement Changes
+ * 
+ *    Rev 1.20   11 Mar 2013 02:26:10   ygupta
+ * Issues Fixed & Requirement Changes
+ * 
+ *    Rev 1.19   18 Feb 2013 03:07:18   ygupta
+ * FieldBus Changes
+ * 
+ *    Rev 1.18   29 Jan 2013 02:20:18   ygupta
+ * WebPages CleanUp, Code Review and CleanUp
+ * 
+ *    Rev 1.17   22 Jan 2013 10:38:22   ygupta
+ * Profibus Bug Fixes
+ * 
+ *    Rev 1.16   17 Jan 2013 07:28:04   ygupta
+ * Profibus Related changes
+ * 
+ *    Rev 1.15   16 Jan 2013 06:27:08   ygupta
+ * Level2 Code with Profibus
+ * 
+ *    Rev 1.14   11 Jan 2013 02:51:30   ygupta
+ * Level2 Requirement Changes
+ * 
+ *    Rev 1.13   13 Dec 2012 00:10:14   ygupta
+ * Changes related to Issues
+ * 
+ *    Rev 1.12   29 Nov 2012 08:45:10   rjamloki
+ * Scan Changes and Coverty issues Resolved
+ * 
+ *    Rev 1.11   24 Nov 2012 08:01:54   amaurya
+ * Added changes for 40KHz supply.
+ * 
+ *    Rev 1.10   08 Nov 2012 01:19:26   rjamloki
+ * Website changes
+ * 
+ *    Rev 1.9   05 Nov 2012 08:56:48   amaurya
+ * State Machine changes
+ * 
+ *    Rev 1.8   26 Oct 2012 02:36:08   rjamloki
+ * Website Related files Added
+ * 
+ *    Rev 1.7   21 Sep 2012 01:31:56   rjamloki
+ * Added State machine
+ * 
+ *    Rev 1.6   10 Sep 2012 03:12:06   rjamloki
+ * Modbus changed implementation with unions and code cleanup
+ * 
+ *    Rev 1.5   29 Aug 2012 13:27:56   rjamloki
+ * WC Modbus checkin and related changes
+ * 
+ *    Rev 1.4   05 Jul 2012 04:45:58   ygupta
+ * Cleanup after review summary on database and BSP.
+ * 
+ *    Rev 1.3   02 Jul 2012 13:04:10   ygupta
+ * Code cleanup for meeting coding standard. and updates after review. All varibles name in upper case. 
+ * 
+ *    Rev 1.2   29 Jun 2012 12:14:56   ygupta
+ * First Compilable code, First check in after review, Needs more clanup
+ * 
+ *    Rev 1.1   21 Jun 2012 12:34:12   ygupta
+ * Total clean up
+ * 
+ *    Rev 1.0   21 Mar 2012 12:21:10   PDwivedi
+ * Initial revision.
+*/
+
+
+#ifndef LOG_H_
+#define LOG_H_
+
+#include "portable.h"
+#include "CpuDefs.h"
+#include "PasscodeConfig.h"
+#include "Alarms.h"
+
+//Below are the defines, enums and data structures for LOG handling module
+//The value to determine that whether the LOG module ever been initialized.
+#define LOGINITIALIZED_CHECKSUM 0xAAEEDDFC
+#define NSECSINYEAR   31536000
+#define NSECSINMONTH  2592000
+#define NSECSINDAY    86400
+#define NSECSINHOUR   3600
+#define NSECSINMINUTE 60
+#define NMSINHOUR     3600000
+#define NMSINMINUTE   60000
+
+//This structure represents a time stamp
+struct LogTime
+{
+	//seconds in 24 hour clock
+	UINT8 TmSec;
+	//minutes in 24 hour clock
+	UINT8 TmMin;
+	//hours in 24 hour clock
+	UINT8 TmHour;
+	//The day of the month
+	UINT8 TmDay;
+	//The month of the year
+	UINT8 TmMon;
+	//The year in Gregorian calendar systems
+	UINT8 TmYear;
+};
+
+//Maximum number of events which can be saved in FRAM
+#define MAX_EVENT_ENTRIES 	500
+#define MAX_DCP_EVENT_ENTRIES 200
+//The maximum length of Event Timestamp in mm-dd-yyyy HH-MM-SS or any other configurable format.
+#define MAX_TIMESTAMP_LENGTH  20
+
+//definition of weld and output actions on different type of alarms
+#define RESET_REQUIRED       BIT(5)	// to check alarm latching
+#define LOG_ALARM     	     BIT(4)	// to check alarm aborting
+#define GENERAL_ALARM	     BIT(3)	// to set general alarm flag
+#define CUSTOM_ALARM_OUTPUT  BIT(2)	// op action for reserved alarm
+#define ALARM_COUNTER	     BIT(1)	// to increment alarm counter
+#define CYCLE_COUNTER	     BIT(0)	// to increment cycle counter
+
+// userpassCode in EventLog structure in case of CRC error can have one of below
+//defined values
+#define CRC_ERROR_PRESET 		    1	// preset structure CRC error
+#define CRC_ERROR_MACCHIPRWDATA   2	// MAC chip data CRC error
+#define CRC_ERROR_SYSCONFIG 	    3	// System config data CRC error
+#define CRC_ERROR_PASSCODECONFIG  4	// Passcode config data CRC error
+#define CRC_ERROR_IOCONFIG 		 5	// IO config data CRC error
+
+//Data-1 Data-2 defines for events where data field is fixed. For rest of the
+//events data1 data2 should be determined at run time.
+//Horn Scan Aborted
+//Causes for Event log,Alarm Log, History Clear.
+#define LOG_CLEARED_BY_CRC_ERROR_OR_MANUFACTURING_PAGE   0
+#define LOG_CLEARED_BY_USER   1
+#define LOG_CLEARED_BY_COLD_START_VIA_SERIAL_PORT   2
+#define LOG_CLEARED_BY_USER_IO_JUMPER_AT_POWER_UP  3
+#define LOG_CLEARED_BY_OTHER   4
+
+//The IDs of event
+enum EventID
+{
+   //WC must have copy of DCP Events with enum values
+   EVENT_DCP_POWERON,
+   EVENT_DCP_POWERONDIAGNOSTIC_START,
+   EVENT_DCP_POWERONDIAGNOSTIC_PASSED,
+   EVENT_DCP_CRC_ERROR,
+   EVENT_DCP_FAULT_ERROR,
+   EVENT_DCP_WATCHDOG_RESET,
+   EVENT_DCP_VERSION_CHANGE,
+   EVENT_DCP_CRC_CHANGE,
+   EVENT_DCP_CLOCK_LOST,
+   EVENT_DCP_PROGRAM_FIRMWARE,
+   EVENT_DCP_POWER_SHUTDOWN,
+   EVENT_LOSTAC,
+   EVENT_GOTAC,
+   EVENT_MULTIPLEOVERLOADS,
+   EVENT_DCP_NRT_CMD_NOT_SUPPORTED,
+   EVENT_DCP_TIMESYNC,
+   EVENT_DCP_CRASH_ERROR,
+   EVENT_DCP_ASSERT_ERROR,
+   //WC Events are starting here
+   EVENT_LOG_CLEARED = 500,
+   EVENT_ENTRY_INVALID,
+   EVENT_CRC_ERROR,
+   EVENT_POWERON,
+   EVENT_HILSCHERCARD_DETECTED,
+   EVENT_FIELDBUSPROTOCOL_DETECTED,
+   EVENT_FIELDBUSERROR,
+   EVENT_ERROR_READMACADDR,
+   EVENT_WATCHDOG_RESET,
+   EVENT_PROGRAMFIRMWARE,
+   EVENT_USERIO_DEFINED,
+   EVENT_PRESETCRC_ERROR,
+   EVENT_HORN_SCAN_START,
+   EVENT_HORN_SCAN_COMPLETED,
+   EVENT_HORN_SCAN_ABORTED,
+   EVENT_HORN_SCAN_FAILED,
+   EVENT_PRESET_RECALL,
+   EVENT_POWERONDIAGNOSTIC_STARTED,
+   EVENT_POWERONDIAGNOSTIC_PASSED,
+   EVENT_LCD_BOARD_DETECTED,
+   EVENT_WEBPAGE_LOGIN,
+   EVENT_WEBPAGE_LOGOUT,
+   EVENT_TEST_ACTIVATED,
+   EVENT_TEST_OVERLOAD,
+   EVENT_PARAMETER_CHANGED,
+   EVENT_VERSION_CHANGED,
+   EVENT_POWERON_CRC_CHANGED,
+   EVENT_CLOCK_LOST,
+   EVENT_BIG_FILE_NAME_GET,
+   EVENT_BIG_FILE_NAME_POST,
+   EVENT_POWER_SHUT_DOWN,
+   EVENT_INVALID_SERIAL_INPUT,
+   EVENT_IO_CABLE_NOTDETECTED,
+   EVENT_IO_CABLE_DETECTED,
+   EVENT_CALIBRATION_PASS,
+   EVENT_CALIBRATION_FAIL,
+   EVENT_BOARD_REPLACED,
+   EVENT_SYSTEM_CLEANED,
+   EVENT_ACTIVELOWDIGIN,
+   EVENT_FRAM_INIT_DONE,
+   EVENT_ALARM_LOG_CLEARED,
+   EVENT_HISTORY_CLEARED,
+   EVENT_RESTORE_DEFAULTS,
+   EVENT_COLD_START,
+   EVENT_MB_ENOREG,
+   //IDs reserved for events related Fieldbus. Give the meaningful name later.
+   EVENT_FIELD_SERVICE_ONE,
+   EVENT_FIELD_SERVICE_TWO,
+   EVENT_FIELD_SERVICE_THREE,
+   EVENT_FIELD_SERVICE_FOUR,
+   EVENT_RTC_BATTERYFAILURE,
+   EVENT_PSVERIFY_FAIL,
+   EVENT_SEEK,
+   EVENT_FBSLAVECARDVERSION,
+   EVENT_MODBUSCOMMFAILURE,
+   EVENT_FRAM_REFORMATTED,
+   EVENT_LOGEND
+};
+
+//Alarm configuration data which gets saved in FRAM.
+struct AlarmConfig
+{
+   UINT32 AlarmAction[ALARM_TYPES]; 	// an array to store the actions on different alarm
+   UINT32 Spare;                    // spare
+   CounterSt Counter; //fix the system counters in Alarm Config section for now
+};
+
+//Timestamp of an event or alarm
+struct TimeStamp
+{
+	//time the event occurred
+	UINT8  Year;
+	UINT8  Month;
+	UINT8  Day;
+	UINT8  Hour;
+	UINT8  Minute;
+	UINT8  Second;
+};
+
+//An object of this structure represents an event.This is compatible with Ver6 Rls
+//and used only during FRAM conversion.
+struct EventLogRls6
+{
+	TimeStamp TS; 			// the time of occurrence
+	SINT16  EventID; 		// unique id for the event
+	SINT32  Data1; 			// diagnostic purpose data
+	SINT32  Data2; 			// diagnostic purpose data
+	SINT8   UserID[MAX_LEN_USERID]; 	// the passcode to login into website
+	UINT16  LogChecksum; 		// To check whether the values in other fields of this structure are valid or not
+};
+
+//An object of this structure represents an event.This is to be saved in FRAM.
+//This structure always represent the data according to current FRAM version.
+struct EventLog
+{
+	TimeStamp TS; 			// the time of occurrence
+	SINT32  EventID; 		// unique id for the event
+	SINT32  Data1; 			// diagnostic purpose data
+	SINT32  Data2; 			// diagnostic purpose data
+	SINT8   UserID[MAX_LEN_USERID]; 	// the passcode to login into website
+	UINT16  LogChecksum; 		// To check whether the values in other fields of this structure are valid or not
+};
+
+//This structure is used to keep event information in string format.
+//No object of this is saved in FRAM. It is just used to change the information saved in FRAM object
+//to descriptive format which can be sent to website.
+struct WebEventData
+{
+	TimeStamp TS; 						// the time of occurrence
+	SINT8   EventStr[MAX_LOG_LENGTH];    // array to store the string
+	SINT32  Data1;                       // diagnostic purpose data
+	SINT32  Data2;                       // diagnostic purpose data
+	SINT8   UserID[MAX_LEN_USERID + 1];  // plus 1 to accommodate NULL
+	UINT32  EventNo;                     // event no.
+};
+
+//This structure represents the data related to an alarm
+struct AlarmLogData
+{
+   UINT32   SeekStartFrequency;
+   UINT32   SeekStopFrequency;
+   UINT16   Temperature;
+   UINT8    AvgWeldAmplitude;
+   UINT32   ErrorFrequency;
+   UINT8    ErrorPower;
+   UINT8    ErrorAmplitude;
+   UINT8    ErrorCurrent;
+   UINT32   ErrorReason;
+   UINT32   CycleCounter;
+   TimeStamp  TS;
+   UINT32   WeldTime;
+   UINT32   WeldEnergy;
+   UINT8    WeldPower;
+   UINT8    Amplitude1;
+   UINT8    Amplitude2;
+   UINT32   WeldStartFrequency;
+   UINT32   WeldStopFrequency;
+   UINT16   CustomAIn1;
+   UINT16   CustomAIn2;
+   UINT8	WeldMode;
+   UINT8	PresetNum;
+};
+
+struct AlarmLogDataRls6
+{
+   UINT32   SeekStartFrequency;
+   UINT32   SeekStopFrequency;
+   UINT16   Temperature;
+   UINT8    AvgWeldAmplitude;
+   UINT32   ErrorFrequency;
+   UINT8    ErrorPower;
+   UINT8    ErrorAmplitude;
+   UINT8    ErrorCurrent;
+   UINT32   ErrorReason;
+   UINT32   CycleCounter;
+   TimeStamp  TS;
+   UINT32   WeldTime;
+   UINT32   WeldEnergy;
+   UINT8    WeldPower;
+   UINT8    Amplitude1;
+   UINT8    Amplitude2;
+   UINT32   WeldStartFrequency;
+   UINT32   WeldStopFrequency;
+   UINT16   CustomAIn1;
+   UINT16   CustomAIn2;
+};
+
+//Alarm log object saved in FRAM Rls6
+struct AlarmLogRls6
+{
+   SINT16   AlarmID;                   // the alarm ID
+   struct   AlarmLogDataRls6 AlarmData;    // data related to an alarm
+   UINT16   LogChecksum;                // To check whether the values in other fields of this structure are valid or not
+};
+
+//Alarm log object saved in FRAM
+struct AlarmLog
+{
+   SINT16   AlarmID;                   // the alarm ID
+   struct   AlarmLogData AlarmData;    // data related to an alarm
+   UINT16   LogChecksum;                // To check whether the values in other fields of this structure are valid or not
+};
+
+//This structure is used to keep the alarm information in string format.
+//No object of this is saved in FRAM. It is just used to change the information saved in AlarmLog object
+//to descriptive format which can be sent to website.
+struct WebAlarmData
+{
+   SINT8   AlarmStr[MAX_LOG_LENGTH];    // array to store the string
+   struct  AlarmLogData AlarmData;      // data related to an alarm
+   UINT32  AlarmNo;                     // the alarm no
+};
+
+//Data below should go into FRAM.
+//This structure is just used during FRAM conversion. The variable here are moved to
+//EventLogFRAM and AlarmLogFRAM structures from FRAM version 1 onwards
+struct LOGInformationRls6
+{
+	//A sort of checksum to determine that whether the LOG is ever been written or not, should be stored here.
+	UINT16 LogInitialized;
+
+	//the index which moves between 0 and MAX_EVENT_ENTRIES - 1
+	//and always points to the latest entry made in eventlogObjs array
+	//defined below i.e. to the latest event occurred.
+	SINT16 CircularIndexEvent;
+
+	//the index which moves between 0 and MAX_ALARM_ENTRIES - 1
+	//and always points to the latest entry made in alarmlogObjs array
+	//defined below i.e. to the latest alarm occurred.
+	SINT16 CircularIndexAlarm;
+
+	//The number of latest event occurred Count started from 0 and incremented whenever an event logged
+	UINT16 EventsNo;
+
+	//The number of latest alarm occurred Count started from 0 and incremented whenever an alarm logged
+	UINT16 AlarmsNo;
+};
+
+//An object of this structure keeps the event description
+//in string format corresponding to an event ID
+struct EventDescription
+{
+   SINT8  * EventStr; //event description in string
+   SINT32 Eventid;        //event id
+};
+
+
+//Enum definitions for commands related to
+//clearing the log.
+enum ClearLog
+{
+	CLEARALL, //clear the alarm and event log entries saved in FRAM
+	CLEAREVENT,//clear the event log entries saved in FRAM
+    CLEARALARM,//clear the alarm log entries saved in FRAM
+    CLEARHISTORY,
+    CLEARDCP,
+};
+
+//Event section in FRAM
+struct EventLogFRAM
+{
+	//A sort of checksum to determine that whether the LOG is ever been written or not, should be stored here.
+	UINT32 LogInitialized;
+	//the index which moves between 0 and MAX_EVENT_ENTRIES - 1
+	//and always points to the latest entry made in eventlogObjs array
+	//defined below i.e. to the latest event occurred.
+	SINT16 CircularIndexEvent;
+	//The number of latest event occurred Count started from 0 and incremented whenever an event logged
+	UINT32 EventsNo;
+	EventLog EventLogObjs[MAX_EVENT_ENTRIES];
+};
+
+//Alarm section in FRAM
+struct AlarmLogFRAM
+{
+	//A sort of checksum to determine that whether the LOG is ever been written or not, should be stored here.
+	UINT32 LogInitialized;
+	//the index which moves between 0 and MAX_EVENT_ENTRIES - 1
+	//and always points to the latest entry made in eventlogObjs array
+	//defined below i.e. to the latest event occurred.
+	SINT16 CircularIndexAlarm;
+	//The number of latest alarm occurred Count started from 0 and incremented whenever an alarm logged
+	UINT32 AlarmsNo;
+	AlarmLog AlarmLogObjs[MAX_ALARM_ENTRIES];
+};
+
+//This is the interface class to access and store events and alarms
+class Log
+{
+public:
+   static void Init(void);
+   static void ResetLog(ClearLog Logtype = CLEARALL);
+   static SINT8 * GetEventStringFromID(EventID EventId);
+   static void WriteEventLog(EventID EventId, SINT32 Data1 = 0, SINT32 Data2 = 0, UINT32 UserId = 0, TimeStamp * TStamp = NULL,
+   BOOLEAN TimeStampingRequired = TRUE);
+   static void WriteSystemEventLog(short eid, int data1, int data2, unsigned int data3, bool TimeStampingRequired);
+   static void WriteAlarmLog(Alarms AlarmId, BOOLEAN TimeStampingRequired = TRUE);
+   static UINT32 ReadWCEventLog(WebEventData * LogData, SINT32 LogsCount);
+   static UINT32 ReadDCPEventLog(WebEventData * LogData, SINT32 LogsCount);
+   static UINT32 ReadAlarmLog(WebAlarmData * LogData, SINT32 LogsCount);
+};
+extern SINT32 LogData2;
+extern EventLogFRAM * EventLogFram;
+extern AlarmLogFRAM * AlarmLogFram;
+#endif /* LOG_H_ */

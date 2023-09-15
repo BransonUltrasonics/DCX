@@ -1,0 +1,587 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+    <link rel="stylesheet" type="text/css" href="superfishDCXAF-v1.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="styleDCXAF-v1.css" />
+    
+    <script type="text/javascript" language="javascript" src="jqueryDCXAF-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="hoverIntentDCXAF-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="superfishDCXAF-v1.js"></script>
+    <script type="text/JavaScript" language="javascript" src="formchange-detect.js"></script>
+    <script type="text/javascript" language="javascript" src="handlerDCXAF-v1.js"></script>
+    
+    <title>BRANSON DCX GUI</title>
+<script type="text/JavaScript">
+var iponfigStatic = 2, ipconfigDhcpServer = 0, ipconfigDhcpClient = 1, ipconfigBOOTClient = 4;
+var pageRefresh = false, PageRefTo = null;
+var http = getHTTPObject(); 
+function handleHttpResponse() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) { 
+		var i,j,results,GroupVal,SingleVal,SysFB = false;        
+	    results = http.responseText.split("@");  
+		var UserType = results[0].split("/");
+        SetUserType(UserType[0]);
+        SetToken(UserType[1],0);
+        SetSystemType(UserType[2]);
+		for(i = 1; i < results.length; i++){   	             
+	         GroupVal = results[i].split(":");
+	         SingleVal = GroupVal[1].split(",");       
+	         try{	            
+					switch(SingleVal[0]){
+						case "CB":
+							UseID(GroupVal[0]).checked = (SingleVal[1] == "1");
+							break;
+						case "D":
+							UseID(GroupVal[0]).value = SingleVal[1];
+							break;
+					    case "S":
+					        UseID(GroupVal[0]).innerHTML = SingleVal[1];
+					        break;
+						case "RB":
+							UseID(GroupVal[0] + '_' + SingleVal[1]).checked = true;
+							break;
+						case "Sys":
+							switch(SingleVal[1]){
+								case '0':
+										UseID("ShowFieldbus").style.visibility = "hidden";
+										UseID("ShowIP").style.paddingLeft = "150px";
+										break;
+								case '1':					       
+										UseID("ShowFieldbus").style.visibility = "visible";
+										UseID("ShowPBIP").style.display = "inline";
+										break;
+								case '2':
+										UseID("ShowFieldbus").style.visibility = "visible";
+										UseID("ShowFBIP").style.display = "inline";
+										SysFB = true;
+										break;
+								default :
+										break;
+							}
+							break;
+				 }
+	         }catch(err){}
+	    }
+		if(SysFB == true){
+			if(UseID('FBipconfig_1').checked == true)
+				OnIpConfigurationChange(ipconfigDhcpClient,'FB');	
+			else if(UseID('FBipconfig_4').checked == true)
+				OnIpConfigurationChange(ipconfigBOOTClient,'FB');	
+		}
+	    OnIpConfigurationChange(GetCurrentIPConfiguration(),"");
+	    if(UseID("GateWay").value == "0.0.0.0")
+	        UseID("GateWay").value = " ";
+	    if (UseID("FBGateWay").value == "0.0.0.0")
+	        UseID("FBGateWay").value = " ";
+	    RefreshAttribute(document.main_form);
+	} 
+}
+function HandleUpdateResponse(){
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+	    if(http.responseText == "OK"){
+	    	SetToken(1,0);
+	        alert("Values Updated. \r\n DCX System Restart Required");
+	        RefreshAttribute(document.main_form);
+			if (PageRefTo != null)
+				SubmitForm(PageRefTo);
+	    }
+	    else if(http.responseText == "NOK")
+	        alert("Error in Updating IP Configuration");    
+		else{
+			SetToken(0,0);
+			alert(Notoken);
+		}
+	}
+}
+function HandleRestoreResponse(){
+	var result;
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+		result = http.responseText.split('!');
+	    if(result[0] == "OK")
+	        alert("IP Setup Restored. \r\n DCX System Restart Required");
+	   	else{
+			SetToken(0,0);
+			alert(Notoken);
+		}	    
+	}
+}
+function IPSetupOnLoad(){
+	window.history.forward(1);
+	var IPSetupOnLoadUrl = "func=" +Func.ConfigurationIPSetupGetDatahandler +"cmd=" +Command.REQ_NONE +"?param=";
+	IPSetupOnLoadUrl += SendCookies();
+	http.open("POST", IPSetupOnLoadUrl, true);
+	http.onreadystatechange = handleHttpResponse;
+	http.send(null);
+}
+function OnIpConfigurationChange(config, isIdFB){   
+    switch(config){
+        case iponfigStatic:
+        case ipconfigDhcpServer:
+            UseID(isIdFB + "SubnetMask").disabled = false;
+            UseID(isIdFB + "GateWay").disabled = false;
+            UseID(isIdFB + "IPAddress").disabled = false;
+			if(isIdFB != 'FB')
+				UseID(isIdFB + "dhcpserver").disabled = false;
+        break;
+        case ipconfigDhcpClient:
+            UseID(isIdFB + "SubnetMask").disabled = true;
+            UseID(isIdFB + "GateWay").disabled = true;
+            UseID(isIdFB + "IPAddress").disabled = true;  
+			if(isIdFB != 'FB')
+				UseID(isIdFB + "dhcpserver").disabled = true; 
+        break;
+		case ipconfigBOOTClient:
+            UseID(isIdFB + "SubnetMask").disabled = true;
+            UseID(isIdFB + "GateWay").disabled = true;
+            UseID(isIdFB + "IPAddress").disabled = true;
+		break;
+        default:
+            alert("Unknown IP Configuration");       
+    }
+}
+function RestoreIPSetup(){
+	var ret = confirm(strRestoreDefault);   
+	if (ret == true){
+		var Updateurl = "func=" + Func.ConfigurationIPSetupGetDatahandler +"cmd=" +Command.REQ_RESTORE +"?param=";
+     	Updateurl += SendCookies();
+   		http.open("POST", Updateurl, true);      
+		http.onreadystatechange = HandleRestoreResponse;
+		http.send(null);
+	}
+}
+function validateFormat(inputString){
+	var re = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+	if (re.test(inputString)) 
+        return true;   
+    return false;
+}
+function formvalidate(config){
+	var validationstring = "", RetVal = true;
+	if(config != ipconfigDhcpClient){
+		document.getElementById("IPAddress").value = trim(document.getElementById("IPAddress").value);
+        if((document.getElementById("IPAddress").value.length == 0) || (!validateFormat(document.getElementById("IPAddress").value)))  
+			validationstring += "Invalid IP Address.\n";
+        document.getElementById("SubnetMask").value = trim(document.getElementById("SubnetMask").value);
+        if((document.getElementById("SubnetMask").value.length == 0) ||(!validateFormat(document.getElementById("SubnetMask").value)))
+			validationstring += "Invalid SubnetMask .\n";
+		document.getElementById("GateWay").value = trim(document.getElementById("GateWay").value);
+		if((document.getElementById("GateWay").value.length == 0) || (!validateFormat(document.getElementById("GateWay").value)))
+              validationstring += "Invalid GateWay \n";
+       if(!validationstring)       
+           RetVal = verifyInput();
+       else{
+		    alert(validationstring);
+	        RetVal = false;
+       }
+   }
+   if(RetVal == true){
+       if(UseID("ShowFieldbus").style.visibility == "visible"){
+           if(UseID("ShowPBIP").style.display == "inline"){ 
+		       var PBAddr = UseID("PFAddress").value;
+               PBAddr = trim(PBAddr);
+               if(isNaN(PBAddr)) {
+                   RetVal = false;
+                   alert("Profibus Address should be a valid integer in the range 0 to 126");
+               }
+               else {
+                   var addr = parseInt(PBAddr, 10);
+                   if ((addr >= 0) && (PBAddr <= 126)){
+                       RetVal = true;
+					   UseID("PFAddress").value = PBAddr;
+				   }
+                   else {
+                       RetVal = false;
+                       alert("Profibus Address should be in the range 0 to 126");
+                   }                   
+               }
+           }
+           else {              
+               config = GetCurrentIPConfiguration("FB");               
+				if(config == iponfigStatic){
+				    UseID("FBIPAddress").value = trim(UseID("FBIPAddress").value);				    
+					if((UseID("FBIPAddress").value.length == 0) || (!validateFormat(UseID("FBIPAddress").value)))
+							validationstring += "Invalid Fieldbus IP Address.\n"
+					UseID("FBSubnetMask").value = trim(UseID("FBSubnetMask").value);
+					if((UseID("FBSubnetMask").value.length == 0) || (!validateFormat(UseID("FBSubnetMask").value)))
+							validationstring += "Invalid Fieldbus SubnetMask .\n"
+					UseID("FBGateWay").value = trim(UseID("FBGateWay").value);
+					if((UseID("FBGateWay").value.length == 0) || (!validateFormat(UseID("FBGateWay").value)))
+							validationstring += "Invalid Fieldbus GateWay \n";
+					if(!validationstring)      
+						RetVal = verifyInput("FB");
+					else{
+						alert(validationstring);
+						RetVal = false;
+					}
+				}
+		   }
+       }
+   }
+   return RetVal; 
+}
+function GetCurrentIPConfiguration(isIdFB){   
+	var retVal = ipconfigDhcpClient;  	
+	if (isIdFB == "FB"){
+		if(UseID("FBipconfig_1").checked == true)
+			retVal = ipconfigDhcpClient; 
+		else if(UseID("FBipconfig_2").checked == true)    
+			retVal = iponfigStatic;
+		else if(UseID("FBipconfig_4").checked == true)            
+			retVal = ipconfigBOOTClient;
+	}
+	else{		
+		if(UseID("ipconfig_1").checked == true)
+			retVal = ipconfigDhcpClient;     
+		else if (UseID("ipconfig_2").checked == true) {		    
+		    if (UseID("dhcpserver").checked == true)
+		        retVal = ipconfigDhcpServer;
+		    else
+		        retVal = iponfigStatic;
+		}
+	}	
+	return retVal;
+}
+function verifyInput(isIdFB) {
+    var ipaddress = UseID("IPAddress").value;
+    var smmask = UseID("SubnetMask").value;
+    var gway = UseID("GateWay").value;
+
+    if (isIdFB == "FB") {
+        ipaddress = UseID("FBIPAddress").value;
+        smmask = UseID("FBSubnetMask").value;
+        gway = UseID("FBGateWay").value;
+    }
+    var dotpos = new Array(3);
+    var c = -1;   
+    for (i = 0; i < ipaddress.length; i++){   
+        if (ipaddress.charAt(i) == ".")
+            dotpos[++c] = i + 1;
+    }     
+    var val1 = parseInt(ipaddress.substring(0,dotpos[0]),10);
+    var val2 = parseInt(ipaddress.substring(dotpos[0],dotpos[1]),10);
+    var val3 = parseInt(ipaddress.substring(dotpos[1],dotpos[2]),10);
+    var val4 = parseInt(ipaddress.substring(dotpos[2],ipaddress.length),10);
+    c = -1;   
+    for (i = 0; i < smmask.length; i++){   
+        if (smmask.charAt(i) == ".")
+            dotpos[++c] = i + 1;
+    }
+    var val5 = parseInt(smmask.substring(0,dotpos[0]),10);
+    var val6 = parseInt(smmask.substring(dotpos[0],dotpos[1]),10);
+    var val7 = parseInt(smmask.substring(dotpos[1],dotpos[2]),10);
+    var val8 = parseInt(smmask.substring(dotpos[2],smmask.length),10);  
+    var message1 = "Dotted decimal values must be between 0 and 255"
+    var message2 = "The subnet mask is invalid"
+    var message3 = "The combination of IP address and subnet mask is not valid";
+    var message4 = "The subnet mask is invalid"
+    var message5 = "The IP address is invalid"
+    var message6 = " "
+    var message7 = "IP addresses of type 127.x.x.x are unusable as host addresses"    
+    var message12 = "IP addresses of type 0.x.x.x are unusable as host addresses"
+    var message13 = "First octet of IP address should have a value between 1 and 223."
+    var message14 = "First octet of IP address should have a value between 1 and 223."
+    var message8 = "Gateway of type 127.x.x.x are not valid";    
+    var message9 = "Gateway of type 0.x.x.x are not valid";
+    if (val1 == 127){
+        alert(message7);
+        return false;
+    } 
+    if (val1 == 0){
+        alert(message12);
+        return false;
+     }
+    if ((val1 > 255) || (val2 > 255) || (val3 > 255) || (val4 > 255)
+    || (val5 > 255) || (val6 > 255) || (val7 > 255) || (val8 > 255)){
+        alert(message1); 
+        return false;
+     }      
+    if ((val5!=192)&&(val5!=224)&&(val5!=240)&&(val5!=248)&&(val5!=252)&&(val5!=254)&&(val5!=255)){
+        alert(message2);
+        return false;
+    }    
+    if ((val6!=00)&&(val6!=128)&&(val6!=192)&&(val6!=224)&&(val6!=240)&&(val6!=248)&&(val6!=252)&&(val6!=254)&&(val6!=255)){
+        alert(message2);
+        return false;
+    }   
+    if ((val7!=00)&&(val7!=128)&&(val7!=192)&&(val7!=224)&&(val7!=240)&&(val7!=248)&&(val7!=252)&&(val7!=254)&&(val7!=255)){
+        alert(message2);
+        return false;
+    }
+    if ((val8!=00)&&(val8!=128)&&(val8!=192)&&(val8!=224)&&(val8!=240)&&(val8!=248)&&(val8!=252)&&(val8!=254)&&(val8!=255)){
+       alert(message2);
+       return false;
+    }
+    if (val5!=255){
+        if ((val6!=0)||(val7!=0))
+        {
+         alert(message4);
+         return false;
+        }
+    }      
+    if (val6!=255){
+        if ((val7!=0)||(val8!=0)){
+         alert(message4);
+         return false;
+        }
+    }
+    if (val7!=255){
+        if (val8!=0){
+            alert(message4);
+            return false;
+        }
+    }
+    if (val8> 252){
+        alert(message4);
+        return false;
+    }
+    var smdec,ipdec,val17,indx,n;
+    smdec = (val5 * 16777216) + (val6 * 65536) + (val7 * 256) + val8;
+    ipdec = (val1 * 16777216) + (val2 * 65536) + (val3 * 256) + val4;
+    for(indx = 31; indx >=0;indx--){
+        if(((smdec >> indx) & 1) == 0){
+           break;
+        }                        
+    }        
+    n = 31 - indx;    
+    var validIP = false;
+    for(indx = 31; indx > (31 - n);indx--){
+        if(((ipdec >> indx) & 1) == 1){
+           validIP = true;
+           break;
+        }                        
+    }        
+    if(validIP == false){
+        alert(message3);
+        return false;   
+    }    
+    if((ipdec & (~smdec)) == 0){   
+        alert(message3);
+        return false;
+    }
+    if((ipdec | smdec) == -1){   
+        alert(message3);
+        return false;
+    }
+    if (val1 < 127) {val17 = "A"}
+    if ((val1 > 127) && (val1 < 192)) {val17 = "B"}
+    if ((val1 > 191) && (val1 < 224)) {val17 = "C"} 
+    if ((val1 > 223) && (val1 < 240)) {val17 = "D"}
+    if ((val1 > 239) && (val1 < 256)) {val17 = "E"}     
+    if (val17 == "D"){
+        alert(message13); 
+        return false;
+    }
+    if (val17 == "E"){
+        alert(message14); 
+        return false;
+    }    
+    if(gway.length > 0){
+        c = -1;   
+        for (i = 0; i < gway.length; i++){   
+            if (gway.charAt(i) == ".")  
+                dotpos[++c] = i + 1;
+        }         
+        val1 = parseInt(gway.substring(0,dotpos[0]),10);
+        val2 = parseInt(gway.substring(dotpos[0],dotpos[1]),10);
+        val3 = parseInt(gway.substring(dotpos[1],dotpos[2]),10);
+        val4 = parseInt(gway.substring(dotpos[2],gway.length),10);
+        if (val1 == 127){
+            alert(message8);
+            return false;
+        } 
+        if (val1 == 0){
+            alert(message9);
+            return false;
+         }         
+        if ((val1 > 255) || (val2 > 255) || (val3 > 255) || (val4 > 255)){
+            alert(message1); 
+            return false;
+        }      
+        if(val1 > 223){
+            alert("First octet of Gateway address should have a value between 1 and 223.");
+            return false;
+        }
+    }
+    return true;
+}
+function OnClickSave(){    
+	if(formvalidate(GetCurrentIPConfiguration())){
+		var Updateurl = "func=" + Func.ConfigurationIPSetupPostDatahandler  + "cmd=" + Command.REQ_NONE   +"?param=IPAddress:";
+		Updateurl += UseID("IPAddress").value;
+		Updateurl += "&SubnetMask:";
+		Updateurl += UseID("SubnetMask").value;
+		Updateurl += "&GateWay:";
+		if(UseID("GateWay").value.lenght != 0)
+			Updateurl += UseID("GateWay").value;
+		else{
+			Updateurl += "0.0.0.0";
+			UseID("GateWay").value = " ";
+		}
+		Updateurl += "&ipconfig:";    
+		Updateurl += (GetCurrentIPConfiguration());
+		if (UseID("ShowFieldbus").style.visibility == "visible"){		    
+		    if (UseID("ShowPBIP").style.display == "inline"){		        
+				Updateurl += "&PFAddress:";
+				Updateurl += UseID("PFAddress").value;
+			}
+		    else {		        
+				Updateurl += "&FBIPAddress:";
+				Updateurl += UseID("FBIPAddress").value;
+				Updateurl += "&FBSubnetMask:";
+				Updateurl += UseID("FBSubnetMask").value;
+				Updateurl += "&FBGateWay:";
+				if (UseID("FBGateWay").value.length != 0)
+				    Updateurl += UseID("FBGateWay").value;
+				else{
+					Updateurl += "0.0.0.0";
+					UseID("FBGateWay").value = " ";
+				}
+				Updateurl += "&FBipconfig:";
+				Updateurl += (GetCurrentIPConfiguration("FB"));
+			}
+		}
+		Updateurl += SendCookies();
+		http.open("POST", Updateurl, true);      
+		http.onreadystatechange = HandleUpdateResponse;
+		http.send(null);
+	}
+}
+function OnClickCancel(){  
+    pageRefresh = true;
+    SubmitForm('IPSetup.html');
+}
+function SubmitForm(hrefpage){
+    if(pageRefresh == false){
+        var ret;
+        if(IsFormModified(document.main_form))
+        {
+            ret = confirm(formChangeMessage);
+			if (ret == true){
+				PageRefTo = hrefpage;
+				OnClickSave();
+				return;
+			}
+        }
+    }
+    if(hrefpage == "index.html")
+        location.href = hrefpage;
+    else{
+        SubmitCookies(hrefpage);
+        document.temp_form.submit();    
+    }	
+} 
+jQuery(function(){
+	UseID('header').innerHTML = MainHeader;
+	SetTabAttribute(3,3);
+	jQuery('ul.sf-menu').superfish();
+});
+</script>
+</head>
+<body onload='IPSetupOnLoad()'>
+<form name="temp_form" method="post" action="IPSetup.html">
+<input type="hidden" name="lang" id="lang"  />
+<input type="hidden" name="usrid" id="usrid"  />
+<input type="hidden" name="passcode" id="passcode"  />
+	<input type="hidden" name="uniqueid" id="uniqueid" />	
+</form>
+<form action="" name="main_form">
+<div id="wrapper">
+  <div id="header"></div>
+  <div id="PageHeader"></div>
+  <div id="content">
+  <table>
+  <tr>
+  <td>
+   	<div class="contentBoxWrapper" id="ShowIP">
+    	<div class="contentBoxHeader">IP Setup</div>
+    	<div class="IPgradientBox">
+			<div class="checkbox">
+			<input name="ipconfig" type="radio"  id="ipconfig_2" onclick="OnIpConfigurationChange(iponfigStatic,'')"/></div>
+			<div class="textLabelBigLeft">Static IP</div>
+		    <div class="clearit"></div>
+			<div class="textLabelBigRight">IP Address</div>
+            <input type="text" class="textInput" id='IPAddress' />
+            <div class="clearit"></div>
+			<div class="textLabelBigRight">Subnet Mask</div>
+            <input type="text" class="textInput" id='SubnetMask'/>
+            <div class="clearit"></div>
+			<div class="textLabelBigRight">Gateway</div>
+            <input type="text" class="textInput" id='GateWay'/>
+            <div class="clearit"></div>     
+			<div class="textLabelBigRight">MAC Address</div>
+            <div class="textLabelBigCenter" id='MAC'>FF-FF-FF-FF-FF-FF</div>
+            <div class="clearit"></div>
+			<div class="checkboxCenter">
+            <input type="checkbox" id ="dhcpserver" onclick="OnIpConfigurationChange(ipconfigDhcpServer,'')"/></div>
+ 			<div class="textLabelBigLeft">DHCP Server Enabled</div>
+            <div class="clearit"></div>
+			<div class="checkbox">
+            <input name="ipconfig" type="radio"  id ="ipconfig_1"  onclick="OnIpConfigurationChange(ipconfigDhcpClient,'')"/></div>
+ 			<div class="textLabelBigLeft">DHCP Client</div>  
+			<div class="clearit"></div><br/>
+         </div>
+    </div>
+</td>
+<td>
+   	<div class="contentBoxWrapper" id="ShowFieldbus" style="visibility:hidden">
+    	<div class="contentBoxHeader">FIELDBUS</div>
+        <div class="IPgradientBox">
+			<div id="ShowPBIP" class="NoDisplay">
+				<div class="textLabelBigLeft">Profibus Address</div>
+				<input type="text" class="textInputS" id="PFAddress"/>
+				<div class="clearit"></div>
+			</div>
+			<div id="ShowFBIP" class="NoDisplay">
+				<div class="checkbox">
+				<input name="FBipconfig" type="radio"   id ="FBipconfig_2" onclick="OnIpConfigurationChange(iponfigStatic,'FB')"/></div>
+				<div class="textLabelBigLeft">Static IP</div>    
+				<div class="clearit"></div>
+				<div class="textLabelBigRight">IP Address</div>
+				<input type="text" class="textInput" id='FBIPAddress' />
+				<div class="clearit"></div>
+				<div class="textLabelBigRight">Subnet Mask</div>
+				<input type="text" class="textInput" id='FBSubnetMask'/>
+				<div class="clearit"></div>
+				<div class="textLabelBigRight">Gateway</div>
+				<input type="text" class="textInput" id='FBGateWay' />
+				<div class="clearit"></div>    
+				<div class="checkbox">
+				<input name="FBipconfig" type="radio"  id ="FBipconfig_1"  onclick="OnIpConfigurationChange(ipconfigDhcpClient,'FB')"/></div>
+				<div class="textLabelBigLeft">DHCP Client</div>
+				<div class="clearit"></div>
+				<div class="checkbox">
+				<input name="FBipconfig" type="radio"  id ="FBipconfig_4"  onclick="OnIpConfigurationChange(ipconfigBOOTClient,'FB')"/></div>
+				<div class="textLabelBigLeft">BOOTP Client</div>
+				<div class="clearit"></div>
+			</div>
+         </div>
+    </div>
+</td>
+</tr>
+</table>
+    <div class="clearit"></div>
+    <div id="contentButtonBank">
+    	<input name="Save" type="button" class="button" value="Save" onclick="PageRefTo = null;OnClickSave();"/>
+    	<input name="Cancel" type="button" class="button" value="Cancel" onclick="OnClickCancel()"/>
+    	<input name="RestoreDefaults" type="button" class="button" value="Restore Defaults" onclick="RestoreIPSetup()"/>
+    </div>
+    </div>
+    <div class="clearit"></div>
+  <div id="footer"></div>
+</div>
+</form>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitStickyFooter();
+    });
+</script>
+</html>

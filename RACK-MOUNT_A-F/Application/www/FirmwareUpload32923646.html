@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<script language="javascript" type="text/javascript">
+var SupportedExtensionsArr = ["bin", "cyg", "cfg"];
+var MaxFileNameLen = 200;
+var uploadInProgress = false, uploadInitiated = false;
+var http = new XMLHttpRequest(); // We create the HTTP Object
+function HandleFileUploadInitiateCommand() {
+    if (http.readyState == 4) {
+    	//CheckSession(http.responseText);
+        if (http.responseText == "READY") {
+            SendFileUploadStartCommand();
+        }
+        else {
+            document.getElementById("btnupload").disabled = false;
+            uploadInitiated = false;
+            alert("File upload not initiated");
+        }
+    }
+}
+
+function SendFileUploadInitiateCommand() {
+    if (uploadInitiated == true)
+        return;
+    var indx;
+    var extMatched = false;
+    if (document.getElementById("file").value == "") {
+        alert("Please select a file to upload");
+        return;
+    }    
+    var fileExt = document.getElementById("file").value.split(".");
+    var ext = fileExt[fileExt.length - 1];
+    try {
+        for (indx = 0; indx < SupportedExtensionsArr.length; indx++) {
+            if (SupportedExtensionsArr[indx] == ext) {
+                extMatched = true;
+                break;
+            }
+        }
+    }
+    catch (err) { };
+
+    if (extMatched) {
+        var fileLen = document.getElementById("file").value;
+        if (fileLen.length >= MaxFileNameLen)
+            alert("FileName including path should be less than 200 characters");
+        else {
+            uploadInitiated = true;
+            document.getElementById("btnupload").disabled = true;
+            var SystemInfoUrl = "func=0"  + "cmd=0"  + "?param=.dcxfileupload";
+
+            SystemInfoUrl += ("&lang=0" + "&usrid=BRANSON" + "&passcode=32923646");
+            http.open("POST", SystemInfoUrl, true);
+            http.onreadystatechange = HandleFileUploadInitiateCommand;
+            http.send(null);
+        }
+    }
+    else
+        alert("Only bin and cyg file is supported");
+}
+
+function SendFileUploadStartCommand() {
+    if (uploadInProgress == true)
+        return;
+    uploadInProgress = true;
+    document.getElementById("btnupload").disabled = true;
+    fileLen = document.getElementById("file").value.split("\\");
+    document.getElementById("file_upload_form").action = fileLen[fileLen.length - 1];
+    document.getElementById("file_upload_form").submit();
+}
+</script>
+<div class = "PageHeader"> Firmware Upload </div>
+
+ <div class="contentBoxCenter" >
+  <div class="gradientBox400"> 
+	<form id="file_upload_form" method="post" enctype="multipart/form-data" action="temp">
+	<input name="file" id="file" size="30" type="file" /><br />
+	<br />
+	<input type="button" name="submitbutton" id="btnupload" value="Upload" onclick="SendFileUploadInitiateCommand()" /><br />
+	</form>
+</div></div>
+ </BODY>
+ </HTML>

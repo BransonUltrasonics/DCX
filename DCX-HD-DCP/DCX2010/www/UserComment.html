@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<script language="javascript"  type="text/javascript">
+function SendFileDownloadCommand()
+{	
+	var UserComment;
+	if (window.opener.parenttype == "PS")
+	{
+		document.form_UserComment.action = "SendBackCSVGraphDataPS";
+		UserComment = "Weld Data\n" + document.getElementById("ChildUserComment").value;
+	}
+	else
+	{
+		document.form_UserComment.action = "SendBackCSVGraphDataHS";
+		UserComment = "Scan Data\n" + document.getElementById("ChildUserComment").value;
+	}
+	document.getElementById("tempdata").value = UserComment + window.opener.document.getElementById("tempdata").value;
+	document.form_UserComment.submit();
+	window.close();
+}
+</script>
+
+<body onload= "document.getElementById('ChildUserComment').focus();">
+<form name="form_UserComment" method="post" enctype="multipart/form-data" target = "_blank" action="SendBackCSVGraphData">
+<input type="hidden" name="UserComment:," id="tempdata" value=""  />
+</form>
+<div class='textLabel' style='padding-left:10px'>User Comment</div>
+<input name='' class='textInput' id = 'ChildUserComment' style='width:380px' />
+<input name='Submit' style='position:absolute; left:170px; top:70px' type='button' class='button' value='Submit' onclick='SendFileDownloadCommand()'/>
+</body>
+</html>

@@ -1,0 +1,393 @@
+/*
+$Header:   D:/databases/VMdb/archives/DCX/Weld Controller/WC/Application/Version.h_v   1.82.1.5.1.8   Apr 18 2017 16:43:30   EGUAJARDO  $
+*/
+/****************************************************************************/
+/*                                                                          */
+/*                                                                          */
+/*      Copyright (c) Branson Ultrasonics Corporation, 1995,96, 2009        */
+/*     This program is the property of Branson Ultrasonics Corporation      */
+/*   Copying of this software is expressly forbidden, without the prior     */
+/*   written consent of Branson Ultrasonics Corporation.                    */
+/*                                                                          */
+/*                                                                          */
+/*                                                                          */
+/*************************                         **************************/
+/*****************************************************************************
+$Log:   D:/databases/VMdb/archives/DCX/Weld Controller/WC/Application/Version.h_v  $
+ * 
+ *    Rev 1.82.1.5.1.8   Apr 18 2017 16:43:30   EGUAJARDO
+ * Updated version to 6.6.3.
+ * 
+ *    Rev 1.82.1.5.1.7   Mar 06 2017 16:29:00   EGUAJARDO
+ * Updated version from 6.6.3A to 6.6.3B.
+ * 
+ *    Rev 1.82.1.5.1.6   Feb 09 2017 09:06:58   EGUAJARDO
+ * Updated version to 6.6.3A.
+ * 
+ *    Rev 1.82.1.5.1.5   28 Sep 2016 14:17:46   hasanchez
+ * Updated software Version to 6.6.3S
+ * 
+ *    Rev 1.82.1.5.1.4   26 Sep 2016 15:32:56   hasanchez
+ * Updated softwar version to V6.6.3S C
+ * 
+ *    Rev 1.82.1.5.1.3   19 Sep 2016 12:33:36   hasanchez
+ * Software version updated to 6.6.3.S B
+ * 
+ *    Rev 1.82.1.5.1.2   02 Sep 2016 11:59:46   EGUAJARDO
+ * Updated software version to 6.6.3S A.
+ * 
+ *    Rev 1.82.1.5.1.1   Sep 03 2015 15:23:04   Builder
+ * Version string changed to 6.6.2
+ * 
+ *    Rev 1.82.1.5.1.0   31 Jul 2015 14:04:58   BKymer
+ * Change version to 6.6.2 Beta for Rychiger
+ * 
+ *    Rev 1.82.1.5   30 Jul 2015 08:12:42   RJamloki
+ * Version string changed to 6.6.2D
+ * 
+ *    Rev 1.82.1.4   29 Jul 2015 07:55:12   RJamloki
+ * version changed to 6.6.2C
+ * 
+ *    Rev 1.82.1.3   27 Jun 2015 11:16:34   gbutron
+ * Changed version to 6.6.2
+ * 
+ *    Rev 1.82.1.2   07 May 2015 13:49:34   gbutron
+ * Version changed to 6.6.1
+ * 
+ *    Rev 1.82.1.1   04 Mar 2015 08:23:00   amaurya
+ * Logging event on communication failure
+ * 
+ *    Rev 1.82.1.0   23 Jan 2015 15:14:14   ygupta
+ * Ver6.5U where increased the number of modbus retries and decreased the wait time.
+ * 
+ *    Rev 1.82   Sep 08 2014 10:04:44   Builder
+ * Version string changed to V6.5
+ * 
+ *    Rev 1.81   25 Aug 2014 10:12:32   amaurya
+ * Changed Version label to 6.5B
+ * 
+ *    Rev 1.80   08 Aug 2014 11:26:02   rjamloki
+ * Changed version label to Ver 6.5A
+ * 
+ *    Rev 1.79   Apr 28 2014 13:42:08   builder
+ * Change version to 6.4 for official release build
+ * 
+ *    Rev 1.78   16 Apr 2014 10:45:26   amaurya
+ * Changed to make Diagnostic-UserIO page accessible when system is in error state.
+ * 
+ *    Rev 1.77   24 Mar 2014 14:11:48   rjamloki
+ * Version 6.4 E. Service Event Data fix, Setting Memory Offset to 
+ * 
+ *    Rev 1.76   21 Mar 2014 09:27:14   rjamloki
+ * Tracker issue fixes.
+ * 
+ *    Rev 1.75   13 Mar 2014 15:55:14   rjamloki
+ * FRAM is accessed through pointers. Removed compiler allocation of FRAM
+ * 
+ *    Rev 1.74   06 Mar 2014 07:29:44   rjamloki
+ * Changes for DCP preset update.
+ * 
+ *    Rev 1.73   04 Mar 2014 07:49:26   rjamloki
+ * Added Software Upgrade, Digital Tune and Memory Offset.
+ * 
+ *    Rev 1.72   Dec 13 2013 11:13:08   builder
+ * Change version to 6.0 for official build 100-266-359
+ * 
+ *    Rev 1.71   13 Dec 2013 03:39:08   rjamloki
+ * Version change for the build to be sent to ODVA Lab.
+ * 
+ *    Rev 1.70   13 Dec 2013 03:08:10   rjamloki
+ * In ethernet IP warm start parameters, Connection size is set to 480 again and variable connection size in range 0 to 480 is allowed.
+ * 
+ *    Rev 1.69   13 Dec 2013 01:52:22   rjamloki
+ * Forward Open Connection Size fix from 480 to 128.
+ * 
+ *    Rev 1.68   11 Dec 2013 03:32:04   rjamloki
+ * Power Default set to 4000, Ethernet Link debouncing disabled by default.
+ * 
+ *    Rev 1.67   11 Dec 2013 02:30:06   rjamloki
+ * Setting default Advance R and D parameters on FRAM init.
+ * 
+ *    Rev 1.66   06 Dec 2013 09:40:38   rjamloki
+ * S and V loop constants incorporated.
+ * 
+ *    Rev 1.65   Dec 03 2013 11:27:54   builder
+ * Changed version string for ODVA testing. Went from 7.A to 6.0A
+ * 
+ *    Rev 1.64   02 Dec 2013 07:34:18   rjamloki
+ * Changes for EthIP Conformance Test.
+ * 
+ *    Rev 1.63   20 Nov 2013 06:06:06   rjamloki
+ * Profibus default address changed. Watchdog default timeout changed.
+ * 
+ *    Rev 1.62   15 Nov 2013 05:53:58   rjamloki
+ * Export log fixes, Preready clearing the web command for statemachine, set up alarm implemented for invalid preset.
+ * 
+ *    Rev 1.61   14 Nov 2013 09:55:14   rjamloki
+ * Tracker issue fixes.
+ * 
+ *    Rev 1.60   08 Nov 2013 09:03:10   rjamloki
+ * LCD coldstart fix. removed powerup counter, Alarm log export data header fix.
+ * 
+ *    Rev 1.59   06 Nov 2013 08:48:40   ygupta
+ * Sending Freq Offset to DCP on Prset Update state.
+ * 
+ *    Rev 1.58   06 Nov 2013 07:02:36   rjamloki
+ * Disabled link up/down event, Fieldbus event, fixed tracker issue.
+ * 
+ *    Rev 1.57   06 Nov 2013 06:20:32   rjamloki
+ * Going to preready on user input configuration change to prevent sonics.
+ * 
+ *    Rev 1.56   06 Nov 2013 05:04:32   rjamloki
+ * LCD Program Verify Debug.
+ * 
+ *    Rev 1.55   06 Nov 2013 02:49:46   rjamloki
+ * Added LCD Flash verification.
+ * 
+ *    Rev 1.54   25 Oct 2013 11:59:16   ygupta
+ * Disabled Nagle Algo on http connection, Added JSONStopDCX Data service, Tracker fixes, FinalData State renamed to CycleAbort State.
+ * 
+ *    Rev 1.53   15 Oct 2013 07:42:12   rjamloki
+ * Tracker Fix, JSON Fix, Link Status debouncing configurable from Adv R&D page.
+ * 
+ *    Rev 1.52   11 Oct 2013 04:11:30   rjamloki
+ * DPRAM wait states changed to 20. Critical section removed from watchdog feed.
+ * 
+ *    Rev 1.51   08 Oct 2013 07:52:26   rjamloki
+ * DPRAM wait state changes after power up.
+ * 
+ *    Rev 1.50   08 Oct 2013 06:17:28   rjamloki
+ * Fixed warnings.
+ * 
+ *    Rev 1.49   03 Oct 2013 07:19:24   rjamloki
+ * Remote Debounce
+ * 
+ *    Rev 1.48   03 Oct 2013 06:34:16   rjamloki
+ * BDM Fixes
+ * 
+ *    Rev 1.47   03 Oct 2013 04:26:34   rjamloki
+ * Watchdog related Changes
+ * 
+ *    Rev 1.46   01 Oct 2013 03:16:36   ygupta
+ * Change for fieldbus version.
+ * 
+ *    Rev 1.45   24 Sep 2013 06:28:42   rjamloki
+ * Watch dog removed.
+ * 
+ *    Rev 1.44   24 Sep 2013 04:37:30   rjamloki
+ * Added Criticalsection to watchdog.
+ * 
+ *    Rev 1.43   20 Sep 2013 07:00:14   rjamloki
+ * Added changes to build bootloader with same CyGOS.
+ * 
+ *    Rev 1.42   17 Sep 2013 04:14:02   rjamloki
+ * Added Task Manager again and reduced time for WatchDogTimer.
+ * 
+ *    Rev 1.41   14 Sep 2013 07:30:38   rjamloki
+ * WatchDog Cant be disabled.
+ * 
+ *    Rev 1.39   10 Sep 2013 03:46:38   ygupta
+ * WC revision 6.A.
+ * 
+ *    Rev 1.38   04 Sep 2013 13:11:44   rjamloki
+ * Removed Test Offset
+ * 
+ *    Rev 1.37   03 Sep 2013 18:13:52   ygupta
+ * Moved to tip from 1.35.1.30.1.4
+ * 
+ *    Rev 1.35.1.30.1.4   03 Sep 2013 11:14:08   amaurya
+ * Tracker fixes and Synchronization fixes for User Outputs.
+ * 
+ *    Rev 1.35.1.30.1.3   30 Aug 2013 15:01:36   amaurya
+ * Fixed tracker issue 521,525,526,527,529,531.
+ * 
+ *    Rev 1.35.1.30.1.2   28 Aug 2013 12:07:12   amaurya
+ * Fixed tracker issue along Restore Default of Advanced Diagnostics.
+ * 
+ *    Rev 1.35.1.30.1.1   27 Aug 2013 01:46:48   amaurya
+ * Fixed issue of load preset at start and tracker issue.
+ * 
+ *    Rev 1.35.1.30.1.0   24 Aug 2013 17:14:14   amaurya
+ * Code review and tracker issue fixes.
+ * 
+ *    Rev 1.35.1.30   02 Aug 2013 10:55:48   amaurya
+ * Coverty fixes.
+ * 
+ *    Rev 1.35.1.27   10 Jul 2013 07:52:24   amaurya
+ * Fixed powerup DCP Event Log issue.
+ * 
+ *    Rev 1.35.1.26   08 Jul 2013 08:56:14   amaurya
+ * Fixed tracker issue for Ver3.0y.
+ * 
+ *    Rev 1.35.1.24   27 Jun 2013 05:57:30   amaurya
+ * System crash fixes.
+ * 
+ *    Rev 1.35.1.23   14 Jun 2013 16:33:24   ygupta
+ * Added Overload Generic if Overload reason is Zero.
+ * 
+ *    Rev 1.35.1.22   14 Jun 2013 11:21:10   amaurya
+ * MH1 Round fixes
+ * 
+ *    Rev 1.35.1.21   12 Jun 2013 09:40:48   rjamloki
+ * Scan Algo fixes.
+ * 
+ *    Rev 1.35.1.20   11 Jun 2013 09:52:14   amaurya
+ * MH round I testing fixes.
+ * 
+ *    Rev 1.35.1.19   07 Jun 2013 10:19:46   amaurya
+ * MH testing round I fixes.
+ * 
+ *    Rev 1.35.1.18   05 Jun 2013 03:12:10   amaurya
+ * Fixed Passcode and Limits issue.
+ * 
+ *    Rev 1.35.1.17   03 Jun 2013 08:46:38   amaurya
+ * Fixed Sort by Date/Time on History page and reset overload after horn disconnect.
+ * 
+ *    Rev 1.35.1.15   28 May 2013 07:44:18   amaurya
+ * Fixed issues of Level II testing.
+ * 
+ *    Rev 1.35.1.14   24 May 2013 10:17:10   ygupta
+ * Fixed Tracker Issue.
+ * 
+ *    Rev 1.35.1.13   22 May 2013 10:41:40   ygupta
+ * Fixes for Disable Stepping in while in after burst, energy braking and scrub time.
+ * 
+ *    Rev 1.35.1.12   21 May 2013 12:26:02   amaurya
+ * Code review fixes.
+ * 
+ *    Rev 1.35.1.10   07 May 2013 10:15:02   amaurya
+ * Code review fixed.
+ * 
+ *    Rev 1.35.1.9   06 May 2013 09:21:08   amaurya
+ * Changes to use actual frequency.
+ * 
+ *    Rev 1.35.1.8   30 Apr 2013 11:22:34   amaurya
+ * Changes related to State machine optimization.
+ * 
+ *    Rev 1.35.1.7   26 Apr 2013 11:03:54   amaurya
+ * Fixed traker issue for Ver2.0U.
+ * 
+ *    Rev 1.35.1.6   23 Apr 2013 10:25:02   ygupta
+ * Fixed issue of System Test page on website.
+ * 
+ *    Rev 1.35.1.5   22 Apr 2013 11:33:30   amaurya
+ * Fixed tracker issue of Ver2.0S
+ * 
+ *    Rev 1.35.1.4   16 Apr 2013 11:17:34   amaurya
+ * Fixed tracker issues in Ver2.0R
+ * 
+ *    Rev 1.35.1.3   10 Apr 2013 10:32:26   ygupta
+ * Added and fixed EQ Alarm generation
+ * 
+ *    Rev 1.35.1.2   08 Apr 2013 08:25:44   amaurya
+ * Fixed Tracker issue of Ver2.0P.
+ * 
+ *    Rev 1.35.1.1   22 Mar 2013 07:34:56   ygupta
+ * Alarm String Corrected
+ * 
+ *    Rev 1.35.1.0   20 Mar 2013 09:39:42   ygupta
+ * RF Switch Changes, Requirement Changes
+ * 
+ *    Rev 1.36   20 Mar 2013 08:19:38   ygupta
+ * RF Switch Changes, Requirement Changes
+ * 
+ *    Rev 1.35   15 Mar 2013 10:54:28   ygupta
+ * Issues Resolved, Requirement Changes
+ * 
+ *    Rev 1.34   11 Mar 2013 02:31:14   ygupta
+ * Issues Fixed & Requirement Changes
+ * 
+ *    Rev 1.33   18 Feb 2013 03:12:26   ygupta
+ * FieldBus Changes
+ * 
+ *    Rev 1.32   29 Jan 2013 02:25:50   ygupta
+ * WebPages CleanUp, Code Review and CleanUp
+ * 
+ *    Rev 1.31   23 Jan 2013 06:57:46   ygupta
+ * Profibus weld result bug fixed
+ * 
+ *    Rev 1.30   22 Jan 2013 10:38:36   ygupta
+ * Profibus Bug Fixes
+ * 
+ *    Rev 1.29   17 Jan 2013 07:27:00   ygupta
+ * Profibus Related changes
+ * 
+ *    Rev 1.28   16 Jan 2013 06:30:40   ygupta
+ * Level2 Code with Profibus
+ * 
+ *    Rev 1.27   11 Jan 2013 02:55:42   ygupta
+ * Level2 Requirement Changes
+ * 
+ *    Rev 1.26   11 Jan 2013 01:51:38   ygupta
+ * Stroke length and Amplitude Default Changed
+ * 
+ *    Rev 1.25   03 Jan 2013 07:19:44   ygupta
+ * Modbus Comm problem Resolved
+ * 
+ *    Rev 1.24   28 Dec 2012 10:11:08   ygupta
+ * RTC bug fix
+ * 
+ *    Rev 1.23   27 Dec 2012 06:46:24   ygupta
+ * Changes to fix Issues
+ * 
+ *    Rev 1.22   18 Dec 2012 07:39:36   ygupta
+ * Changes for Multiple Overload alarm in case of 15V lost
+ * 
+ *    Rev 1.20   17 Dec 2012 02:19:38   ygupta
+ * Level 2 passwords and Alarm(WC to DCP Comm) chnged
+ * 
+ *    Rev 1.19   14 Dec 2012 05:29:42   ygupta
+ * Alarms Implemented
+ * 
+ *    Rev 1.18   13 Dec 2012 00:13:54   ygupta
+ * Changes related to Issues
+ * 
+ *    Rev 1.17   29 Nov 2012 08:49:16   rjamloki
+ * Scan Changes and Coverty issues Resolved
+ * 
+ *    Rev 1.15   09 Nov 2012 00:36:22   rjamloki
+ * State Machine and website changes
+ * 
+ *    Rev 1.14   08 Nov 2012 01:22:18   rjamloki
+ * Website changes
+ * 
+ *    Rev 1.13   05 Nov 2012 09:00:16   amaurya
+ * State Machine changes
+ * 
+ *    Rev 1.12   29 Oct 2012 02:57:30   rjamloki
+ * Printfs disbaled and changes in website
+ * 
+ *    Rev 1.11   26 Oct 2012 02:41:30   rjamloki
+ * Website Related files Added
+ * 
+ *    Rev 1.8   11 Sep 2012 10:12:32   rjamloki
+ * User IO update and clean up
+ * 
+ *    Rev 1.7   10 Sep 2012 03:13:42   rjamloki
+ * Modbus changed implementation with unions and code cleanup
+ * 
+ *    Rev 1.6   29 Aug 2012 13:28:12   rjamloki
+ * WC Modbus checkin and related changes
+ * 
+ *    Rev 1.5   05 Jul 2012 04:48:32   ygupta
+ * Cleanup after review summary on database and BSP.
+ * 
+ *    Rev 1.4   02 Jul 2012 13:04:14   ygupta
+ * Code cleanup for meeting coding standard. and updates after review. All varibles name in upper case. 
+ * 
+ *    Rev 1.3   29 Jun 2012 12:16:56   ygupta
+ * First Compilable code, First check in after review, Needs more clanup
+ * 
+ *    Rev 1.2   21 Jun 2012 12:35:42   ygupta
+ * Ver1.0B. Version doesn't compile
+ * 
+ *    Rev 1.1   20 Jun 2012 10:31:24   ygupta
+ * Initial version Ver1.0A. Need to fix compilation issue.
+ *
+ */
+
+#include "portable.h"
+#include "DEF_DEF.h"
+
+//Current Version string of WC
+const SINT8 SWVersionLabel[SWVERSION_LEN] = "6.6.4";

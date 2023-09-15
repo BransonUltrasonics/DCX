@@ -1,0 +1,837 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+	<link rel="stylesheet" type="text/css" href="superfishDCXAFRackMt-v1.css" media="screen" />
+	<script type="text/javascript" src="jqueryDCXAFRackMt-v1.js"></script>
+	<script type="text/javascript" src="hoverIntentDCXAFRackMt-v1.js"></script>
+	<script type="text/javascript" src="superfishDCXAFRackMt-v1.js"></script>
+	<script type="text/javascript" language="javascript" src="handlerDCXAFRackMt-v1.js"></script> 
+	<script type="text/javascript"></script>
+	<script type="text/JavaScript" language="javascript" src="formchange-detectDCXAFRackMt-v1.js"></script>
+	<title>BRANSON DCX GUI</title>
+	<link href="styleDCXAFRackMt-v1.css" rel="stylesheet" type="text/css" />
+	<!--[if IE]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
+</head>
+<script language="javascript"  type="text/javascript">
+var parenttype = "HS", DataSize = 2002, DefaultDataSize = 2002, FrequencyStep = 1, HSPresetData = "", w, DataLength;
+var Phase = new Array(), Current = new Array(), Amplitude = new Array(), Frequency = new Array(), ResFreqArr = new Array(), ResFreqType = new Array();
+var http = getHTTPObject();
+XPad = 75;
+var UserComment, datastate = 1, ScanStartTimeOut = 6, ScanPollTimeOut = 2, ScanAbortTimeOut = 6, timerid = 0, state = 0;
+var missedCount = 0, missedCountMax = 20, MaxAdcRawVal = 2047, msCount, ReqCmd = 0, MainFrequency;
+var SCAN_START = 1, WAIT_SCAN_START = 2, SCAN_POLL = 3, WAIT_SCAN_POLL = 4, SCAN_POLL_TIMEOUT = 5, SCAN_ABORT = 6, WAIT_SCAN_ABORT = 7;
+var graph, c, xPadding, yPadding, y1Paddin, MaxX, MaxY, MinY, DiffCurrent, DiffFrequency, DiffPower, DiffAmplitude;
+var DiffPhase, graphheight, graphwidth, reverseScan = false,StartFrequency, EndFrequency;
+function TimerCallBack() {
+    switch (state) {
+        case SCAN_START:
+            msCount = ScanStartTimeOut;
+            state = WAIT_SCAN_START;
+            break;
+        case WAIT_SCAN_START:
+            if (--msCount <= 0) {
+                state = 0;
+                missedCount = 0;
+                TimeOutAlertScan("Scan Start Command Not responded");
+            }
+            break;
+        case SCAN_POLL:
+            SendScanPollCommand();
+            mscount = ScanPollTimeOut;
+            state = WAIT_SCAN_POLL;
+            break;
+        case WAIT_SCAN_POLL:
+            if (--msCount <= 0) {
+                missedCount++;
+                if (missedCount >= missedCountMax) {
+                    TimeOutAlertScan("Scan Poll Command Not responded");
+                    missedCount = 0;
+                    state = 0;
+                }
+                else
+                    state = SCAN_POLL;
+            }
+            break;
+        case SCAN_POLL_TIMEOUT:
+            if (--msCount <= 0) {
+                state = SCAN_POLL;
+            }
+            break;
+        case SCAN_ABORT:
+            msCount = ScanAbortTimeOut;
+            state = WAIT_SCAN_ABORT;
+            break;
+        case WAIT_SCAN_ABORT:
+            if (--msCount <= 0) {
+                state = 0;
+                missedCount = 0;
+                TimeOutAlertScan("Scan Abort Command Not responded");
+            }
+            break;
+    }
+}
+function ResetScanControlsToDefaults() {
+    if (timerid) {
+        clearInterval(timerid);
+        timerid = 0;
+    }
+    UseID('StartHS').disabled = false;
+    UseID('AbortHS').disabled = false;
+    var scnProgrs = UseID('HSProgress');
+    scnProgrs.style.width = parseInt(0) + 'px';
+}
+function handleScanResponse() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+        if (http.responseText == "AUTOMODE") {
+            if (timerid) {
+                clearInterval(timerid);
+                timerid = 0;
+            }
+            state = 0;
+            missedCount = 0;
+            UseID('AbortHS').disabled = false;
+            UseID('StartHS').disabled = false;
+            alert("System is in auto mode");
+        }
+		else{
+			var results = http.responseText.split("@");
+			var UserType = results[0].split("/");
+			SetUserType(UserType[0]);
+			SetToken(UserType[1],0);
+			SetSystemType(UserType[2]);
+			var res = results[1].split(":");
+			if (res[0] == "SYSTEMBUSY") {
+				state = 0;
+				missedCount = 0;
+				TimeOutAlertScan("Sytem is either busy or in error state");
+			}
+			else if (res[0] == "SCANSTARTED") {
+				state = SCAN_POLL;
+				missedCount = 0;
+				OffAllLedsScan();
+				ResetFrequencyValues();
+				UseID('AbortHS').disabled = false;
+				UpdateScanResult("INPROGRESS", "");
+			}
+			else if (res[0] == "SCANINPROGRESS") {
+				msCount = ScanPollTimeOut;
+				missedCount = 0;
+				state = SCAN_POLL_TIMEOUT;
+				UpdateScanResult("INPROGRESS", res[1]);
+			}
+			else if (res[0] == "SCANCOMPLETED") {
+				missedCount = 0;
+				state = 0;
+				UpdateScanResult("DONE", res[1]);
+				datastate = 1;
+				GetScanData(); 					
+			}
+			else if (res[0] == "SCANABORTED") {
+				missedCount = 0;
+				state = 0;
+				UpdateScanResult("ABORTED", "");
+			}
+			else if (res[0] == "SCANFAILED") {
+				missedCount = 0;
+				state = 0;
+				UpdateScanResult("FAILED", "");
+				datastate = 1;
+				GetScanData(); 					
+			}
+		}
+	}
+}
+function ResetFrequencyValues() {
+    for (var indx = 0; indx < 3; indx++) {
+        UseID("sfreq" + indx).innerHTML = "&nbsp";
+        UseID("pfreq" + indx).innerHTML = "&nbsp";
+    }
+}
+function TimeOutAlertScan(msg) {
+    if (timerid) {
+        clearInterval(timerid);
+        timerid = 0;
+    }
+    alert(msg);
+    ResetScanControlsToDefaults();
+    state = 0;
+}
+function OffAllLedsScan() {
+    UseID('imgScanDone').src = "greyDot.gif";
+    UseID('imgScanFailed').src = "greyDot.gif";
+    UseID('imgScanAborted').src = "greyDot.gif";
+}
+function SetLedStatus(ID, status) {
+    if (status == "ON")
+        UseID(ID).src = (ID == "imgScanFailed") ? "redDot.gif" : "greenDot.gif";
+    else if (status == "OFF")
+        UseID(ID).src = "greyDot.gif"
+}
+function OnStartScan() {
+    ReqCmd = 0;
+    if (w)
+        if (!w.closed) w.window.close();
+    if (state == SCAN_START)
+        return;
+    if (!timerid)
+        timerid = setInterval("TimerCallBack()", 500);
+    var postUrl;
+    UseID('StartHS').disabled = true;
+    UseID('AbortHS').disabled = true;
+    ResetFrequencyValues();
+    postUrl = "func=" + Func.ProcessScanCommand + "cmd=" + Command.REQ_SCAN_START + "?param=";
+    state = SCAN_START;
+    postUrl += SendCookies();
+    http.open("POST", postUrl, true);
+    http.onreadystatechange = handleScanResponse;
+    http.send(null);
+}
+function SendScanPollCommand() {
+    var postUrl;
+    postUrl = "func=" + Func.ProcessScanCommand + "cmd=" + Command.REQ_SCAN_POLL + "?param=";
+    postUrl += SendCookies();
+    http.open("POST", postUrl, true);
+    http.onreadystatechange = handleScanResponse;
+    http.send(null);
+}
+function OnAbortScan() {
+    ReqCmd = 0;
+    if (w)
+        if (!w.closed) w.window.close();
+    if (state == SCAN_ABORT)
+        return;
+    if ((state >= SCAN_START) && (state <= SCAN_POLL_TIMEOUT)) {
+        postUrl = "func=" + Func.ProcessScanCommand + "cmd=" + Command.REQ_SCAN_ABORT + "?param=";
+        postUrl += SendCookies();
+        http.open("POST", postUrl, true);
+        http.onreadystatechange = handleScanResponse;
+        state = SCAN_ABORT;
+        http.send(null);
+    }
+}
+function UpdateScanResult(scanRes, resFreq) {
+    var indx;
+    if (scanRes == "DONE") {
+        ResetScanControlsToDefaults();
+        ResetFrequencyValues();
+        OffAllLedsScan();
+        SetLedStatus("imgScanDone", "ON");
+        UseID("HSProgress").style.width = parseInt(600) + 'px';
+        var freqs = resFreq.split(",");
+        var fNoS = 0, fNoP = 0;
+        for (indx = 0; indx < 12; indx += 2) {
+            if (freqs[indx] == "1") {
+                if (parseInt(freqs[indx + 1]) > 0) {
+                    UseID("sfreq" + fNoS).style.color = "Red";
+                    UseID("sfreq" + fNoS).innerHTML = freqs[indx + 1] + "HZ";
+                    fNoS++;
+                }
+            }
+            else if (freqs[indx] == "2") {
+                if (parseInt(freqs[indx + 1]) > 0) {
+                    if (fNoP == 0)
+                        UseID("pfreq" + fNoP).style.color = "Blue";
+                    else
+                        UseID("pfreq" + fNoP).style.color = "Red";
+                    UseID("pfreq" + fNoP).innerHTML = freqs[indx + 1] + "HZ";
+                    fNoP++;
+                }
+            }
+        }
+    }
+    else if (scanRes == "ABORTED") {
+        ResetScanControlsToDefaults();
+        SetLedStatus("imgScanAborted", "ON");
+        UseID("HSProgress").style.width = parseInt(0) + 'px';
+        ResetFrequencyValues();
+    }
+    else if (scanRes == "FAILED") {
+        ResetScanControlsToDefaults();
+        SetLedStatus("imgScanFailed", "ON");
+        UseID("HSProgress").style.width = parseInt(0) + 'px';
+        ResetFrequencyValues();
+    }
+    else if (scanRes == "INPROGRESS") {
+        var currWidth = parseInt(UseID("HSProgress").style.width);
+        if (currWidth >= 600)
+            currWidth = 0;
+        else
+            currWidth = (resFreq * 600) / 100;
+        UseID("HSProgress").style.width = (parseInt(currWidth) + 'px');
+    }
+}
+function GetScanData() {
+    if (UseID('StartHS').disabled == true)
+        return;    
+    if (w)
+        if (!w.closed) w.window.close();   
+    if (timerid) {
+        clearInterval(timerid);
+        timerid = 0;            
+    }
+    UseID("Level2Lbl").innerHTML = GDInfo;
+    EnableDiv();
+	var Commd = 0;
+    switch (datastate) {
+        case 1: Commd = Command.REQ_FREQUENCY_DATA; break;
+        case 2: Commd = Command.REQ_CURRENT_DATA; break;
+        case 3: Commd = Command.REQ_PHASE_DATA; break;
+        case 4: Commd = Command.REQ_AMPLITUDE_DATA; break;
+        case 5: Commd = Command.REQ_PRESET_DATA; break;
+        case 6: Commd = Command.REQ_RESFREQ; break;
+        default:
+            DefaultSetting();
+    }
+	if (Commd != 0){
+		var GetUri = "func=" + Func.DiagnosticHornSignatureGetDatahandler + "cmd=" + Commd + "?param=" + SendCookies();
+		http.open("POST", GetUri, true);
+		http.onreadystatechange = UpdateGraphData;
+		http.send(null);
+	}
+}
+function UpdateGraphData() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+        var i, j, results, results1;
+        if (http.responseText == "TOKENNOTAVAILABLE") {
+            SetToken(0,0);
+            alert(Notoken);
+            return;
+        }
+        else
+            SetToken(1,0);
+        if (http.responseText == "SCANINPROGRESS") {
+            DisableDiv();
+            alert("Already running a scan!! Try Later");
+            return;
+        }
+        results = http.responseText.split(",");
+        if (results[0] == "Frequency") {
+            for (i = 0; i < results.length; i++)
+                Frequency[i] = parseFloat(results[i]);
+            Frequency[DefaultDataSize] = Frequency[i - 1];
+        }
+        else if (results[0] == "Phase")
+            for (i = 0; i < results.length; i++)
+                Phase[i] = ((parseFloat(results[i]) * 180) / MaxAdcRawVal).toFixed(3);
+        else if (results[0] == "Current")
+            for (i = 0; i < results.length; i++)
+                Current[i] = ((parseFloat(results[i]) > 50) ? 50 : parseFloat(results[i]));
+        else if (results[0] == "Amplitude") {
+            for (i = 0; i < results.length; i++)
+                Amplitude[i] = ((parseFloat(results[i]) > 50) ? 50 :((parseFloat(results[i]) == 0)? 1 : parseFloat(results[i])));
+            DataLength = i - 1;
+        }
+        else if (results[0] == "PresetData") {
+        	HSPresetData = "";
+            Frequency[1] = parseInt(results[2]);
+            Frequency[DataLength] = parseInt(results[4]);
+            FrequencyStep = parseInt(results[6]);
+            UseID("StartFrequency:tt").value = Frequency[1];
+            UseID("EndFrequency:tt").value = Frequency[DataLength];
+            for (i = 1; i < results.length; i++)
+                HSPresetData += results[i] + ',';
+        }
+        else if (results[0] == "ResonFreq") {
+            for (i = 1; i < results.length; i++) {
+                results1 = results[i].split(":");
+                ResFreqArr[i - 1] = parseInt(results1[1]);
+                ResFreqType[i - 1] = results1[0];
+            }
+        }
+        datastate = datastate + 1;
+        GetScanData();
+    }
+}
+function handleDiagHSLoadResponse() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+        var i, j,results, GroupVal, SingleVal;
+        results = http.responseText.split("@");
+        var UserType = results[0].split("/");
+        SetUserType(UserType[0]);
+        SetToken(UserType[1],0);
+        SetSystemType(UserType[2]);
+        GroupVal = results[2].split(":");
+        if (GroupVal[0] == "PSFreqType") {
+            SingleVal = GroupVal[1].split(",");
+            Frequency[1] = parseInt(SingleVal[0]);
+            Frequency[DataLength] = parseInt(SingleVal[1]);
+            UseID("StartFrequency:tt").value = parseInt(SingleVal[0]);
+            UseID("EndFrequency:tt").value = parseInt(SingleVal[1]);
+        }
+        MaxAdcRawVal = parseInt(results[3], 10);            
+        GroupVal = results[4].split(":");
+        if (GroupVal[0] == "SCANCOMPLETED") 
+            UpdateScanResult("DONE", GroupVal[1]);
+        else if (GroupVal[0] == "SCANFAILED")
+            UpdateScanResult("FAILED", "");
+        else if (GroupVal[0] == "SCANABORTED") 
+            UpdateScanResult("ABORTED", "");
+        UseID("StartHS").disabled = false;
+        UseID("AbortHS").disabled = false;
+        DefaultSetting();
+    }
+    else if (http.readyState == 4)
+        EnableDiv();
+}
+function DiagnosticHSOnLoad() {
+    window.history.forward(1);
+    var postUrl = "func=" + Func.DiagnosticHornSignaturePostDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+    postUrl += SendCookies();
+    http.open("POST", postUrl, true);
+    http.onreadystatechange = handleDiagHSLoadResponse;
+    http.send(null);
+}
+function DisplayGraphValue() {
+    if (w)
+        if (!w.closed) w.window.close();
+    var value = parseFloat(UseID('XValue').value);
+    if (UseID('SelectedGraph').selectedIndex != 0) {
+        if (value >= parseFloat(Frequency[1]) && value < (parseFloat(Frequency[1]) + DefaultDataSize)) {
+            value = value - Frequency[1];
+            value = parseFloat(value / FrequencyStep) + 1
+            switch (UseID('SelectedGraph').selectedIndex) {
+                case 1: UseID('YValue').value = Phase[value];
+                    break;
+                case 2: UseID('YValue').value = Current[value];
+                    break;
+                case 3: UseID('YValue').value = Amplitude[value];
+                    break;
+            }
+        }
+        else
+            alert("Enter correct Frequency");
+    }
+    else
+        alert("Select Graph");
+}
+function DefaultSetting() {
+    if (w)
+        if (!w.closed) w.window.close();
+    UseID("Phase:cb").checked = true;
+    UseID("Current:cb").checked = true;
+    UseID("Amplitude:cb").checked = true;
+    UseID("StartFrequency:tt").value = Frequency[1];
+    UseID("EndFrequency:tt").value = Frequency[DataLength];
+    UseID("XValue").value = Frequency[1];
+    UseID("YValue").value = 0;
+    UseID('SelectedGraph').selectedIndex = 0;
+    missedCount = 0;
+    state = 0;
+    if (timerid) {
+        clearInterval(timerid);
+        timerid = 0;
+    }
+    DrawGraph();
+}
+function Difference(Diff){
+	return ((Diff > 0)? Diff: Diff * -1);
+}
+function RedrawGraph() {
+    if (w)
+        if (!w.closed) w.window.close();
+    var StartFrequency;
+    var EndFrequency;
+    if (Frequency[DataLength] < Frequency[1]){
+        reverseScan = true;
+        StartFrequency = parseFloat(UseID("EndFrequency:tt").value);
+        EndFrequency = parseFloat(UseID("StartFrequency:tt").value);
+    }
+    else {
+        StartFrequency = parseFloat(UseID("StartFrequency:tt").value);
+        EndFrequency = parseFloat(UseID("EndFrequency:tt").value);
+    }
+	if (reverseScan) {
+		if (StartFrequency < Frequency[DataLength])
+			StartFrequency = Frequency[DataLength];
+		UseID("EndFrequency:tt").value = StartFrequency - (StartFrequency % 10);
+		if (EndFrequency > Frequency[1])
+			EndFrequency = Frequency[1];
+		if ((EndFrequency % 10) != 0)
+			EndFrequency = EndFrequency + (10 - (EndFrequency % 10));
+		UseID("StartFrequency:tt").value = EndFrequency;
+	}
+	else {
+		if (StartFrequency < Frequency[1])
+			StartFrequency = Frequency[1];
+		if (Frequency[DataLength] < EndFrequency)
+			EndFrequency = Frequency[DataLength];
+		UseID("StartFrequency:tt").value = StartFrequency - (StartFrequency % 10);
+		if ((EndFrequency % 10) != 0)
+			EndFrequency = EndFrequency + (10 - (EndFrequency % 10));
+		UseID("EndFrequency:tt").value = EndFrequency;
+	}
+	if (Difference(EndFrequency - StartFrequency) >= 100)
+        DrawGraph();
+    else
+        alert("Minimum Frequency difference should be of 100 Hz");
+}
+
+function DrawGraph() {
+    UseID("Level2Lbl").innerHTML = BusyInfo;
+    DisableDiv();
+    graph = $('#graph');
+    c = graph[0].getContext('2d');
+    c.clearRect(0, 0, 900, 500);
+    datastate = 1;
+    c.strokeStyle = '#333';
+    c.font = '8pt arial';
+    c.textAlign = "center";
+    xPadding = 150;
+    yPadding = 40;
+    y1Padding = -50;
+    UseID("XValue").value = Frequency[1];
+    if (Frequency[DataLength] < Frequency[1]){
+        reverseScan = true;
+        StartFrequency = Frequency[1] - parseFloat(UseID("StartFrequency:tt").value);
+        EndFrequency = Frequency[1] - parseFloat(UseID("EndFrequency:tt").value);
+    }
+    else {
+        StartFrequency = parseFloat(UseID("StartFrequency:tt").value) - Frequency[1];
+        EndFrequency = parseFloat(UseID("EndFrequency:tt").value) - Frequency[1];
+    }
+    DataSize = EndFrequency - StartFrequency;
+    MaxX = EndFrequency - StartFrequency;
+    if ((MaxX % 10) != 0)
+        MaxX = MaxX - (MaxX % 10) + 10;
+    DiffFrequency = MaxX / 10;
+    MaxX = MaxX + DiffFrequency;
+    graphheight = graph.height();
+    graphwidth = graph.width();
+    if (DataLength < DataSize)
+        DataSize = DataLength + 1;
+    c.stroke();
+    c.lineWidth = 2;
+    c.beginPath();
+    c.strokeStyle = "Black";
+    c.moveTo(xPadding, yPadding);
+    c.lineTo(xPadding, graphheight - yPadding);            
+    c.lineTo(graphwidth - 68, graphheight - yPadding);
+    c.moveTo(xPadding, yPadding);
+    c.lineTo(graphwidth - 68, yPadding);          
+    c.lineTo(graphwidth - 68, graphheight - yPadding); 
+    c.stroke();
+    c.fillStyle = "Black";
+    c.beginPath();
+    c.lineWidth = .5;
+    if (reverseScan == true){
+        tempFreqDiff = DiffFrequency;
+        for (var i = 0, j = StartFrequency; i < MaxX; i += DiffFrequency, j += DiffFrequency) {
+            if (i % DiffFrequency == 0) {
+                c.fillText(Frequency[1] - j, getXPixel(i, MaxX), graphheight - yPadding + 20);
+                c.moveTo(getXPixel(i, MaxX), graphheight - yPadding - 2);
+                c.lineTo(getXPixel(i, MaxX), graphheight - yPadding + 3);
+            }
+        }
+    }
+    else {
+        for (var i = 0, j = StartFrequency; i < MaxX; i += DiffFrequency, j += DiffFrequency) {
+            if (i % DiffFrequency == 0) {
+                c.fillText(Frequency[1] + j, getXPixel(i, MaxX), graphheight - yPadding + 20);
+                c.moveTo(getXPixel(i, MaxX), graphheight - yPadding - 2);
+                c.lineTo(getXPixel(i, MaxX), graphheight - yPadding + 3);
+            }
+        }
+    }
+    c.stroke();
+	UseID("Phase:cb").checked = true;
+    if (UseID("Phase:cb").checked == true) 
+		PlotPhase(c,Phase,180,'Black',207,StartFrequency,68,50);
+    if (UseID("Current:cb").checked == true)
+		PlotGraph(c,Current,120,'Blue',8,StartFrequency,0,50);
+	if (UseID("Amplitude:cb").checked == true)
+		PlotGraph(c,Amplitude,50,'Green',5,StartFrequency,0,50);
+    y1Padding = 115;
+    c.textAlign = "left";
+    c.font = 'Bold 10pt sans-serif';
+    c.fillText("FREQUENCY (Hz)", 350, 495);
+	MainFrequency = true;
+    for (i = 0; i < ResFreqType.length; i++) {
+        DrawRasonanceMarker(ResFreqType[i], ResFreqArr[i], i);
+    }
+    c.rotate(-90 * Math.PI / 180);
+    if (UseID("Phase:cb").checked == true) {
+        c.fillStyle = "Black";
+        c.fillText("PHASE (Deg)", -280, y1Padding);
+    }
+    if (UseID("Current:cb").checked == true) {
+        y1Padding = y1Padding - 50;
+        c.fillStyle = "Blue";
+        c.fillText("CURRENT (%)", -280, y1Padding);
+    }
+    if (UseID("Amplitude:cb").checked == true) {
+        y1Padding = y1Padding - 50;
+        c.fillStyle = "Green";
+        c.fillText("AMPLITUDE (%)", -280, y1Padding);
+    }
+    c.rotate(90 * Math.PI / 180);
+    c.stroke();
+    c.strokeStyle = "Black";
+    c.lineWidth = .5;
+    c.beginPath();
+    c.moveTo(0, 0);
+    c.moveTo(xPadding, yPadding);
+    c.lineTo(xPadding + 1, yPadding + 1);
+    c.stroke();
+}
+function DrawRasonanceMarker(Type, ResFreq, Index) {
+    if (reverseScan == true)
+        ResFreq = parseInt(UseID("StartFrequency:tt").value) - ResFreq;
+    else
+        ResFreq = ResFreq - parseFloat(UseID("StartFrequency:tt").value);
+    if (Phase[1] && ResFreq >= 0 && ResFreq < DataSize) {
+        c.beginPath();
+        c.lineWidth = .5;
+        if ((MainFrequency == true) && (Type == "P")) {
+            c.strokeStyle = "Blue";
+            c.fillStyle = "Blue";
+			MainFrequency = false;
+        }
+        else {
+            c.strokeStyle = "Red";
+            c.fillStyle = "Red";
+        }
+        MaxY = 100;
+        for (var i = 0; i < MaxY - 7; i += 1) {
+            if (i % 2 == 0)
+                c.moveTo(getXPixel(ResFreq, MaxX / FrequencyStep), getYPixel(i, 100));
+            else
+                c.lineTo(getXPixel(ResFreq, MaxX / FrequencyStep), getYPixel(i, 100));
+        }
+        c.stroke();
+        c.textAlign = "left";
+        c.font = 'Bold 10pt sans-serif';
+        if (Type == "P")
+            c.fillText("P", getXPixel(ResFreq, MaxX / FrequencyStep), yPadding - 10);
+        else
+            c.fillText("S", getXPixel(ResFreq, MaxX / FrequencyStep), yPadding - 10);
+        c.stroke();
+    }
+}
+function ExportGraphDataToExcel() {
+    if (!Phase[1]) {
+        alert("   No Graph Data   ");
+        return;
+    }
+    if (UseID('StartHS').disabled == true)
+        return;
+    clearInterval(timerid);
+    timerid = 0;
+    if (w)
+        if (!w.closed) return;
+    w = window.open('UserComment.html', '', sOption);
+    var FileHeader = "\n\nFREQUENCY(Hz),CURRENT(%),AMPLITUDE(%),PHASE(Degree)\n";
+    var temp = "";
+    temp += HSPresetData + FileHeader;
+    for (j = 1; j < DataLength; j++)
+        temp += Frequency[j] + "," + Current[j] + "," + Amplitude[j] + "," + Phase[j] + "\n";
+    UseID("tempdata").value = temp;
+}
+$(document).ready(function () {
+	DefaultSetting();
+});
+function GetTokenFunc(cmd) {
+   ReqCmd = cmd;
+   GetToken("Loc");
+}
+function SubmitForm(hrefpage) {
+    SubmitCookies(hrefpage);
+    document.temp_form.submit();
+}
+function SendResetCmd() {
+    BtnReq = 0;
+    if (w)
+        if (!w.closed) w.window.close();
+	if ((state < SCAN_START) || (state >= SCAN_POLL_TIMEOUT)) {
+		postUrl = "func=" + Func.ViewWeldGraphPostDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+		postUrl += SendCookies();
+		http.open("POST", postUrl, true);
+		http.onreadystatechange = handleResetResponse;
+		http.send(null);
+	}
+}
+function handleResetResponse() {
+    if (http.readyState == 4) {
+        DisableDiv();
+        if (http.responseText != "OK")  
+            alert("Reset command not responded");
+    }
+}
+function GetTokenResponseHandlerLoc() {
+    if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+        var Token = parseFloat(http.responseText);
+        if (Token) {
+            SetToken(1,0);
+            switch (ReqCmd) {
+                case 1: OnStartScan(); break;
+                case 2: OnAbortScan(); break;
+				case 3: SendResetCmd(); break;
+            }
+        }
+        else {
+            SetToken(0,0);
+            if (ReqCmd == 0)
+                alert(NotokenWait);
+            else
+                alert(Notoken);
+        }
+    }
+}
+jQuery(function () {
+	UseID('header').innerHTML = MainHeader;
+	SetTabAttribute(2,2);
+    jQuery('ul.sf-menu').superfish();
+});
+</script>
+<body onload = "DiagnosticHSOnLoad()">
+<div id="wrapper">
+<div id="header"></div>
+<div id="PageHeader"></div>
+<div id="content">
+    <div id="fade_div"></div>
+    <div id="info_div">
+	    <table>		    
+	        <tr><td id="Level2Lbl">INFO : System is busy</td></tr>
+	    </table>
+    </div>
+  	<div class="contentBoxWrapper">
+   	    <div class="contentBoxHeader">Horn Signature</div>
+    	<div class="gradientBox"  id="HSBar">
+			<div class="buttonInGradient">
+                <input id = "StartHS" name="StartScan" type="button" class="button" value="Start Horn Scan" onclick = "GetTokenFunc(1)"/>
+		        <input id = "AbortHS" name="AbortScan" type="button" class="button" value="Abort Horn Scan" onclick = "GetTokenFunc(2)"/>
+				<input name="RstOL" type="button" class="button" value="Reset Overload" id="brst" onclick = "GetTokenFunc(3)"/>
+		    </div>
+    		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">Status</div>
+            	<div class="subBoxContent" id="HSBar">  
+            	    <table>
+            	    <tr>
+            	        <td>
+                	        <div id="HSBorder">
+					            <div id="HSProgress"></div>
+					        </div>
+					    </td>
+					</tr>
+				    </table>              	
+     			</div>
+            </div>
+            <table>
+            <tr>
+                <td class="Column33">
+                    <div class="subBoxWrapper">
+            	        <div class="subBoxHeader">Result</div>
+            	        <div class="subBoxContent">
+                	        <div class="checkboxCenter">
+                            <img id = "imgScanDone" src="greyDot.gif" alt="On" /></div>
+                            <div class="textLabel">Passed</div>
+                            <div class="clearit"></div>
+     				        <div class="checkboxCenter">
+                            <img id = "imgScanFailed" src="greyDot.gif" alt="On" /></div>
+                            <div class="textLabel" >Failed</div>
+                            <div class="clearit"></div>
+     				        <div class="checkboxCenter">
+                            <img id = "imgScanAborted" src="greyDot.gif" alt="On" /></div>
+                            <div class="textLabel">Aborted</div>
+                            <div class="clearit"></div>
+                        </div>
+                    </div>
+                </td>
+                <td class="Column33">      
+                    <div class="subBoxWrapper">
+	            	    <div class="subBoxHeader">Parallel Resonant Points</div>
+                        <div class="subBoxContent">
+                		    <div class="textLabelBigCenter" id = "pfreq0">&nbsp</div>
+                            <div class="clearit"></div>
+     					    <div class="textLabelBigCenter" id = "pfreq1">&nbsp</div>
+                            <div class="clearit"></div>
+                    	    <div class="textLabelBigCenter" id = "pfreq2">&nbsp</div>
+                            <div class="clearit"></div>            	
+                	    </div>
+                    </div>
+                </td>
+                <td class="Column33">			
+                    <div class="subBoxWrapper">
+	            	    <div class="subBoxHeader">Series Resonant Points</div>
+            		    <div class="subBoxContent">
+                		    <div class="textLabelBigCenter" id = "sfreq0">&nbsp</div>
+                            <div class="clearit"></div>
+     					    <div class="textLabelBigCenter" id = "sfreq1">&nbsp</div>
+                            <div class="clearit"></div>
+                    	    <div class="textLabelBigCenter" id = "sfreq2">&nbsp</div>
+                            <div class="clearit"></div>            	
+                	    </div>
+                    </div>
+                 </td>
+                 </tr>
+                 </table>
+		    </div>
+        </div>
+	<div class="clearit"></div>
+	    <div id="parent">
+			<canvas id="graph" width="900" height="500" style="left:10px; top:10px"> </canvas>			
+  	        <div class="clearit"></div>
+	        <div>
+	 		    <table>
+                <tr><td><div class="checkboxLeft"><input type="checkbox" id="Phase:cb" disabled="disabled"/></div></td>
+                <td><div class="textLabelBigLeft">PHASE</div></td>
+                <td><div class="checkboxLeft"><input type="checkbox" id="Current:cb"/></div></td>
+                <td><div class="textLabelBigLeft">CURRENT</div></td>
+                <td><div class="checkboxLeft"><input type="checkbox" id="Amplitude:cb"/></div></td>
+                <td><div class="textLabelBigLeft">AMPLITUDE</div></td>
+                <td><input name="Update Graph" type="button" class="button" value="Update Graph" onclick="GetScanData()"/></td>
+			    <td><input name="Export Graph" type="button" id="ExportGraph" class="button" value="Export Graph Data" onclick="ExportGraphDataToExcel()"/></td>
+                </tr>
+                </table>
+			</div>
+                <div class="clearit"></div>
+	            <div class="contentBoxWrapperBorder" id="Zoom" >
+                        <div class="textInputS" >Draw from</div>
+                        <input class="textInputSS" id="StartFrequency:tt"/>
+                        <div class="textLabelS"> Hz </div>
+                        <div class="textLabelS">To</div>
+                        <input class="textInputSS" id = "EndFrequency:tt"/>
+                        <div class="textLabelS"> Hz </div>
+                        <div class="textLabelS"></div>
+                        <br/><input name="Redraw Graph" type="button" class="button" value="Redraw Graph" onclick="RedrawGraph()"/>
+                        <div class="textLabelS"></div>
+                        <input name="SetDefault" type="button" class="button" value="Set Default" onclick="DefaultSetting()"/>
+			            <div class="clearit"></div>
+                        <div class="textInputS">Graph Selection</div>
+                        <div class="dropdown">
+                            <select id="SelectedGraph">
+						        <option >Select Graph&nbsp&nbsp&nbsp</option>
+						        <option>PHASE</option>					
+						        <option>CURRENT</option>
+						        <option>AMPLITUDE</option>
+				            </select>
+                        </div>				
+                    <div class="textLabelRight">X Value</div>
+                    <input class="textInputSS" id="XValue"/>
+                    <div class="textLabelRight">Y Value</div>
+                    <input class="textInputSS" id="YValue" disabled="disabled"/>
+                    <div class="textLabelRight"></div>
+                    <input name="UpdateValue" type="button" class="button" value="Update Value" onclick="DisplayGraphValue()" />
+                </div>
+            </div>
+   <div class="clearit"></div>
+   </div>
+    <div id="footer"></div>
+    </div>
+<form name="temp_form" method="post" action="hornsignature.html">
+    <input type="hidden" name="lang" id="lang" />
+    <input type="hidden" name="usrid" id="usrid" />
+    <input type="hidden" name="passcode" id="passcode" />
+	<input type="hidden" name="uniqueid" id="uniqueid" />	
+</form>
+<form name="temp_form_test" method="post" enctype="multipart/form-data" action="HornSignature.html">
+    <input type="hidden" name="UserComment:," id="tempdata" /> 
+</form>
+</body>
+</html>

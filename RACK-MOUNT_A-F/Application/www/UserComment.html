@@ -1,0 +1,57 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<script language="javascript"  type="text/javascript">
+function UseID(element){ return document.getElementById(element);}
+function SendFileDownloadCommand(){	
+	var UserComment,ValidName = true;
+	if (window.opener.parenttype == "PS"){
+		document.form_UserComment.action = "SendBackCSVGraphDataPS";
+		UserComment = "Weld Data\n" + UseID("ChildUserComment").value;
+		UseID("tempdata").value = UserComment + window.opener.UseID("tempdata").value;
+		document.form_UserComment.submit();
+	}
+	else if (window.opener.parenttype == "HS"){
+		document.form_UserComment.action = "SendBackCSVGraphDataHS";
+		UserComment = "Scan Data\n" + UseID("ChildUserComment").value;
+		UseID("tempdata").value = UserComment + window.opener.UseID("tempdata").value;
+		document.form_UserComment.submit();
+	}
+	else{	
+		if((UseID("ChildUserComment").value.search(";") >= 0) || (UseID("ChildUserComment").value.search("@") >= 0)){
+			alert("Invalid Preset Name! (@ and ;) not allowed.");
+			ValidName = false;
+		}
+		else if (UseID("ChildUserComment").value.length > 24){
+			alert("Preset name length should not be more than 24 characters");
+			ValidName = false;
+		}
+		else if(UseID("ChildUserComment").value == ""){
+			alert("Invalid Preset Name.");
+			ValidName = false;
+		}		
+		if(ValidName == false){
+			return;
+		}
+		window.opener.SavePresetName = UseID("ChildUserComment").value;
+		window.opener.SaveNewPresetName();
+	}
+	window.close();
+}
+function ChangemyLook(){
+	if (window.opener.parenttype == "PS" || window.opener.parenttype == "HS")
+		UseID('Label:TT').innerHTML = "User Comment";
+	else{
+		UseID('Label:TT').innerHTML = "Save As";
+		UseID("ChildUserComment").value = window.opener.SavePresetName;
+	}
+	UseID('ChildUserComment').focus();
+}
+</script>
+<body onload= "ChangemyLook()"  onkeydown="if(event.keyCode == 13)SendFileDownloadCommand()">
+<div class='textLabel' style='padding-left:10px' id="Label:TT"></div>
+<input name='' class='textInput' id = 'ChildUserComment' style='width:380px' />
+<input name='Submit' style='position:absolute; left:170px; top:70px' type='button' class='button' value='Submit' onclick='SendFileDownloadCommand()'/>
+<form name="form_UserComment" method="post" enctype="multipart/form-data" target = "_blank" action="SendBackCSVGraphData">
+<input type="hidden" name="UserComment:," id="tempdata"  />
+</form>
+</body>
+</html>

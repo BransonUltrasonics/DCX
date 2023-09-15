@@ -1,0 +1,33 @@
+# $Header: /ProductionCyGOS/CyGOS/Arch/MCF/Makefile.arch,v 1.1 2010/05/09 00:03:15 Aare Exp $
+#
+# Copyright (c) Cyber Group, Inc 2008
+# This program is the property of Cyber Group Inc
+# Copying of this software is expressly forbidden, without the prior written
+# consent of Cyber Group Inc
+#
+# This file is part of CyGOS-3.
+#
+# This is architecture-specific Makefile for ColdFire processors. Makefile
+# defines compiler programs and their command line arguments.
+#
+# This makefile should be included from another Makefile two levels deeper,
+# specific to the board where the code will execute.
+
+ARCH = MCF
+
+# Definitions for all programs to use for this architecture, and their command
+# line arguments.
+CC     = m68k-elf-gcc
+CCOPT  = -mcpu=$(CPU) $(CCINC) -c -O2 -fno-rtti -fno-exceptions \
+	$(DEBUGNEW) -Wno-write-strings -nostdinc -nostdinc++ -fno-strict-aliasing -Wall -W
+#-Wall -W
+CCINC  = $(addprefix -I,$(INC)) $(addprefix -I ../../../../,$(LIBS))
+AS     = m68k-elf-as
+ASOPT  = -mcpu=$(CPU)
+AR     = m68k-elf-ar
+AROPT  = -rv
+LD     = m68k-elf-ld
+LDOPT  = -M --warn-once
+OC     = m68k-elf-objcopy
+OCHEX  = -I elf32-m68k -O srec --srec-forceS3 --srec-len 32 
+OCBIN  = -I elf32-m68k -O binary 

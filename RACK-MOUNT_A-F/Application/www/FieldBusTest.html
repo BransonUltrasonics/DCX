@@ -1,0 +1,206 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+    <link rel="stylesheet" type="text/css" href="superfishDCXAFRackMt-v1.css" media="screen" />
+    <script type="text/javascript" src="jqueryDCXAFRackMt-v1.js"></script>
+    <script type="text/javascript" src="hoverIntentDCXAFRackMt-v1.js"></script>
+    <script type="text/javascript" src="superfishDCXAFRackMt-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="handlerDCXAFRackMt-v1.js"></script> 
+    <script type="text/JavaScript" language="javascript" src="formchange-detectDCXAFRackMt-v1.js"></script>
+    <title>BRANSON DCX GUI</title>
+    <link href="styleDCXAFRackMt-v1.css" rel="stylesheet" type="text/css" />
+<script language="javascript"  type="text/javascript">
+var restoreFlag = false, pageRefresh = false, PageRefTo = null;
+var http = getHTTPObject(); 
+function HandleModifyFBOnLoad() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+		ShowDiv = getCookie('ShowDiv');
+        var i, j, results2, results3;
+        results = http.responseText.split("@");
+        var UserType = results[0].split("/");
+        SetUserType(UserType[0]);
+        SetToken(UserType[1],0);
+        SetSystemType(UserType[2]);
+		results2 = results[2].split(":");
+		switch(results2[1]){
+			case '1':
+				UseID("ProfiBus").style.display = "inline";
+				UseID("BoxHeading").innerHTML = "DCX PROFIBUS";	
+				break;
+			case '2':
+				UseID("EthernetIP").style.display = "inline";
+				UseID("BoxHeading").innerHTML = "DCX ETHERNETIP";
+				break;
+			default: 
+				UseID("BoxHeading").innerHTML = "No Fieldbus Detected";
+				return;
+				break;
+		}
+		UseID("FieldBus").style.display = "inline";
+		UseID("UpdateBtn").style.visibility= "visible"; 
+        for (i = 3; i < results.length; i++) {
+            results2 = results[i].split(":");
+			UseID(results2[0]).value = results2[1];
+        }
+        RefreshAttribute(document.main_form);
+    }
+}
+function ModifyFBOnLoad() {
+    window.history.forward(1);
+    var ModifyFBOnLoadUrl = "func=" + Func.BransonFieldBusTestGetDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+    ModifyFBOnLoadUrl += SendCookies();
+    http.open("POST", ModifyFBOnLoadUrl, true);
+    http.onreadystatechange = HandleModifyFBOnLoad;
+    http.send(null);
+}
+function SubmitForm(hrefpage) {
+    if (pageRefresh == false) {
+        var ret;
+        if (IsFormModified(document.main_form)) {
+            ret = confirm(formChangeMessage);
+			if (ret == true){
+				PageRefTo = hrefpage;
+				ModifyFBSave();
+				return;
+			}
+        }
+    }
+	if(hrefpage != "FieldBusTest.html")
+		setCookie('ShowDiv', true, 365);
+	if (hrefpage == "index.html")
+		location.href = hrefpage;
+    else {
+        SubmitCookies(hrefpage);
+        document.temp_form.submit();
+    }
+}
+jQuery(function () {
+	UseID('header').innerHTML = MainHeader;
+	SetTabAttribute(2,5);
+    jQuery('ul.sf-menu').superfish();
+});
+</script>
+</head>
+<body onload="ModifyFBOnLoad()">
+<form name="temp_form" method="post" action="FieldBusTest.html">
+<input type="hidden" name="lang" id="lang" />
+<input type="hidden" name="usrid" id="usrid" />
+<input type="hidden" name="passcode" id="passcode" />
+	<input type="hidden" name="uniqueid" id="uniqueid" />	
+</form>
+<form name="main_form">
+<div id="wrapper">
+  <div id="header"></div>
+  <div id="PageHeader"></div>
+<div id="content">
+	<div id="fade_div"></div>
+    <div id="info_div">
+	     <table>
+		        <tr><td id="Level2Lbl">Enter Password</td></tr>
+		        <tr><td id="Level2Msg"></td></tr>
+		        <tr><td><input type="password" class="Level2Pwd" id ="USERPASSCODE" onkeydown="if(event.keyCode == 13)ModifyFBOnLoad();"/></td></tr>
+	     </table>
+    </div> 
+      <div class="contentBoxWrapper">
+        <div class="contentBoxHeader" id="BoxHeading"></div>
+	        <div class="gradientBox">
+				<div id="FieldBus" style = "display:none">
+                    <div class="textLabelBigLeft">STW1 Value</div>
+			        <input type="text" class="textInput" disabled ="disabled" id="STW1" />
+                    <div class="textInputS"></div>
+			        <div class="textLabelBigLeft">ZSW1 Value</div>
+			        <input type="text" class="textInput" disabled ="disabled" id="ZSW1"/>
+			        <div class="textInputS" >	</div>		
+					<div class="clearit"></div>
+				    <div class="textLabelBigLeft">STW2 Value</div>
+                    <input type="text" class="textInput" disabled ="disabled" id="STW2" />
+                    <div class="textInputS"></div>
+			        <div class="textLabelBigLeft">ZSW2 Value</div>
+                    <input type="text" class="textInput" disabled ="disabled" id="ZSW2"/>
+				    <div class="textInputS"></div>
+					<div class="clearit"></div>
+				</div>
+                 <br/><br/><br/>
+				 <div id="ProfiBus" style = "display:none">
+				    <div class="textLabelBigLeft">AK Value</div>
+			        <input type="text" class="textInput" disabled ="disabled" id="AKIn"/>
+				    <div class="textInputS"></div>
+				    <div class="textLabelBigLeft">AK Value</div>
+                    <input type="text" class="textInput" disabled ="disabled" id="AKOut" />
+                <div class="clearit"></div>
+        		    <div class="textLabelBigLeft">PNU Value</div>
+				    <input type="text" class="textInput" disabled ="disabled" id="PNUIn" />
+                    <div class="textInputS"></div>
+                    <div class="textLabelBigLeft"> PNU Value </div>
+                    <input type="text" class="textInput" disabled ="disabled" id="PNUOut" />
+                 <div class="clearit"></div>
+				    <div class="textLabelBigLeft">IND Value</div>
+				    <input type="text" class="textInput" disabled ="disabled" id="INDIn" />
+                    <div class="textInputS"></div>
+                    <div class="textLabelBigLeft">IND Value</div>
+                    <input type="text" class="textInput" disabled ="disabled" id="INDOut" />
+                 <div class="clearit"></div>
+                    <div class="textLabelBigLeft">PWEh Value</div>
+                    <input type="text" class="textInput" disabled ="disabled" id="PWEhIn" />
+                    <div class="textInputS"></div>
+                    <div class="textLabelBigLeft">PWEh Value</div>
+                    <input type="text" class="textInput" disabled ="disabled" id="PWEhOut" />
+                <div class="clearit"></div>
+			        <div class="textLabelBigLeft">PWEl Value</div>
+				    <input type="text" class="textInput" disabled ="disabled" id="PWElIn" />
+                    <div class="textInputS"></div>
+                    <div class="textLabelBigLeft">PWEl Value</div>
+                    <input type="text" class="textInput" disabled ="disabled" id="PWElOut" />
+                <div class="clearit"></div>
+				</div>
+				<div id="EthernetIP" style = "display:none">
+				    <div class="textLabelBigLeft">Service</div>
+			        <input type="text" class="textInput" disabled ="disabled" id="EIPService"/>
+				    <div class="textInputS"></div>
+				    <div class="textLabelBigLeft">Class</div>
+                    <input type="text" class="textInput" disabled ="disabled" id="EIPClass" />
+                <div class="clearit"></div>
+        		    <div class="textLabelBigLeft">Instance</div>
+				    <input type="text" class="textInput" disabled ="disabled" id="EIPInstance" />
+                    <div class="textInputS"></div>
+                    <div class="textLabelBigLeft"> Attribute </div>
+                    <input type="text" class="textInput" disabled ="disabled" id="EIPAttribute" />
+                 <div class="clearit"></div>
+				    <div class="textLabelBigLeft">Service Data<br />
+                        Request(Hex)</div>
+				    <input type="text" class="textInput" disabled ="disabled" id="EIPRequest" />
+                    <div class="textInputS"></div>
+                    <div class="textLabelBigLeft">Service Data 
+                        <br />
+                        Response(Hex)</div>
+                    <input type="text" class="textInput" disabled ="disabled" id="EIPResponse" />
+                 <div class="clearit"></div>
+                    <div class="textLabelBigLeft">CIP Status</div>
+                    <input type="text" class="textInput" disabled ="disabled" id="EIPStatus" />
+                <div class="clearit"></div>
+				</div>
+               </div>
+               <div class="clearit"></div>
+            </div>
+            <div class="clearit"></div>
+            <div id="contentButtonBank">
+    	        <input name="Update" type="button" id ="UpdateBtn" class="button" value="Update" style="visibility:hidden" onclick="ModifyFBOnLoad()"/>
+            </div>         
+    </div>
+    <div id="footer"></div>
+</div>
+</form>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitStickyFooter();
+    });
+</script>
+</html>

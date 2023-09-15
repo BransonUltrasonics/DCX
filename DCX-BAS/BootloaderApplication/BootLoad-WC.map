@@ -1,0 +1,1038 @@
+Archive member included because of file (symbol)
+
+C:/RTOS-WC/libRTOS-WC.a(LED_cpp.o)
+                              obj-WC/Main_cpp.o (LED::Set(int, int))
+C:/RTOS-WC/libRTOS-WC.a(54455_CPU_cpp.o)
+                              obj-WC/Main_cpp.o (CPU::SetupChipSelect(int, int, int, void volatile*))
+C:/RTOS-WC/libRTOS-WC.a(54455_Exception_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_CPU_cpp.o) (Exception::Set(int, void (*)(int, void*), int))
+C:/RTOS-WC/libRTOS-WC.a(54455_PIT_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_CPU_cpp.o) (PIT::PIT(int, int, int, int, void (*)(), int))
+C:/RTOS-WC/libRTOS-WC.a(54455_MMU_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_CPU_cpp.o) (MMU::Map(unsigned long))
+C:/RTOS-WC/libRTOS-WC.a(54455_CPU_asm.o)
+                              C:/RTOS-WC/Start.o (CPU::Init())
+C:/RTOS-WC/libRTOS-WC.a(54455_Exception_asm.o)
+                              C:/RTOS-WC/Start.o (AsmExceptionHandler)
+C:/RTOS-WC/libRTOS-WC.a(54455_MCF5445xRTOS_asm.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_Exception_asm.o) (RTOS::TaskSwitch())
+C:/RTOS-WC/libRTOS-WC.a(MCF_ArchDefs_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_CPU_cpp.o) (DisableInterrupts())
+C:/RTOS-WC/libRTOS-WC.a(MCF_MemoryInit_asm.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_CPU_asm.o) (MemoryInit)
+C:/RTOS-WC/libRTOS-WC.a(MCF_ArchDefs_asm.o)
+                              obj-WC/Main_cpp.o (memcpy)
+C:/RTOS-WC/libRTOS-WC.a(stdlib_Assert_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_Exception_cpp.o) (SystemCrash(char*, char*, int))
+C:/RTOS-WC/libRTOS-WC.a(stdlib_Alloc_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_CPU_cpp.o) (operator new(unsigned long, char*, int))
+C:/RTOS-WC/libRTOS-WC.a(stdlib_PrintF_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_Exception_cpp.o) (pprintf)
+C:/RTOS-WC/libRTOS-WC.a(stdlib_String_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(stdlib_Alloc_cpp.o) (memset)
+C:/RTOS-WC/libRTOS-WC.a(API_CyGOS_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(stdlib_Assert_cpp.o) (CyGOS::LogTaskLoad())
+C:/RTOS-WC/libRTOS-WC.a(API_SysLog_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_Exception_cpp.o) (CyGOS::WriteSystemEvent(int, int, int, unsigned int, bool))
+C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(API_CyGOS_cpp.o) (RTOS::tasks)
+C:/RTOS-WC/libRTOS-WC.a(RTOS_Task_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o) (TaskBase::Tick())
+C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o) (PrintfTask::PrintfTask())
+C:/RTOS-WC/libRTOS-WC.a(RTOS_Debug_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(stdlib_Assert_cpp.o) (Debug::Poll())
+C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(API_CyGOS_cpp.o) (TaskDispLed::TaskDispLed(void (*)(int, int)))
+C:/RTOS-WC/libRTOS-WC.a(RTOS_TaskManager_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_Exception_cpp.o) (TaskManager::intCount)
+C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o)
+                              obj-WC/Main_cpp.o (CyGOS::CreateSerialBootTask(int&))
+C:/RTOS-WC/libRTOS-WC.a(Board_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(API_CyGOS_cpp.o) (Board::StopTimer(int))
+C:/RTOS-WC/libRTOS-WC.a(MultiBootBoard_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o) (SerialBootTask::FlashAddress(unsigned short*))
+C:/RTOS-WC/libRTOS-WC.a(Board_asm.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_CPU_asm.o) (Board::MultiBootMemoryInit())
+C:/RTOS-WC/libRTOS-WC.a(54455_Terminal_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(stdlib_PrintF_cpp.o) (Terminal::OutPoll(int))
+C:/RTOS-WC/libRTOS-WC.a(54455_Serial_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o) (Serial::Init(int, int, int, int, bool))
+C:/RTOS-WC/libRTOS-WC.a(54455_MCF5445xTask_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o) (Task::GetTickAddress() const)
+C:/RTOS-WC/libRTOS-WC.a(54455_Cache_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(Board_cpp.o) (Cache::Init(int, int))
+C:/RTOS-WC/libRTOS-WC.a(54455_DSPI_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(Board_cpp.o) (DSPI::DSPI(int, int, int))
+C:/RTOS-WC/libRTOS-WC.a(54455_MultiBootCpu_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o) (MultiBootCpu::Init())
+C:/RTOS-WC/libRTOS-WC.a(54455_I2C_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(Board_cpp.o) (I2C::I2C(int, int, int, int))
+C:/RTOS-WC/libRTOS-WC.a(54455_WatchDog_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(API_CyGOS_cpp.o) (WatchDog::EnableWatchDog())
+C:/RTOS-WC/libRTOS-WC.a(stdlib_StdLib_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o) (atoi)
+C:/RTOS-WC/libRTOS-WC.a(API_LinkedList_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o) (LinkedListBase::LinkedListBase())
+C:/RTOS-WC/libRTOS-WC.a(RTOS_FIFO_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o) (FifoBase::FifoBase(int, int, char const*))
+C:/RTOS-WC/libRTOS-WC.a(RTOS_Mutex_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(54455_DSPI_cpp.o) (Mutex::~Mutex())
+C:/RTOS-WC/libRTOS-WC.a(BoardFlash_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(MultiBootBoard_cpp.o) (Board::GetFlash())
+C:/RTOS-WC/libRTOS-WC.a(Flash_FlashM29W128G_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(BoardFlash_cpp.o) (FlashM29W128GL::FlashM29W128GL(unsigned int, int))
+C:/RTOS-WC/libRTOS-WC.a(Flash_Flash_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(Flash_FlashM29W128G_cpp.o) (Flash::access)
+C:/RTOS-WC/libRTOS-WC.a(Flash_FlashAMD_cpp.o)
+                              C:/RTOS-WC/libRTOS-WC.a(Flash_FlashM29W128G_cpp.o) (FlashAMD::UnlockChip())
+
+Discarded input sections
+
+ _ZN8IdleTaskD0Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o)
+ _ZN8IdleTaskD1Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o)
+ _ZTV8IdleTask  0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o)
+ _ZTV4Task      0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_Task_cpp.o)
+ _ZTV8TaskBase  0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_Task_cpp.o)
+ _ZN10PrintfTaskD0Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o)
+ _ZN10PrintfTaskD1Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o)
+ _ZTV10PrintfTask
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o)
+ _ZN11TaskSlowLedD0Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ _ZN11TaskSlowLedD1Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ _ZN11TaskFastLedD0Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ _ZN11TaskFastLedD1Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ _ZN11TaskDispLedD0Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ _ZN11TaskDispLedD1Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ _ZTV11TaskDispLed
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ _ZTV11TaskFastLed
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ _ZTV11TaskSlowLed
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ _ZN11TaskManagerD0Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_TaskManager_cpp.o)
+ _ZN11TaskManagerD1Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_TaskManager_cpp.o)
+ _ZTV11TaskManager
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_TaskManager_cpp.o)
+ _ZN14SerialBootTaskD1Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o)
+ _ZN14SerialBootTaskD0Ev
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o)
+ _ZTV14SerialBootTask
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o)
+ _ZTV4DSPI      0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_DSPI_cpp.o)
+ _ZTV3SPI       0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_DSPI_cpp.o)
+ _ZTV8WatchDog  0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_WatchDog_cpp.o)
+ _ZTV14FlashM29W128GL
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(Flash_FlashM29W128G_cpp.o)
+ _ZTV11FlashAccess
+                0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(Flash_Flash_cpp.o)
+ _ZTV5Flash     0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(Flash_Flash_cpp.o)
+ _ZTV8FlashAMD  0x00000000        0x0 C:/RTOS-WC/libRTOS-WC.a(Flash_FlashAMD_cpp.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+vectors          0x50000000         0x00000400         xrw
+config           0x50000400         0x00000100         xrw
+sdram            0x50000500         0x07fffb00         xrw
+boot_flash       0x00000000         0x01000000         xrw
+boot_rom         0x00040000         0x00fc0000         xrw
+fram             0x0b000000         0x00020000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD C:/RTOS-WC/Start.o
+LOAD obj-WC/Main_cpp.o
+LOAD C:/RTOS-WC/libRTOS-WC.a
+
+.textvect       0x50000000      0x400
+                0x50000000                __FLASH_RAM = .
+                0x50000000                __VECTOR_TABLE = .
+                0x50000000                __INIT_SP = .
+                0x50000000        0x4 LONG 0x0
+                0x50000004                __INIT_PC = .
+                0x50000004        0x4 LONG 0x526 (_MultiBootStart + __FLASH_DIFF)
+ *(.textvect)
+ .textvect      0x50000008      0x3f8 C:/RTOS-WC/Start.o
+
+.config         0x50000400       0x16
+                0x50000400                . = ALIGN (0x10)
+                0x50000400                __SYSTEM_CLOCK = .
+                0x50000400        0x4 LONG 0x7d
+                0x50000404                __TERMINAL_PORT = .
+                0x50000404        0x4 LONG 0x1
+                0x50000408                __TERMINAL_BAUD = .
+                0x50000408        0x4 LONG 0x1c200
+                0x5000040c                __SERIAL_NUMBER = .
+                0x5000040c        0x4 LONG 0xffffffff
+                0x50000410                __ETHERNET_MAC = .
+                0x50000410                __ETHERNET_MAC0 = .
+                0x50000410                __ETHERNET_MAC1 = .
+                0x50000410        0x4 LONG 0xffffffff
+                0x50000414        0x2 SHORT 0xffff
+
+.text           0x50000500     0xc8f0
+                0x50000500                __TEXT_START = .
+ *(.text)
+ .text          0x50000500       0x42 C:/RTOS-WC/Start.o
+                0x5000050e                _RAMstart
+                0x50000500                _start
+                0x50000526                _MultiBootStart
+ *fill*         0x50000542        0x2 00
+ .text          0x50000544      0x19c obj-WC/Main_cpp.o
+                0x50000544                UpdateTPVal(int)
+                0x50000554                ByteCRC(unsigned char*, unsigned int)
+                0x5000054c                UpdateITPVal(int)
+                0x500005fe                UpdateBootLoaderInfo()
+                0x5000063e                PowerUpInitialization()
+                0x5000058c                CalculateFlashCRC()
+                0x5000066c                main
+                0x500006b0                SetLeds(int, int)
+ .text          0x500006e0      0x13e C:/RTOS-WC/libRTOS-WC.a(LED_cpp.o)
+                0x500006fe                LED::Set(int, int)
+                0x500006e0                LED::Init()
+                0x50000816                LED::SetAll(unsigned char*)
+ *fill*         0x5000081e        0x2 00
+ .text          0x50000820      0x46c C:/RTOS-WC/libRTOS-WC.a(54455_CPU_cpp.o)
+                0x50000820                CPU::InstallTaskSwitchRoutine(void (*)())
+                0x500008be                CPU::Restart()
+                0x500008d4                CPU::ClearExternalInterrupt(int)
+                0x50000b80                CPU::SetupChipSelect(int, int, int, void volatile*)
+                0x5000099e                CPU::InstallRtosTimer(int, void (*)(), int)
+                0x50000910                CPU::DisableExternalInterrupt(int)
+                0x50000832                CPU::DelayMs(int)
+                0x50000870                CPU::DelayUs(int)
+                0x500009f8                CPU::SetupHandler(void (*)(int, void*), CpuInterrupt, int, int, int)
+                0x5000095a                CPU::EnableExternalInterrupt(int)
+                0x50000ae0                CPU::InitExternalInterrupt(void (*)(int, void*), int, int, int, CpuInterruptMode, bool)
+ .text          0x50000c8c      0xe8a C:/RTOS-WC/libRTOS-WC.a(54455_Exception_cpp.o)
+                0x50000c8c                Exception::Init()
+                0x50000ca8                Exception::DefaultHandler(int, void*)
+                0x50001976                Exception::FirstHandler(void*)
+                0x5000193a                Exception::Set(int, void (*)(int, void*), int)
+ *fill*         0x50001b16        0x2 00
+ .text          0x50001b18      0x58a C:/RTOS-WC/libRTOS-WC.a(54455_PIT_cpp.o)
+                0x50002048                PIT::IntHandler2(int, void*)
+                0x50001bd4                PIT::StartInt(int)
+                0x50001b92                PIT::StopInt(int)
+                0x50001b3a                PIT::IntHandler1(int, void*)
+                0x50001dde                PIT::PIT(int, int, int, int, void (*)(), int)
+                0x50001b18                PIT::ResetInt(int)
+                0x50001f96                PIT::IntHandler0(int, void*)
+                0x50001c26                PIT::PIT(int, int, int, int, void (*)(), int)
+                0x50001fee                PIT::IntHandler3(int, void*)
+ *fill*         0x500020a2        0x2 00
+ .text          0x500020a4      0x62c C:/RTOS-WC/libRTOS-WC.a(54455_MMU_cpp.o)
+                0x50002170                MMU::Init()
+                0x500020a4                MMU::Map(int, int, int, int, int, int, int, int, int, int)
+                0x500024c8                MMU::AccessError(void*)
+                0x50002350                MMU::UnMap(int, int)
+                0x500023c8                MMU::RemapCodeData(bool, bool)
+                0x500020fe                MMU::Map(unsigned long)
+ .text          0x500026d0       0x3e C:/RTOS-WC/libRTOS-WC.a(54455_CPU_asm.o)
+                0x500026ea                CPU::MultiBootInit()
+                0x500026d0                CPU::Init()
+                0x50002704                CPU::SwitchStack(void*)
+ *fill*         0x5000270e        0x2 00
+ .text          0x50002710       0x3a C:/RTOS-WC/libRTOS-WC.a(54455_Exception_asm.o)
+                0x50002710                AsmExceptionHandler
+ *fill*         0x5000274a        0x2 00
+ .text          0x5000274c       0x2c C:/RTOS-WC/libRTOS-WC.a(54455_MCF5445xRTOS_asm.o)
+                0x5000275e                RTOS::ExecuteFirstTask()
+                0x5000274c                RTOS::TaskSwitch()
+ .text          0x50002778       0x6e C:/RTOS-WC/libRTOS-WC.a(MCF_ArchDefs_cpp.o)
+                0x5000278a                ExitCritical(short)
+                0x50002778                EnterCritical()
+                0x500027cc                __cxa_pure_virtual
+                0x500027c4                __cxa_atexit
+                0x50002798                DisableInterrupts()
+                0x500027bc                __cxa_guard_release
+                0x500027a6                EnableInterrupts()
+                0x500027b4                __cxa_guard_acquire
+ *fill*         0x500027e6        0x2 00
+ .text          0x500027e8       0xc8 C:/RTOS-WC/libRTOS-WC.a(MCF_MemoryInit_asm.o)
+                0x500027e8                MemoryInit
+ .text          0x500028b0       0x6a C:/RTOS-WC/libRTOS-WC.a(MCF_ArchDefs_asm.o)
+                0x500028b0                memcpy
+ *fill*         0x5000291a        0x2 00
+ .text          0x5000291c      0x1d8 C:/RTOS-WC/libRTOS-WC.a(stdlib_Assert_cpp.o)
+                0x5000291c                SystemCrash(char*, char*, int)
+                0x50002a08                AssertFailed(char*, char*, int)
+ .text          0x50002af4      0xd88 C:/RTOS-WC/libRTOS-WC.a(stdlib_Alloc_cpp.o)
+                0x50002b82                MemHeader::FillDeallocatedData()
+                0x50002fc0                operator new(unsigned long)
+                0x50002f68                malloc
+                0x50003364                MemHeader::SafetyTest(bool)
+                0x50003872                operator delete(void*)
+                0x5000379c                Memrealloc
+                0x5000300e                operator new[](unsigned long, char*, int)
+                0x50003248                ShowMemory
+                0x50002f82                calloc
+                0x50002c8c                MallocAlignedNoCache
+                0x50002c3e                InitMemoryAllocation
+                0x50002c76                FreeAlignedNoCache
+                0x50002f4e                mallocNoInit
+                0x50003868                operator delete[](void*)
+                0x50002af4                MemHeader::FillSafetyAreas(bool)
+                0x50003028                MemHeader::PTrace()
+                0x50002fda                operator new(unsigned long, char*, int)
+                0x50002ff4                operator new[](unsigned long)
+                0x50002c98                CallocAlignedNoCache
+                0x500034f0                CheckMemory(char*)
+                0x5000356a                free
+ .text          0x5000387c      0x968 C:/RTOS-WC/libRTOS-WC.a(stdlib_PrintF_cpp.o)
+                0x50004102                putchar
+                0x500040a0                printf
+                0x5000416a                puts
+                0x50004030                sprintf
+                0x5000406e                pprintf
+ .text          0x500041e4      0x504 C:/RTOS-WC/libRTOS-WC.a(stdlib_String_cpp.o)
+                0x5000429e                strcpy
+                0x50004518                strlower
+                0x50004550                strrchr
+                0x50004388                stricmp
+                0x5000426a                strcat
+                0x5000432c                memchr
+                0x5000459c                strstr
+                0x5000446c                strncmp
+                0x50004692                memmove(void*, void const*, unsigned int)
+                0x50004602                strncpy
+                0x500042c6                memcmp
+                0x5000464a                strdup
+                0x500041e4                memset
+                0x500042fe                strcmp
+                0x500043fe                strnicmp
+                0x500044e0                strupr
+                0x50004246                strlen
+                0x50004360                strchr
+ .text          0x500046e8      0x1e2 C:/RTOS-WC/libRTOS-WC.a(API_CyGOS_cpp.o)
+                0x500047be                CyGOS::InstallTimer(int, void (*)(), int)
+                0x50004712                CyGOS::ResetTimeSpentForTasks()
+                0x500047a6                CyGOS::StopTimer(int)
+                0x50004776                CyGOS::DisableWatchDog()
+                0x5000479a                CyGOS::InitWatchDog(int)
+                0x5000478e                CyGOS::EnableWatchDog()
+                0x500048b2                CyGOS::Start(int)
+                0x50004722                CyGOS::RegisterTaskLoadLogCallback(void (*)(bool))
+                0x500047ca                CyGOS::Restart()
+                0x500048a6                CyGOS::Stop()
+                0x5000471a                CyGOS::ResetTimeSpentForInterrupts()
+                0x50004734                CyGOS::LogTaskLoad()
+                0x50004782                CyGOS::KickWatchDog()
+                0x500047fe                CyGOS::CreateLedTasks(int, int, void (*)(int, int))
+                0x500047f2                CyGOS::PrintStatus(PrintStatusMode)
+                0x500048be                CyGOS::Init()
+                0x500047d6                CyGOS::CreateTask(Task*, int&)
+                0x500047b2                CyGOS::StartTimer(int)
+                0x50004760                CyGOS::ApplicationCrashCallBack()
+                0x500046e8                CyGOS::GetTaskName(int)
+                0x5000474e                CyGOS::RegisterAppCrashCallback(void (*)())
+ *fill*         0x500048ca        0x2 00
+ .text          0x500048cc       0xea C:/RTOS-WC/libRTOS-WC.a(API_SysLog_cpp.o)
+                0x50004938                CyGOS::GetSysEventStrigFromID(int)
+                0x50004906                CyGOS::WriteSystemEvent(int, int, int, unsigned int, bool)
+                0x500048f4                CyGOS::RegisterSysLogCallback(void (*)(short, int, int, unsigned int, bool))
+                0x500048cc                CyGOS::RegisterBoardTestCallback(void (*)())
+                0x500048de                CyGOS::DOBoardTest()
+ *fill*         0x500049b6        0x2 00
+ .text          0x500049b8      0x826 C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o)
+                0x50004e6e                RTOS::Delete(Task*)
+                0x50004eda                RTOS::Create(Task*, int)
+                0x50005088                RTOS::Init()
+                0x50004bf4                RTOS::DelayUs(int)
+                0x50004a0c                RTOS::RemoveFromTickChain(Task*)
+                0x50004a58                RTOS::Gettaskloadinformation()
+                0x50005166                RTOS::Create(Task*, int, int)
+                0x50004a66                RTOS::PrintStatus(PrintStatusMode)
+                0x50005054                IdleTask::IdleTask()
+                0x50004f68                RTOS::Start(int)
+                0x50005042                IdleTask::Run()
+                0x50005132                IdleTask::IdleTask()
+                0x50004c48                RTOS::DelayMs(int)
+                0x500049b8                RTOS::InsertIntoTickChain(Task*)
+                0x50004cc6                RTOS::TickHandler()
+                0x50004c9a                RTOS::Stop()
+                0x50004da4                RTOS::Schedule()
+ *fill*         0x500051de        0x2 00
+ .text          0x500051e0      0x438 C:/RTOS-WC/libRTOS-WC.a(RTOS_Task_cpp.o)
+                0x50005444                Task::Suspend()
+                0x50005232                TaskBase::~TaskBase()
+                0x500052d8                Task::Task(char*, int)
+                0x50005286                Task::~Task()
+                0x5000554c                Task::Delay(long)
+                0x50005244                TaskBase::~TaskBase()
+                0x500051e0                TaskBase::Tick()
+                0x50005202                TaskBase::Run()
+                0x500055bc                Task::Wakeup()
+                0x500051e8                Task::ReturnFromTask()
+                0x50005256                Task::~Task()
+                0x5000521c                TaskBase::~TaskBase()
+                0x5000538e                Task::Task(char*, int)
+                0x500052ae                Task::~Task()
+                0x500054aa                Task::Resume()
+ .text          0x50005618      0x344 C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o)
+                0x50005618                getcharWait
+                0x50005664                gets
+                0x5000576e                PrintfTask::Run()
+                0x50005858                PrintfTask::PrintfTask()
+                0x50005656                getchar
+                0x500056e4                PrintfTask::Print(unsigned char)
+                0x500058da                PrintfTask::PrintfTask()
+ .text          0x5000595c      0x368 C:/RTOS-WC/libRTOS-WC.a(RTOS_Debug_cpp.o)
+                0x50005bf6                Debug::Poll()
+                0x50005a5c                Debug::ReadMemory(int, int)
+                0x50005af0                Debug::Run()
+                0x500059d0                Debug::ReadLine()
+                0x5000595c                Debug::HexToInt(char*&, int)
+                0x50005c8a                Debug::Init()
+                0x50005c3a                Debug::Debug(int)
+                0x50005c62                Debug::Debug(int)
+ .text          0x50005cc4      0x572 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+                0x50005e50                TaskFastLed::TaskFastLed(int)
+                0x50005ef2                TaskSlowLed::TaskSlowLed(int)
+                0x50005de4                TaskDispLed::TaskDispLed(void (*)(int, int))
+                0x50005e86                TaskFastLed::TaskFastLed(int)
+                0x50005e1a                TaskDispLed::TaskDispLed(void (*)(int, int))
+                0x50005ebc                TaskSlowLed::TaskSlowLed(int)
+                0x50005cc4                TaskDispLed::Run()
+                0x5000611e                TaskFastLed::Run()
+                0x50005f28                TaskSlowLed::Run()
+ *fill*         0x50006236        0x2 00
+ .text          0x50006238      0x47c C:/RTOS-WC/libRTOS-WC.a(RTOS_TaskManager_cpp.o)
+                0x5000665c                CyGOS::CreateTaskManager(int&, int, void (*)())
+                0x50006238                CyGOS::GetTaskTime(int)
+                0x5000639e                TaskManager::Run()
+                0x500062b0                CyGOS::GetIntrTimeHighest(int)
+                0x50006570                TaskManager::TaskManager(void (*)(), int)
+                0x500062da                CyGOS::GetIntCount(int)
+                0x500065e6                TaskManager::TaskManager(void (*)(), int)
+                0x5000629a                CyGOS::GetIntrTime(int)
+                0x500062f0                TaskManager::Tick()
+                0x5000624e                CyGOS::GetTaskTimeHighest(int)
+ .text          0x500066b4      0xc48 C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o)
+                0x50006f70                SerialBootTask::EnterSerialNumber()
+                0x500070e4                SerialBootTask::Run()
+                0x50006c76                SerialBootTask::SerialDownload(bool)
+                0x50006b68                CyGOS::CreateSerialBootTask(int&)
+                0x50006860                SerialBootTask::SerialReceiveHexRecord(unsigned char*)
+                0x50006ad2                SerialBootTask::SerialBootTask()
+                0x50006a90                SerialBootTask::SerialBootTask()
+                0x50006b14                ProgramCallback(int, int)
+                0x50006bb4                SerialBootTask::IdentifyFlash()
+                0x500066b4                SerialBootTask::HexToInt(char*&, int)
+                0x50006b46                EraseCallback(int, int)
+                0x50006db8                SerialBootTask::EnterMacAddress(unsigned char*)
+                0x5000671c                SerialBootTask::BurnImageToFlash()
+ .text          0x500072fc      0x5aa C:/RTOS-WC/libRTOS-WC.a(Board_cpp.o)
+                0x500076e4                Board::UpdateLEDs(unsigned char*)
+                0x50007644                Board::FreeAlignedNoCache(void*)
+                0x500072fc                Board::SetupforSensingVoltageonAA13andAB14()
+                0x5000762a                Board::SetupSlowCS8bit(int, int, void volatile*)
+                0x5000752e                Board::StopTimer(int)
+                0x500075ba                Board::GetSPI(int, int, int)
+                0x50007410                Board::InitProfilerTimer(int)
+                0x50007662                Board::AllocAlignedNoCache(unsigned long, int)
+                0x5000753a                Board::StartTimer(int)
+                0x500073a6                Board::InitRTC()
+                0x5000775a                Board::Init(bool)
+                0x50007546                Board::InstallTimer(int, void (*)(), int)
+                0x500076fe                Board::CheckforVoltageSignalonAB14Resistor4()
+                0x500073b8                Board::InitDMATimer(int)
+                0x500073ae                Board::GetRTCTime()
+                0x5000772c                Board::CheckforVoltageSignalonAA13Resistor3()
+                0x5000734c                Board::EnableWatchDog()
+                0x500074ba                Board::GetI2C(int, int, int)
+ *fill*         0x500078a6        0x2 00
+ .text          0x500078a8      0x206 C:/RTOS-WC/libRTOS-WC.a(MultiBootBoard_cpp.o)
+                0x50007a84                SerialBootTask::Init(void*)
+                0x500079ee                SerialBootTask::PrintData()
+                0x500078a8                SerialBootTask::FlashAddress(unsigned short*)
+                0x500078ba                SerialBootTask::MoveImageToSdram()
+                0x500079a4                SerialBootTask::CheckPrompts(int)
+                0x5000792c                SerialBootTask::ExecuteFlash()
+                0x5000796a                SerialBootTask::PrintPrompts()
+ *fill*         0x50007aae        0x2 00
+ .text          0x50007ab0      0x13c C:/RTOS-WC/libRTOS-WC.a(Board_asm.o)
+                0x50007ab0                Board::MultiBootMemoryInit()
+ .text          0x50007bec      0x280 C:/RTOS-WC/libRTOS-WC.a(54455_Terminal_cpp.o)
+                0x50007c1c                Terminal::In()
+                0x50007c9e                Terminal::Out(int)
+                0x50007c4c                Terminal::Peek()
+                0x50007bec                Terminal::OutPoll(int)
+                0x50007cca                Terminal::Init()
+                0x50007c70                Terminal::OutPoll(char*)
+ .text          0x50007e6c      0x8f6 C:/RTOS-WC/libRTOS-WC.a(54455_Serial_cpp.o)
+                0x5000856c                Serial::Send(Task*, unsigned char, int)
+                0x500084bc                Serial::Serial(int, int)
+                0x50007e96                Serial::EnableUARTInterrupt()
+                0x50007ede                Serial::IntHandler()
+                0x50007e6c                Serial::WriteIMR(int)
+                0x50008146                Serial::Init(int, int, int, int, bool)
+                0x5000840c                Serial::Serial(int, int)
+                0x500086d6                Serial::Receive(Task*, unsigned char&, int)
+                0x500080dc                Serial::IntHandler(int, void*)
+                0x50008622                Serial::FlushOutputBuffer()
+ *fill*         0x50008762        0x2 00
+ .text          0x50008764       0xda C:/RTOS-WC/libRTOS-WC.a(54455_MCF5445xTask_cpp.o)
+                0x50008764                Task::GetRunAddress() const
+                0x50008776                Task::GetTickAddress() const
+                0x50008788                Task::Initialize()
+ *fill*         0x5000883e        0x2 00
+ .text          0x50008840       0x5c C:/RTOS-WC/libRTOS-WC.a(54455_Cache_cpp.o)
+                0x50008840                Cache::Init(int, int)
+ .text          0x5000889c      0x99c C:/RTOS-WC/libRTOS-WC.a(54455_DSPI_cpp.o)
+                0x50009182                DSPI::DSPI(int, int, int)
+                0x50008c5a                DSPI::LongWordTransfer(int, unsigned char*, int, int)
+                0x50008bf2                DSPI::ReadInput()
+                0x50008c0c                DSPI::SetSignals(int, int, int)
+                0x5000889c                DSPI::ConfigureSPIPins()
+                0x50009162                DSPI::~DSPI()
+                0x50008c26                DSPI::EnableGPIO()
+                0x50008edc                DSPI::EnableSPI(bool, int, int, bool, bool)
+                0x5000908c                DSPI::~DSPI()
+                0x500090ac                DSPI::DSPI(int, int, int)
+                0x50008bc0                DSPI::InterruptHandler(int, void*)
+                0x50008d98                DSPI::GetBaudRate(unsigned long, unsigned long, bool, bool)
+                0x500088b4                DSPI::SingleTransfer(int, unsigned short*, int, bool)
+                0x50008a50                DSPI::IntHandler()
+                0x50008c40                DSPI::ReadByte(unsigned char, int)
+ .text          0x50009238       0x26 C:/RTOS-WC/libRTOS-WC.a(54455_MultiBootCpu_cpp.o)
+                0x50009248                MultiBootCpu::WriteProtectCs()
+                0x50009238                MultiBootCpu::Init()
+ *fill*         0x5000925e        0x2 00
+ .text          0x50009260      0x5b4 C:/RTOS-WC/libRTOS-WC.a(54455_I2C_cpp.o)
+                0x500092da                I2C::I2C(int, int, int, int)
+                0x5000928e                I2C::Release()
+                0x50009260                I2C::InterruptHandler()
+                0x500097e2                I2C::Acquire(int)
+                0x5000953a                I2C::Read(int, int, int, unsigned char*, int&, int)
+                0x5000940a                I2C::I2C(int, int, int, int)
+                0x50009268                I2C::WaitForInterrupt()
+                0x500092b4                I2C::InterruptHandler(int, void*)
+                0x500096ee                I2C::Write(int, int, int, unsigned char const*, int)
+ .text          0x50009814      0x1b6 C:/RTOS-WC/libRTOS-WC.a(54455_WatchDog_cpp.o)
+                0x50009814                WatchDog::WatchDog()
+                0x50009858                WatchDog::DisableWatchDog()
+                0x50009990                WatchDog::~WatchDog()
+                0x500099a6                WatchDog::~WatchDog()
+                0x50009884                WatchDog::IntHandler(int, void*)
+                0x50009838                WatchDog::EnableWatchDog()
+                0x50009954                WatchDog::InitWatchDog(int)
+                0x5000986e                WatchDog::kickWatchDog()
+                0x500099b8                WatchDog::~WatchDog()
+                0x50009826                WatchDog::WatchDog()
+ *fill*         0x500099ca        0x2 00
+ .text          0x500099cc      0x114 C:/RTOS-WC/libRTOS-WC.a(stdlib_StdLib_cpp.o)
+                0x50009a3e                xtoi
+                0x50009aae                otoi
+                0x500099cc                atoi
+ .text          0x50009ae0      0x2fc C:/RTOS-WC/libRTOS-WC.a(API_LinkedList_cpp.o)
+                0x50009b60                LinkedListBase::GetNext(void*&) const
+                0x50009b04                LinkedListBase::GetCount() const
+                0x50009bfc                LinkedListBase::RemoveTail()
+                0x50009cc6                LinkedListBase::~LinkedListBase()
+                0x50009c70                LinkedListBase::AddHead(void*)
+                0x50009af2                LinkedListBase::LinkedListBase()
+                0x50009b42                LinkedListBase::GetTail() const
+                0x50009d82                LinkedListBase::AddTail(void*)
+                0x50009b8e                LinkedListBase::RemoveAt(void*)
+                0x50009d04                LinkedListBase::RemoveHead()
+                0x50009c32                LinkedListBase::~LinkedListBase()
+                0x50009d38                LinkedListBase::Find(void*) const
+                0x50009b26                LinkedListBase::GetHead() const
+                0x50009ae0                LinkedListBase::LinkedListBase()
+ .text          0x50009ddc      0x2b4 C:/RTOS-WC/libRTOS-WC.a(RTOS_FIFO_cpp.o)
+                0x50009ec0                FifoBase::WriteTest(Task*, int)
+                0x50009e04                FifoBase::FifoBase(int, int, char const*)
+                0x50009e76                FifoBase::WriteCleanup()
+                0x50009ddc                FifoBase::FifoBase(int, int, char const*)
+                0x50009e2c                FifoBase::ReadCleanup()
+                0x50009fe4                FifoBase::ReadTest(Task*, int)
+ .text          0x5000a090      0x374 C:/RTOS-WC/libRTOS-WC.a(RTOS_Mutex_cpp.o)
+                0x5000a130                Mutex::Release(Task*)
+                0x5000a388                Mutex::Mutex(char*)
+                0x5000a252                Mutex::Acquire(Task*, int)
+                0x5000a090                Mutex::~Mutex()
+                0x5000a0e0                Mutex::~Mutex()
+                0x5000a23a                Mutex::Unlock()
+                0x5000a3e8                Mutex::Lock()
+                0x5000a3b8                Mutex::Mutex(char*)
+ .text          0x5000a404       0x2e C:/RTOS-WC/libRTOS-WC.a(BoardFlash_cpp.o)
+                0x5000a404                Board::GetFlash()
+ *fill*         0x5000a432        0x2 00
+ .text          0x5000a434      0x514 C:/RTOS-WC/libRTOS-WC.a(Flash_FlashM29W128G_cpp.o)
+                0x5000a4ee                FlashM29W128GL::Erase(void*, int, void (*)(int, int))
+                0x5000a434                FlashM29W128GL::GetSectorSize(int)
+                0x5000a69a                FlashM29W128GL::Program(void*, void*, int, void (*)(int, int))
+                0x5000a7e8                FlashM29W128GL::ReadFlashType()
+                0x5000a4ae                FlashM29W128GL::FlashM29W128GL(unsigned int, int)
+                0x5000a46e                FlashM29W128GL::FlashM29W128GL(unsigned int, int)
+ .text          0x5000a948      0x164 C:/RTOS-WC/libRTOS-WC.a(Flash_Flash_cpp.o)
+                0x5000a948                FlashAccess::FlashAccess(int)
+                0x5000a968                FlashAccess::FlashAccess(int)
+                0x5000a9ae                FlashAccess::Read(unsigned int)
+                0x5000aa3c                Flash::Flash(char*, unsigned int, int, int, int)
+                0x5000a9cc                Flash::Flash(char*, unsigned int, int, int, int)
+                0x5000a988                FlashAccess::Write(unsigned int, unsigned int)
+ .text          0x5000aaac      0x65a C:/RTOS-WC/libRTOS-WC.a(Flash_FlashAMD_cpp.o)
+                0x5000aef2                FlashAMD::ReadFlashType()
+                0x5000aafa                FlashAMD::Unlock(void*, int)
+                0x5000ad56                FlashAMD::Program(void*, void*, int, void (*)(int, int))
+                0x5000ab1e                FlashAMD::FlashAMD(char*, unsigned int, int, int, int)
+                0x5000b0e2                FlashAMD::Identify()
+                0x5000abc6                FlashAMD::Erase(void*, int, void (*)(int, int))
+                0x5000ab58                FlashAMD::FlashAMD(char*, unsigned int, int, int, int)
+                0x5000aad6                FlashAMD::Lock(void*, int)
+                0x5000aaac                FlashAMD::UnlockChip()
+                0x5000aabc                FlashAMD::GetSectorSize(void*)
+                0x5000aab4                FlashAMD::LockChip()
+                0x5000ab92                FlashAMD::WaitFor(unsigned int, unsigned int)
+ *(.text.*)
+ .text._ZN8IdleTaskD0Ev
+                0x5000b106       0x2a C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o)
+                0x5000b106                IdleTask::~IdleTask()
+ .text._ZN8IdleTaskD1Ev
+                0x5000b130       0x16 C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o)
+                0x5000b130                IdleTask::~IdleTask()
+ .text._ZN10PrintfTaskD0Ev
+                0x5000b146       0x44 C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o)
+                0x5000b146                PrintfTask::~PrintfTask()
+ .text._ZN10PrintfTaskD1Ev
+                0x5000b18a       0x3c C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o)
+                0x5000b18a                PrintfTask::~PrintfTask()
+ .text._ZN11TaskSlowLedD0Ev
+                0x5000b1c6       0x2a C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+                0x5000b1c6                TaskSlowLed::~TaskSlowLed()
+ .text._ZN11TaskSlowLedD1Ev
+                0x5000b1f0       0x16 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+                0x5000b1f0                TaskSlowLed::~TaskSlowLed()
+ .text._ZN11TaskFastLedD0Ev
+                0x5000b206       0x2a C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+                0x5000b206                TaskFastLed::~TaskFastLed()
+ .text._ZN11TaskFastLedD1Ev
+                0x5000b230       0x16 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+                0x5000b230                TaskFastLed::~TaskFastLed()
+ .text._ZN11TaskDispLedD0Ev
+                0x5000b246       0x2a C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+                0x5000b246                TaskDispLed::~TaskDispLed()
+ .text._ZN11TaskDispLedD1Ev
+                0x5000b270       0x16 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+                0x5000b270                TaskDispLed::~TaskDispLed()
+ .text._ZN11TaskManagerD0Ev
+                0x5000b286       0x44 C:/RTOS-WC/libRTOS-WC.a(RTOS_TaskManager_cpp.o)
+                0x5000b286                TaskManager::~TaskManager()
+ .text._ZN11TaskManagerD1Ev
+                0x5000b2ca       0x3c C:/RTOS-WC/libRTOS-WC.a(RTOS_TaskManager_cpp.o)
+                0x5000b2ca                TaskManager::~TaskManager()
+ .text._ZN14SerialBootTaskD1Ev
+                0x5000b306       0x2c C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o)
+                0x5000b306                SerialBootTask::~SerialBootTask()
+ .text._ZN14SerialBootTaskD0Ev
+                0x5000b332       0x34 C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o)
+                0x5000b332                SerialBootTask::~SerialBootTask()
+                0x5000b368                . = ALIGN (0x4)
+ *fill*         0x5000b366        0x2 00
+ *(.rodata)
+ .rodata        0x5000b368      0x200 obj-WC/Main_cpp.o
+ .rodata        0x5000b568        0x8 C:/RTOS-WC/libRTOS-WC.a(54455_CPU_cpp.o)
+                0x5000b568                CPU::ResetD0
+                0x5000b56c                CPU::ResetD1
+ .rodata        0x5000b570       0x88 C:/RTOS-WC/libRTOS-WC.a(API_SysLog_cpp.o)
+ .rodata        0x5000b5f8        0x4 C:/RTOS-WC/libRTOS-WC.a(MultiBootBoard_cpp.o)
+ .rodata        0x5000b5fc       0x50 C:/RTOS-WC/libRTOS-WC.a(54455_DSPI_cpp.o)
+ .rodata        0x5000b64c       0x80 C:/RTOS-WC/libRTOS-WC.a(54455_I2C_cpp.o)
+                0x5000b64c                I2C::divider
+ *(.rodata.*)
+ .rodata.str1.1
+                0x5000b6cc       0x44 obj-WC/Main_cpp.o
+ .rodata.str1.1
+                0x5000b710       0x78 C:/RTOS-WC/libRTOS-WC.a(54455_CPU_cpp.o)
+                                 0x7a (size before relaxing)
+ .rodata.str1.1
+                0x5000b788      0x396 C:/RTOS-WC/libRTOS-WC.a(54455_Exception_cpp.o)
+                                0x39e (size before relaxing)
+ .rodata.str1.1
+                0x5000bb1e       0xe6 C:/RTOS-WC/libRTOS-WC.a(54455_PIT_cpp.o)
+ .rodata.str1.1
+                0x5000bc04      0x11d C:/RTOS-WC/libRTOS-WC.a(54455_MMU_cpp.o)
+                                0x120 (size before relaxing)
+ .rodata.str1.1
+                0x5000bd21       0x32 C:/RTOS-WC/libRTOS-WC.a(MCF_ArchDefs_cpp.o)
+ .rodata.str1.1
+                0x5000bd53       0x4e C:/RTOS-WC/libRTOS-WC.a(stdlib_Assert_cpp.o)
+ .rodata.str1.1
+                0x5000bda1      0x142 C:/RTOS-WC/libRTOS-WC.a(stdlib_Alloc_cpp.o)
+                                0x14e (size before relaxing)
+ .rodata.str1.1
+                0x5000bee3       0x1e C:/RTOS-WC/libRTOS-WC.a(stdlib_String_cpp.o)
+ .rodata.str1.1
+                0x5000bf01       0x27 C:/RTOS-WC/libRTOS-WC.a(API_CyGOS_cpp.o)
+ .rodata.str1.1
+                0x5000bf28       0xf2 C:/RTOS-WC/libRTOS-WC.a(API_SysLog_cpp.o)
+ .rodata.str1.1
+                0x5000c01a      0x110 C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o)
+                                0x11d (size before relaxing)
+ *fill*         0x5000c12a        0x2 00
+ .rodata._ZTV8IdleTask
+                0x5000c12c       0x18 C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o)
+                0x5000c12c                vtable for IdleTask
+ .rodata.str1.1
+                0x5000c144       0x66 C:/RTOS-WC/libRTOS-WC.a(RTOS_Task_cpp.o)
+ *fill*         0x5000c1aa        0x2 00
+ .rodata._ZTV4Task
+                0x5000c1ac       0x18 C:/RTOS-WC/libRTOS-WC.a(RTOS_Task_cpp.o)
+                0x5000c1ac                vtable for Task
+ .rodata._ZTV8TaskBase
+                0x5000c1c4       0x18 C:/RTOS-WC/libRTOS-WC.a(RTOS_Task_cpp.o)
+                0x5000c1c4                vtable for TaskBase
+ .rodata.str1.1
+                0x5000c1dc       0x1f C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o)
+ *fill*         0x5000c1fb        0x1 00
+ .rodata._ZTV10PrintfTask
+                0x5000c1fc       0x18 C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o)
+                0x5000c1fc                vtable for PrintfTask
+ .rodata.str1.1
+                0x5000c214       0x5a C:/RTOS-WC/libRTOS-WC.a(RTOS_Debug_cpp.o)
+ .rodata.str1.1
+                0x5000c26e       0x48 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ *fill*         0x5000c2b6        0x2 00
+ .rodata._ZTV11TaskDispLed
+                0x5000c2b8       0x18 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+                0x5000c2b8                vtable for TaskDispLed
+ .rodata._ZTV11TaskFastLed
+                0x5000c2d0       0x18 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+                0x5000c2d0                vtable for TaskFastLed
+ .rodata._ZTV11TaskSlowLed
+                0x5000c2e8       0x18 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+                0x5000c2e8                vtable for TaskSlowLed
+ .rodata.str1.1
+                0x5000c300       0x29 C:/RTOS-WC/libRTOS-WC.a(RTOS_TaskManager_cpp.o)
+                                 0x41 (size before relaxing)
+ *fill*         0x5000c329        0x3 00
+ .rodata._ZTV11TaskManager
+                0x5000c32c       0x18 C:/RTOS-WC/libRTOS-WC.a(RTOS_TaskManager_cpp.o)
+                0x5000c32c                vtable for TaskManager
+ .rodata.str1.1
+                0x5000c344      0x39d C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o)
+                                0x3d0 (size before relaxing)
+ *fill*         0x5000c6e1        0x3 00
+ .rodata._ZTV14SerialBootTask
+                0x5000c6e4       0x18 C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o)
+                0x5000c6e4                vtable for SerialBootTask
+ .rodata.str1.1
+                0x5000c6fc      0x170 C:/RTOS-WC/libRTOS-WC.a(Board_cpp.o)
+ .rodata.str1.1
+                0x5000c86c       0x66 C:/RTOS-WC/libRTOS-WC.a(MultiBootBoard_cpp.o)
+                                 0x82 (size before relaxing)
+ .rodata.str1.1
+                0x5000c8d2       0x25 C:/RTOS-WC/libRTOS-WC.a(54455_Terminal_cpp.o)
+ .rodata.str1.1
+                0x5000c8f7      0x126 C:/RTOS-WC/libRTOS-WC.a(54455_Serial_cpp.o)
+                                0x153 (size before relaxing)
+ .rodata.str1.1
+                0x5000ca1d      0x104 C:/RTOS-WC/libRTOS-WC.a(54455_DSPI_cpp.o)
+                                0x118 (size before relaxing)
+ *fill*         0x5000cb21        0x3 00
+ .rodata._ZTV4DSPI
+                0x5000cb24       0x24 C:/RTOS-WC/libRTOS-WC.a(54455_DSPI_cpp.o)
+                0x5000cb24                vtable for DSPI
+ .rodata._ZTV3SPI
+                0x5000cb48       0x24 C:/RTOS-WC/libRTOS-WC.a(54455_DSPI_cpp.o)
+                0x5000cb48                vtable for SPI
+ .rodata.str1.1
+                0x5000cb6c       0x5b C:/RTOS-WC/libRTOS-WC.a(54455_I2C_cpp.o)
+                                 0x6b (size before relaxing)
+ .rodata.str1.1
+                0x5000cbc7       0x10 C:/RTOS-WC/libRTOS-WC.a(54455_WatchDog_cpp.o)
+                                 0x12 (size before relaxing)
+ *fill*         0x5000cbd7        0x1 00
+ .rodata._ZTV8WatchDog
+                0x5000cbd8       0x10 C:/RTOS-WC/libRTOS-WC.a(54455_WatchDog_cpp.o)
+                0x5000cbd8                vtable for WatchDog
+ .rodata.str1.1
+                0x5000cbe8       0x23 C:/RTOS-WC/libRTOS-WC.a(API_LinkedList_cpp.o)
+ .rodata.str1.1
+                0x5000cc0b       0x57 C:/RTOS-WC/libRTOS-WC.a(RTOS_FIFO_cpp.o)
+ .rodata.str1.1
+                0x5000cc62       0x83 C:/RTOS-WC/libRTOS-WC.a(RTOS_Mutex_cpp.o)
+ .rodata.str1.1
+                0x5000cce5       0x42 C:/RTOS-WC/libRTOS-WC.a(Flash_FlashM29W128G_cpp.o)
+ *fill*         0x5000cd27        0x1 00
+ .rodata._ZTV14FlashM29W128GL
+                0x5000cd28       0x30 C:/RTOS-WC/libRTOS-WC.a(Flash_FlashM29W128G_cpp.o)
+                0x5000cd28                vtable for FlashM29W128GL
+ .rodata._ZTV11FlashAccess
+                0x5000cd58       0x10 C:/RTOS-WC/libRTOS-WC.a(Flash_Flash_cpp.o)
+                0x5000cd58                vtable for FlashAccess
+ .rodata._ZTV5Flash
+                0x5000cd68       0x28 C:/RTOS-WC/libRTOS-WC.a(Flash_Flash_cpp.o)
+                0x5000cd68                vtable for Flash
+ .rodata.str1.1
+                0x5000cd90       0x2a C:/RTOS-WC/libRTOS-WC.a(Flash_FlashAMD_cpp.o)
+ *fill*         0x5000cdba        0x2 00
+ .rodata._ZTV8FlashAMD
+                0x5000cdbc       0x2c C:/RTOS-WC/libRTOS-WC.a(Flash_FlashAMD_cpp.o)
+                0x5000cdbc                vtable for FlashAMD
+                0x5000cde8                . = ALIGN (0x4)
+                0x5000cde8                __CTOR_START = .
+ *(.ctors)
+                0x5000cde8                __CTOR_END = .
+                0x5000cdf0                . = ALIGN (0x10)
+ *fill*         0x5000cde8        0x8 00
+                0x5000cdf0                __TEXT_END = .
+
+.data           0x51000000     0x6920 load address 0x5000cdf0
+                0x51000000                . = ALIGN (0x10)
+                0x51000000                __DATA_START = .
+ *(.data)
+ .data          0x51000000        0x0 C:/RTOS-WC/Start.o
+ .data          0x51000000        0x8 obj-WC/Main_cpp.o
+                0x51000000                BootLoaderVersion
+ .data          0x51000008        0x0 C:/RTOS-WC/libRTOS-WC.a(LED_cpp.o)
+ .data          0x51000008        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_CPU_cpp.o)
+ .data          0x51000008        0x4 C:/RTOS-WC/libRTOS-WC.a(54455_Exception_cpp.o)
+ .data          0x5100000c        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_PIT_cpp.o)
+ .data          0x5100000c        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_MMU_cpp.o)
+ .data          0x5100000c        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_CPU_asm.o)
+ .data          0x5100000c        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_Exception_asm.o)
+ .data          0x5100000c        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_MCF5445xRTOS_asm.o)
+ .data          0x5100000c        0x0 C:/RTOS-WC/libRTOS-WC.a(MCF_ArchDefs_cpp.o)
+ .data          0x5100000c        0x0 C:/RTOS-WC/libRTOS-WC.a(MCF_MemoryInit_asm.o)
+ .data          0x5100000c        0x0 C:/RTOS-WC/libRTOS-WC.a(MCF_ArchDefs_asm.o)
+ .data          0x5100000c        0x0 C:/RTOS-WC/libRTOS-WC.a(stdlib_Assert_cpp.o)
+ .data          0x5100000c       0x10 C:/RTOS-WC/libRTOS-WC.a(stdlib_Alloc_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-WC/libRTOS-WC.a(stdlib_PrintF_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-WC/libRTOS-WC.a(stdlib_String_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-WC/libRTOS-WC.a(API_CyGOS_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-WC/libRTOS-WC.a(API_SysLog_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_Task_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_Debug_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_TaskManager_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o)
+ .data          0x5100001c        0x2 C:/RTOS-WC/libRTOS-WC.a(Board_cpp.o)
+                0x5100001c                Board::VoltageonResistor3Flag
+                0x5100001d                Board::VoltageonResistor4Flag
+ *fill*         0x5100001e        0x2 00
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(MultiBootBoard_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(Board_asm.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_Terminal_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_Serial_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_MCF5445xTask_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_Cache_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_DSPI_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_MultiBootCpu_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_I2C_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_WatchDog_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(stdlib_StdLib_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(API_LinkedList_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_FIFO_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_Mutex_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(BoardFlash_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(Flash_FlashM29W128G_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(Flash_Flash_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-WC/libRTOS-WC.a(Flash_FlashAMD_cpp.o)
+                0x51000020                . = ALIGN (0x4)
+                0x51000020                __DATA_END = .
+                0x51000020                __BSS_START = .
+ *(.bss)
+ .bss           0x51000020        0x0 C:/RTOS-WC/Start.o
+ .bss           0x51000020     0x40be obj-WC/Main_cpp.o
+                0x510040d2                StackEnd
+                0x51000022                CrashBuffer
+                0x510040c6                CrashValid
+                0x510040ce                Stackbegin
+                0x510040da                MMUAR
+                0x510040ae                TaskName
+                0x510040ca                CurrStackPtr
+                0x510040d6                CrashBuffPrintLen
+                0x51000020                FramCsDone
+ *fill*         0x510040de        0x2 00
+ .bss           0x510040e0        0x4 C:/RTOS-WC/libRTOS-WC.a(LED_cpp.o)
+                0x510040e0                LED::lptr
+ .bss           0x510040e4        0x4 C:/RTOS-WC/libRTOS-WC.a(54455_CPU_cpp.o)
+                0x510040e4                CPU::rtosPit
+ .bss           0x510040e8      0x418 C:/RTOS-WC/libRTOS-WC.a(54455_Exception_cpp.o)
+                0x510044f4                ExStkPtr
+                0x510040e8                Exception::ExceptionHandlerArray
+                0x510044f8                ExStkSize
+                0x510044ec                ExTaskPtr
+                0x510044e8                LastInterruptLevel
+                0x510044fc                ExIndx
+                0x510044f0                ExStkBegin
+ .bss           0x51004500       0x10 C:/RTOS-WC/libRTOS-WC.a(54455_PIT_cpp.o)
+                0x51004500                PIT::pit
+ .bss           0x51004510       0x20 C:/RTOS-WC/libRTOS-WC.a(54455_MMU_cpp.o)
+                0x51004510                MMU::mapped
+ .bss           0x51004530        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_CPU_asm.o)
+ .bss           0x51004530        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_Exception_asm.o)
+ .bss           0x51004530        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_MCF5445xRTOS_asm.o)
+ .bss           0x51004530        0x4 C:/RTOS-WC/libRTOS-WC.a(MCF_ArchDefs_cpp.o)
+                0x51004530                __dso_handle
+ .bss           0x51004534        0x0 C:/RTOS-WC/libRTOS-WC.a(MCF_MemoryInit_asm.o)
+ .bss           0x51004534        0x0 C:/RTOS-WC/libRTOS-WC.a(MCF_ArchDefs_asm.o)
+ .bss           0x51004534        0x0 C:/RTOS-WC/libRTOS-WC.a(stdlib_Assert_cpp.o)
+ .bss           0x51004534        0x8 C:/RTOS-WC/libRTOS-WC.a(stdlib_Alloc_cpp.o)
+ .bss           0x5100453c        0x0 C:/RTOS-WC/libRTOS-WC.a(stdlib_PrintF_cpp.o)
+ .bss           0x5100453c        0x0 C:/RTOS-WC/libRTOS-WC.a(stdlib_String_cpp.o)
+ .bss           0x5100453c        0x8 C:/RTOS-WC/libRTOS-WC.a(API_CyGOS_cpp.o)
+                0x5100453c                LoadLogCallBack
+                0x51004540                AppCrashCallBackFun
+ .bss           0x51004544       0x3a C:/RTOS-WC/libRTOS-WC.a(API_SysLog_cpp.o)
+                0x51004548                BoardTestCallBack
+                0x51004544                sysLogCallBack
+ *fill*         0x5100457e        0x2 00
+ .bss           0x51004580      0x122 C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o)
+                0x51004586                RTOS::taskCurrent
+                0x51004696                RTOS::ticking
+                0x5100458a                RTOS::taskHighest
+                0x51004580                RTOS::running
+                0x51004692                RTOS::taskPrintf
+                0x5100469a                RTOS::timestamp
+                0x51004592                RTOS::tasks
+                0x51004582                RTOS::intNesting
+                0x5100458e                RTOS::taskIdle
+ *fill*         0x510046a2        0x2 00
+ .bss           0x510046a4        0x4 C:/RTOS-WC/libRTOS-WC.a(RTOS_Task_cpp.o)
+                0x510046a4                Task::usecPerTick
+ .bss           0x510046a8        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o)
+ .bss           0x510046a8        0x8 C:/RTOS-WC/libRTOS-WC.a(RTOS_Debug_cpp.o)
+                0x510046a8                Debug::stack
+                0x510046ac                Debug::debug
+ .bss           0x510046b0       0x10 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ .bss           0x510046c0     0x2204 C:/RTOS-WC/libRTOS-WC.a(RTOS_TaskManager_cpp.o)
+                0x51005ec0                TaskManager::lastTime
+                0x510064c4                TaskManager::intrTimesHighest
+                0x51004ac0                TaskManager::intrData
+                0x51005fc4                TaskManager::TaskTimesHighest
+                0x51005ac0                TaskManager::intCount
+                0x51005ec4                TaskManager::taskTimes
+                0x510046c0                TaskManager::taskData
+                0x510060c4                TaskManager::intrTimes
+ .bss           0x510068c4        0xc C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o)
+                0x510068c4                SerialBootTask::bootImageBuffer
+                0x510068c8                SerialBootTask::bootImageLength
+                0x510068cc                SerialBootTask::bootImageFlash
+ .bss           0x510068d0        0xc C:/RTOS-WC/libRTOS-WC.a(Board_cpp.o)
+                0x510068d4                Board::i2c
+                0x510068d8                Board::dmaTimers
+                0x510068d0                Board::spi
+ .bss           0x510068dc        0x0 C:/RTOS-WC/libRTOS-WC.a(MultiBootBoard_cpp.o)
+ .bss           0x510068dc        0x0 C:/RTOS-WC/libRTOS-WC.a(Board_asm.o)
+ .bss           0x510068dc        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_Terminal_cpp.o)
+ .bss           0x510068dc        0xc C:/RTOS-WC/libRTOS-WC.a(54455_Serial_cpp.o)
+                0x510068dc                Serial::serial
+ .bss           0x510068e8        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_MCF5445xTask_cpp.o)
+ .bss           0x510068e8        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_Cache_cpp.o)
+ .bss           0x510068e8        0x4 C:/RTOS-WC/libRTOS-WC.a(54455_DSPI_cpp.o)
+                0x510068e8                DSPI::thisPtr
+ .bss           0x510068ec        0x0 C:/RTOS-WC/libRTOS-WC.a(54455_MultiBootCpu_cpp.o)
+ .bss           0x510068ec        0x8 C:/RTOS-WC/libRTOS-WC.a(54455_I2C_cpp.o)
+                0x510068f0                I2CRetries
+                0x510068ec                I2C::i2c
+ .bss           0x510068f4       0x10 C:/RTOS-WC/libRTOS-WC.a(54455_WatchDog_cpp.o)
+                0x510068f4                TaskPriority
+                0x510068fc                MaxTaskTime
+                0x51006900                MaxVectorTime
+                0x510068f8                VectorNumber
+ .bss           0x51006904        0x0 C:/RTOS-WC/libRTOS-WC.a(stdlib_StdLib_cpp.o)
+ .bss           0x51006904        0x0 C:/RTOS-WC/libRTOS-WC.a(API_LinkedList_cpp.o)
+ .bss           0x51006904        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_FIFO_cpp.o)
+ .bss           0x51006904        0x0 C:/RTOS-WC/libRTOS-WC.a(RTOS_Mutex_cpp.o)
+ .bss           0x51006904        0x0 C:/RTOS-WC/libRTOS-WC.a(BoardFlash_cpp.o)
+ .bss           0x51006904        0x0 C:/RTOS-WC/libRTOS-WC.a(Flash_FlashM29W128G_cpp.o)
+ .bss           0x51006904        0x4 C:/RTOS-WC/libRTOS-WC.a(Flash_Flash_cpp.o)
+                0x51006904                Flash::access
+ .bss           0x51006908        0x0 C:/RTOS-WC/libRTOS-WC.a(Flash_FlashAMD_cpp.o)
+                0x51006920                . = ALIGN (0x20)
+ *fill*         0x51006908       0x18 00
+                0x51006920                __BSS_END = .
+                0x00006920                ___DATA_SIZE = (__BSS_END - __DATA_START)
+
+.fram           0x0b000000       0x10 load address 0x50013710
+                0x0b000000                __FRAM_START = .
+                0x0b000000        0x4 LONG 0x12345678
+                0x0b000004        0x4 LONG 0x12345678
+                0x0b000008        0x4 LONG 0x12345678
+                0x0b00000c        0x4 LONG 0x12345678
+ *(.FRAM)
+                0x0b000010                . = ALIGN (0x10)
+                0x0b000010                __FRAM_END = .
+                0x51006920                __FLASH_END = __BSS_END
+                0x40000000                __SDRAM = 0x40000000
+                0x08000000                __SDRAM_SIZE = 0x8000000
+                0x58000000                __SP_INIT = (__SDRAM_BASE + __SDRAM_SIZE)
+                0x57fff000                __SP_END = (__SP_INIT - 0x1000)
+                0x51006920                __HEAP_START = __FLASH_END
+                0x57fff000                __HEAP_END = __SP_END
+                0x40000000                __VECTOR_RAM = __SDRAM
+                0x00040000                __BOOTLOADER_SIZE = 0x40000
+                0x00040000                __USER_FLASH_ROM = (__FLASH_ROM + __BOOTLOADER_SIZE)
+                0x50040000                __USER_FLASH_RAM = (__SDRAM_BASE + __BOOTLOADER_SIZE)
+                0x00fc0000                __USER_FLASH_SIZE = (0x1000000 - __BOOTLOADER_SIZE)
+                0x00000000                __FLASH_ROM = 0x0
+                0x01000000                __FLASH_SIZE = 0x1000000
+                0x80000000                __CORE_SRAM = 0x80000000
+                0x00008000                __CORE_SRAM_SIZE = 0x8000
+                0x80008000                __SRAM_SP = (__CORE_SRAM + __CORE_SRAM_SIZE)
+                0x50000000                __SDRAM_BASE = 0x50000000
+                0x00000000                __FLASH_BASE = 0x0
+                0xb0000000                __FLASH_DIFF = (__FLASH_BASE - __SDRAM_BASE)
+                0xe1000000                __MMU_BAR = 0xe1000000
+OUTPUT(obj-WC/BootLoad.elf elf32-m68k)
+
+.comment        0x00000000      0x5ca
+ .comment       0x00000000       0x27 obj-WC/Main_cpp.o
+ .comment       0x00000027       0x27 C:/RTOS-WC/libRTOS-WC.a(LED_cpp.o)
+ .comment       0x0000004e       0x27 C:/RTOS-WC/libRTOS-WC.a(54455_CPU_cpp.o)
+ .comment       0x00000075       0x27 C:/RTOS-WC/libRTOS-WC.a(54455_Exception_cpp.o)
+ .comment       0x0000009c       0x27 C:/RTOS-WC/libRTOS-WC.a(54455_PIT_cpp.o)
+ .comment       0x000000c3       0x27 C:/RTOS-WC/libRTOS-WC.a(54455_MMU_cpp.o)
+ .comment       0x000000ea       0x27 C:/RTOS-WC/libRTOS-WC.a(MCF_ArchDefs_cpp.o)
+ .comment       0x00000111       0x27 C:/RTOS-WC/libRTOS-WC.a(stdlib_Assert_cpp.o)
+ .comment       0x00000138       0x27 C:/RTOS-WC/libRTOS-WC.a(stdlib_Alloc_cpp.o)
+ .comment       0x0000015f       0x27 C:/RTOS-WC/libRTOS-WC.a(stdlib_PrintF_cpp.o)
+ .comment       0x00000186       0x27 C:/RTOS-WC/libRTOS-WC.a(stdlib_String_cpp.o)
+ .comment       0x000001ad       0x27 C:/RTOS-WC/libRTOS-WC.a(API_CyGOS_cpp.o)
+ .comment       0x000001d4       0x27 C:/RTOS-WC/libRTOS-WC.a(API_SysLog_cpp.o)
+ .comment       0x000001fb       0x27 C:/RTOS-WC/libRTOS-WC.a(RTOS_RTOS_cpp.o)
+ .comment       0x00000222       0x27 C:/RTOS-WC/libRTOS-WC.a(RTOS_Task_cpp.o)
+ .comment       0x00000249       0x27 C:/RTOS-WC/libRTOS-WC.a(RTOS_PrintfTask_cpp.o)
+ .comment       0x00000270       0x27 C:/RTOS-WC/libRTOS-WC.a(RTOS_Debug_cpp.o)
+ .comment       0x00000297       0x27 C:/RTOS-WC/libRTOS-WC.a(RTOS_LedTasks_cpp.o)
+ .comment       0x000002be       0x27 C:/RTOS-WC/libRTOS-WC.a(RTOS_TaskManager_cpp.o)
+ .comment       0x000002e5       0x27 C:/RTOS-WC/libRTOS-WC.a(MBoot_SerialBootTask_cpp.o)
+ .comment       0x0000030c       0x27 C:/RTOS-WC/libRTOS-WC.a(Board_cpp.o)
+ .comment       0x00000333       0x27 C:/RTOS-WC/libRTOS-WC.a(MultiBootBoard_cpp.o)
+ .comment       0x0000035a       0x27 C:/RTOS-WC/libRTOS-WC.a(54455_Terminal_cpp.o)
+ .comment       0x00000381       0x27 C:/RTOS-WC/libRTOS-WC.a(54455_Serial_cpp.o)
+ .comment       0x000003a8       0x27 C:/RTOS-WC/libRTOS-WC.a(54455_MCF5445xTask_cpp.o)
+ .comment       0x000003cf       0x27 C:/RTOS-WC/libRTOS-WC.a(54455_Cache_cpp.o)
+ .comment       0x000003f6       0x27 C:/RTOS-WC/libRTOS-WC.a(54455_DSPI_cpp.o)
+ .comment       0x0000041d       0x27 C:/RTOS-WC/libRTOS-WC.a(54455_MultiBootCpu_cpp.o)
+ .comment       0x00000444       0x27 C:/RTOS-WC/libRTOS-WC.a(54455_I2C_cpp.o)
+ .comment       0x0000046b       0x27 C:/RTOS-WC/libRTOS-WC.a(54455_WatchDog_cpp.o)
+ .comment       0x00000492       0x27 C:/RTOS-WC/libRTOS-WC.a(stdlib_StdLib_cpp.o)
+ .comment       0x000004b9       0x27 C:/RTOS-WC/libRTOS-WC.a(API_LinkedList_cpp.o)
+ .comment       0x000004e0       0x27 C:/RTOS-WC/libRTOS-WC.a(RTOS_FIFO_cpp.o)
+ .comment       0x00000507       0x27 C:/RTOS-WC/libRTOS-WC.a(RTOS_Mutex_cpp.o)
+ .comment       0x0000052e       0x27 C:/RTOS-WC/libRTOS-WC.a(BoardFlash_cpp.o)
+ .comment       0x00000555       0x27 C:/RTOS-WC/libRTOS-WC.a(Flash_FlashM29W128G_cpp.o)
+ .comment       0x0000057c       0x27 C:/RTOS-WC/libRTOS-WC.a(Flash_Flash_cpp.o)
+ .comment       0x000005a3       0x27 C:/RTOS-WC/libRTOS-WC.a(Flash_FlashAMD_cpp.o)

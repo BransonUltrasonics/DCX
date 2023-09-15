@@ -1,0 +1,77 @@
+/* IO function strings*/
+/*Digital Input Function Strings*/
+100:S,STD-External Reset
+101:S,STD-External Seek
+102:S,STD-External Start
+103:S,STD-External Test
+104:S,STD-Memory Clear
+105:S,STD-External Horn Scan
+106:S,STD-Display Lock
+107:S,STD-Cable Detect
+108:S,STD-Recall Preset 1
+109:S,STD-Recall Preset 2
+110:S,STD-Recall Preset 4
+111:S,STD-Recall Preset 8
+112:S,STD-Recall Preset 16
+113:S,STD-Recall Preset 32
+114:S,STD-External Sonics Delay
+115:S,STD-Sonics Disable
+116:S,ACT-Interlock In Place
+117:S,STD-Load New Preset
+118:S,ACT-Cycle Abort
+119:S,STD-External Amp Step Trigger
+120:S,ACT-Horndown
+121:S,RF-Status Feedback
+122:S,RF-Feedback A
+123:S,RF-Feedback B
+124:S,RF-Feedback C
+125:S,RF-Feedback D
+126:S,ACT-Part In Place
+127:S,STD-Start Cycle
+128:S,ACT-Upperlimit Switch
+129:S,ACT-Ground Detect
+130:S,ACT-Actuator Present
+131:S,ACT-Trigger Switch
+/*Digital Output Function Strings*/
+200:S,STD-Ready
+201:S,STD-Sonics Active
+202:S,STD-General Alarm
+203:S,STD-Overload Alarm
+204:S,STD-Seek/Scan Out
+205:S,STD-Amplitude State
+206:S,ACT-Hold Time
+207:S,ACT-Afterburst Delay
+208:S,ACT-Afterburst Time
+209:S,STD-Plus Time Limit Alarm
+210:S,STD-Minus Time Limit Alarm
+211:S,STD-Plus Energy Limit Alarm
+212:S,STD-Minus Energy Limit Alarm
+213:S,STD-Plus Peak Power Limit Alarm
+214:S,STD-Minus Peak Power Limit Alarm
+215:S,STD-Status
+216:S,STD-Confirm Preset Change
+217:S,ACT-Actuator Home
+218:S,STD-Weldcycle Complete
+219:S,STD-Preloaded Cycle Count
+220:S,ACT-Horndown
+221:S,ACT-End of Hold Time
+222:S,STD-Start Signal Release
+223:S,STD-Cycle Okay
+224:S,RF-Select A
+225:S,RF-Select B
+226:S,RF-Select C
+227:S,RF-Select D
+228:S,STD-Cycle Start Out
+229:S,STD-Amp1 Amp2
+230:S,STD-Custom Alarm
+/*Analog Input Function Strings*/
+300:S,Frequency Offset
+301:S,Amplitude In
+302:S,Custom Input 1
+303:S,Custom Input 2
+/*Analog Output Function Strings*/
+400:S,Power Out
+401:S,Amplitude Out
+402:S,Memory Out
+403:S,Frequency Out
+404:S,Automation OP1

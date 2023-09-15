@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.ibm.magnolia.clientmodel:ClientModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:com.ibm.magnolia.clientmodel="http:///com/ibm/magnolia/clientmodel.ecore">
+  <workItemEditorHistory>
+    <internalContents date="2023-02-20T11:28:12.367-0600" description="10316: Web Page Reloading 3" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_4qOVULFDEe2cwZ31fz8Z7Q"/>
+    </internalContents>
+    <internalContents date="2023-02-20T11:27:34.725-0600" description="10194: Web Page Reloading 2" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_xJgFMJgxEe2Xt7bBCFNEig"/>
+    </internalContents>
+    <internalContents date="2023-01-04T16:15:16.178-0600" description="10065: WebPage Reloading" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_mmE7kIxxEe2HCtPd6bTsLw"/>
+    </internalContents>
+    <internalContents date="2022-11-24T11:13:05.272-0600" description="8208: Field Bus Percentage to Watts Output" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_DsnTsA99Ee2ts7_soK1QUA"/>
+    </internalContents>
+    <internalContents date="2022-11-24T11:11:40.160-0600" description="8209: Field Bus Save Percentage to Watts Settings" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_PJNS0A99Ee2ts7_soK1QUA"/>
+    </internalContents>
+    <internalContents date="2022-11-22T15:31:59.158-0600" description="7825: Webpage Menu does not show in header" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_r77IYNFEEeyk1O_khuB4jw"/>
+    </internalContents>
+    <internalContents date="2022-08-29T14:38:34.356-0500" description="7732: Remove the LCD Communication" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_o3Gy0LwXEey4xfDZQ5pBMw"/>
+    </internalContents>
+  </workItemEditorHistory>
+  <queries/>
+  <queryViews/>
+</com.ibm.magnolia.clientmodel:ClientModelRoot>

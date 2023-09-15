@@ -1,0 +1,859 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+    <meta charset="UTF-8">
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+    <link rel="stylesheet" type="text/css" href="superfishDCXAF-v1.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="styleDCXAF-v1.css" />
+    
+    <script type="text/javascript" language="javascript" src="jqueryDCXAF-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="hoverIntentDCXAF-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="superfishDCXAF-v1.js"></script>
+    <script type="text/JavaScript" language="javascript" src="formchange-detect.js"></script>
+    <script type="text/javascript" language="javascript" src="handlerDCXAF-v1.js"></script>
+    
+    <title>BRANSON DCX GUI</title>
+
+<script language="javascript"  type="text/javascript">
+var restoreFlag = false, pageRefresh = false, PageRefTo = null, currentIPActiveOption = [1, 1, 1, 1, 1, 1, 1, 1, 1];
+var RestoreMsg = "I/O Configuration Restored",ddnames = ['dd_pin17', 'dd_pin18'];
+var http = getHTTPObject();
+var strSaveCustomDefault = "Do you really want to Change Custom Defaults?";
+var strWarningLowSelect = "You have selected 0 volts. To prevent accidental\r\n"
+                          +"activation of ultrasonics if the I/O cable is removed,\r\n"
+                          +"It is recommended you assign one input to\r\n"
+                          +"\"Cable Detect\" and select 24 volts.  Connect this\r\n"
+                          +"input pin to 24 volts.  If the cable is removed the\r\n"
+                          +"signal on this pin drops to 0 volts preventing\r\n"
+                          +"ultrasonics from coming on. The ultrasonics will\r\n"
+                          +"remain disabled until the cable is reconnected.";
+function onIOConfigCancelClick() {
+    pageRefresh = true;
+    SubmitForm('ConfigUserIO.html');
+}
+var DDBoxesArr = ["dd_pin1", "dd_pin2", "dd_pin3", "dd_pin4",
+            "dd_pin11", "dd_pin12", "dd_pin13", "dd_pin16",
+			"dd_pin23", "dd_pin7", "dd_pin8", "dd_pin9", "dd_pin10",
+            "dd_pin19", "dd_pin20", "dd_pin21", "dd_pin22",
+			"dd_pin17", "dd_pin18", "dd_pin24", "dd_pin25"
+			];
+function OnInputCheckAnalog(checkstatus, name, namedd) {
+    var cbnames = ['dd_pin17_cb', 'dd_pin18_cb'];
+    var pinName = ["17", "18"];
+    var object = UseID(namedd);
+    if (object.value != '0') {
+        if ((object.selectedIndex > 0) && (checkstatus == true)) {
+            for (var indx = 0; indx < 2; indx++) {
+                if (name != cbnames[indx]) {
+                    if ((UseID(ddnames[indx]).selectedIndex == object.selectedIndex)
+            && (UseID(ddnames[indx] + "_cb").checked == true)) {
+                        alert("Already Selected in Pin " + pinName[indx]);
+                        UseID(name).checked = false;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+function CheckForInputLowSelection() {
+    var retVal = false;
+    var ddnames = ['dd_pin1', 'dd_pin2', 'dd_pin3', 'dd_pin4', 'dd_pin11', 'dd_pin12', 'dd_pin13', 'dd_pin16', 'dd_pin23'];
+    for (indx = 0; indx < 9; indx++) {
+        if (UseID(ddnames[indx] + "_0").checked == true) {
+            if (UseID(ddnames[indx]).selectedIndex > 0) 
+                if (currentIPActiveOption[indx] == 1)
+                    retVal = true;
+        }
+    }
+    return retVal;
+}
+function SubmitForm(hrefpage) {
+    if (pageRefresh == false) {
+        var ret;
+        if (IsFormModified(document.main_form)) {
+            ret = confirm(formChangeMessage);
+			if (ret == true){
+				PageRefTo = hrefpage;
+				onIOConfigSaveClick('0');
+				return;
+			}
+        }
+    }
+    if (hrefpage == "index.html")
+        location.href = hrefpage;
+    else {
+        SubmitCookies(hrefpage);
+        document.temp_form.submit();
+    }
+}
+function onIOConfigRestoreClick() {
+    var ret = confirm(strRestoreDefault);
+    if (ret == true) {
+        var ConfigUserIOOnLoadRequest = "func=" + Func.ConfigurationUserIOGetDatahandler + "cmd=" + Command.REQ_RESTORE + "?param=";        
+        ConfigUserIOOnLoadRequest += "DefaultTypeSelected=" + UseID('DefaultTypeID').selectedIndex;
+        ConfigUserIOOnLoadRequest += SendCookies();        
+        http.open("POST", ConfigUserIOOnLoadRequest, true);
+        restoreFlag = true;
+        http.onreadystatechange = ConfigUserIOOnLoad;
+        http.send(null);
+    }
+}
+function HandleonIOConfigSave() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+        if (http.responseText == "OK") {
+            alert("Saved");
+            SetToken(1,0);
+            UpdateCheckBoxStatus();
+            UpdateCurrentInputSelection();
+            RefreshAttribute(document.main_form);
+			if (PageRefTo != null)
+			SubmitForm(PageRefTo);
+        }
+        else if (http.responseText == "NOK")
+            alert("System Busy!!!");
+        else {
+            SetToken(0,0);
+            alert(Notoken);
+        }
+    }
+}
+function onIOConfigSaveClick(type) {
+    if (type == '1') {
+        var ret = confirm(strSaveCustomDefault);
+        if (ret == false)
+            return;
+    }
+    var Updateurl = "func=" + Func.ConfigurationUserIOPostDatahandler;
+    if (type == '0')
+        Updateurl += "cmd=" + Command.REQ_NONE + "?param=";
+    else if (type == '1')
+        Updateurl += "cmd=" + Command.REQ_SAVE + "?param=";
+    Updateurl += "DI:"
+    for(var indx = 0; indx < 17; indx++) {
+        var ddObj = UseID(DDBoxesArr[indx]);
+        var radioObj = UseID(DDBoxesArr[indx] + "_24");
+        var ddValue = ddObj.options[ddObj.selectedIndex].value;
+        var funcIDs = ddValue.split('X');
+        if (indx == 9)
+            Updateurl += "&DO:";
+        if (ddObj.selectedIndex == 0)
+            Updateurl += "0,0,";
+        else {
+			Updateurl += ((radioObj.checked == true)? (funcIDs[0] + ","): (funcIDs[1] + ","));
+            Updateurl += ((UseID(DDBoxesArr[indx] + '_cb').checked)?"1,":"0,");
+        }
+    }
+    Updateurl += "&AI:"
+    for(var indx = 17; indx < 21; indx++) {
+        ddObj = UseID(DDBoxesArr[indx]);
+        ddValue = ddObj.options[ddObj.selectedIndex].value;
+        if (indx == 19)
+            Updateurl += "&AO:";
+        if (ddObj.selectedIndex == 0)
+            Updateurl += "0,0,";
+        else 
+            Updateurl += (ddValue + ",") + ((UseID(DDBoxesArr[indx] + '_cb').checked)? "1,": "0,");
+    }
+    Updateurl += "&lowselect," + ((CheckForInputLowSelection() == true)? "1": "0");
+    Updateurl += SendCookies();
+    http.open("POST", Updateurl, true);
+    http.onreadystatechange = HandleonIOConfigSave;
+    http.send(null);
+}
+function OnInputCheckDigital(checkstatus, name, namedd) {
+    var Pin;
+    var ddnames = ['dd_pin1', 'dd_pin2', 'dd_pin3', 'dd_pin4', 'dd_pin11', 'dd_pin12', 'dd_pin13', 'dd_pin16', 'dd_pin23'];
+    var cbnames = ['dd_pin1_cb', 'dd_pin2_cb', 'dd_pin3_cb', 'dd_pin4_cb', 'dd_pin11_cb', 'dd_pin12_cb',
+'dd_pin13_cb', 'dd_pin16_cb', 'dd_pin23_cb'];
+    var object = UseID(namedd);
+    if (object.value != '0') {
+        if ((object.selectedIndex > 0) && (checkstatus == true)) {
+            for(var indx = 0; indx < 9; indx++) {
+                if (name != cbnames[indx]) {
+                    if ((UseID(ddnames[indx]).selectedIndex == object.selectedIndex)
+            && (UseID(ddnames[indx] + "_cb").checked == true)) {
+                        Pin = ddnames[indx].split("n");
+                        alert("Already selected in Pin " + Pin[1] + " ");
+                        UseID(name).checked = false;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+function ClearDropDown(ddl) {
+    var len = ddl.options.length;
+    for (i = 0; i < len; i++)
+        ddl.remove(0);
+}
+function onRadioButtonclick(Id) {
+	alert(strWarningLowSelect);
+}
+function onDD2change(object, name) {
+    var pinName = ["17", "18"];
+    var namecb = name + "_cb";
+    var checkstatus = UseID(namecb).checked;
+    if (object.value != '0') {
+        if ((object.selectedIndex > 0) && (checkstatus == true)) {
+            for (var indx = 0; indx < 2; indx++) {
+                if (name != ddnames[indx]) {
+                    if ((UseID(ddnames[indx]).selectedIndex == object.selectedIndex) && (UseID(ddnames[indx] + "_cb").checked == true)) {
+                        alert("Already selected in Pin " + pinName[indx]);
+                        object.selectedIndex = UseID(name + '_Prev').value;
+                        break;
+                    }
+                }
+            }
+        }
+        UseID(name + '_Prev').value = object.selectedIndex;
+    }
+}
+function onDDchange(object, name, ddType) {
+    var indx = 0, Pin;
+    var ddnames = ['dd_pin1', 'dd_pin2', 'dd_pin3', 'dd_pin4', 'dd_pin11', 'dd_pin12', 'dd_pin13', 'dd_pin16', 'dd_pin23'];
+    var namecb = name + "_cb";
+    var checkstatus = UseID(namecb).checked;
+    if (object.value != '0') {
+        if ((object.selectedIndex > 0) && (checkstatus == true) && (ddType == "in")) {
+            for (indx = 0; indx < ddnames.length; indx++) {
+                if (name != ddnames[indx]) {
+                    if ((UseID(ddnames[indx]).selectedIndex == object.selectedIndex) && (UseID(ddnames[indx] + "_cb").checked == true)) {
+                        Pin = ddnames[indx].split("n");
+                        alert("Already selected in Pin " + Pin[1] + "   ");
+                        object.selectedIndex = UseID(name + '_Prev').value;
+                        break;
+                    }
+                }
+            }
+        }
+        if (ddType == "in")
+            UseID(name + '_Prev').value = object.selectedIndex;
+        var funcID = object.options[object.selectedIndex].value.split("X");
+        if (funcID[0] == 0) {
+            UseID(name + "_24").disabled = true;
+            UseID(name + "_0").checked = true;
+            UseID(name + "_24").checked = false;
+        }
+        else
+            UseID(name + "_24").disabled = false;
+        if (funcID[1] == 0) {
+            UseID(name + "_0").disabled = true;
+            UseID(name + "_24").checked = true;
+            UseID(name + "_0").checked = false;
+        }
+        else
+            UseID(name + "_0").disabled = false;
+    }
+}
+function UpdateRadioButtonStatus() {
+    for (var indx = 0; indx < 17; indx++) {
+        if (UseID(DDBoxesArr[indx]).selectedIndex == 0) {
+            UseID(DDBoxesArr[indx] + '_24').disabled = true;
+            UseID(DDBoxesArr[indx] + '_0').disabled = true;
+        }
+        else {
+            UseID(DDBoxesArr[indx] + '_24').disabled = false;
+            UseID(DDBoxesArr[indx] + '_0').disabled = false;
+            ddbox = UseID(DDBoxesArr[indx]);
+
+            funcID = ddbox.options[ddbox.selectedIndex].value.split('X');
+            if (funcID[0] == 0)
+                UseID(DDBoxesArr[indx] + '_24').disabled = true;
+            else if (funcID[1] == 0)
+                UseID(DDBoxesArr[indx] + '_0').disabled = true;
+        }
+    }
+}
+function UpdateCurrentInputSelection() {
+    var ddnames = ['dd_pin1', 'dd_pin2', 'dd_pin3', 'dd_pin4', 'dd_pin11', 'dd_pin12', 'dd_pin13', 'dd_pin16', 'dd_pin23'];
+    for (var indx = 0; indx < 9; indx++)
+        if (UseID(ddnames[indx] + "_0").checked == true)
+            currentIPActiveOption[indx] = 0;
+        else
+            currentIPActiveOption[indx] = 1;
+}
+function UpdateCheckBoxStatus() {
+    for (var indx = 0; indx < DDBoxesArr.length; indx++)
+        if (UseID(DDBoxesArr[indx]).selectedIndex == 0)
+            UseID(DDBoxesArr[indx] + '_cb').checked = false;
+}
+function HomeOnload() {
+    window.history.forward(1);
+    var ConfigUserIOOnLoadRequest = "func=" + Func.ConfigurationUserIOGetDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+    ConfigUserIOOnLoadRequest += SendCookies();
+    http.open("POST", ConfigUserIOOnLoadRequest, true);
+    http.onreadystatechange = ConfigUserIOOnLoad;
+    http.send(null);
+}
+function ioData(displayText, selectIndex, Value) {
+    this.displayText = displayText;
+    this.selectIndex = selectIndex;
+    this.Value = Value;
+}
+jQuery(function () {
+	UseID('header').innerHTML = MainHeader;
+	SetTabAttribute(3,2);
+    jQuery('ul.sf-menu').superfish();
+});
+function DefaultSelectDDChange() {
+	if(UseID('DefaultTypeID').selectedIndex == 0)
+		UseID('RestoreDefaults').disabled = true;
+	else
+		UseID('RestoreDefaults').disabled = false;
+}
+function ConfigUserIOOnLoad() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {       
+        var i, j, results2, results3, funcStrWithID, type, functionType = 0;
+        results = http.responseText.split("@");
+        var UserType = results[0].split("/");
+        SetUserType(UserType[0]);
+        SetToken(UserType[1], restoreFlag);
+        SetSystemType(UserType[2]);
+        type = results[1].split("=");
+        if (restoreFlag == true) {
+            alert(RestoreMsg);
+            restoreFlag = false;
+        }
+        for (i = 2; i < results.length; i++) {
+            try {
+                results2 = results[i].split(":");
+                if (results2[1] != null) {
+                    results3 = results2[1].split(",");
+                    if (results3[0] == "DD") {
+                        var x = results2[0].split(",");
+                        var y, z;
+                        for (y = 0; y < x.length; y++) {
+                            var select = UseID(x[y]);
+                            ClearDropDown(select);
+                            select.options.add(new Option("UNASSIGN", 0));
+                            select.options[0].value = "0X0";
+                            funcStrWithID = [];
+                            for (z = 0; z < results3.length - 1; z++) {
+                                var tmpArray = results3[1 + z].split('#');
+                                var val = 0;
+                                if ((functionType == 0) || (functionType == 1))
+                                    val = tmpArray[1] + "X" + tmpArray[2];
+                                else if ((functionType == 2) || (functionType == 3))
+                                    val = tmpArray[1];
+                                var tmpObj = new ioData(tmpArray[0], z + 1, val);
+                                funcStrWithID.push(tmpObj);
+                            }
+                            funcStrWithID.sort(function (obj1, obj2) {
+                                var sortResult = 0;
+                                if (obj1.displayText.toLowerCase() < obj2.displayText.toLowerCase()) {
+                                    sortResult = -1;
+                                }
+                                else if (obj1.displayText.toLowerCase() > obj2.displayText.toLowerCase()) {
+                                    sortResult = 1
+                                }
+                                return sortResult;
+                            });
+                            for (var loopCounter = 0; loopCounter < funcStrWithID.length; loopCounter++) {
+                                tmpObj = funcStrWithID[loopCounter];
+                                select.options.add(new Option(tmpObj.displayText, tmpObj.selectIndex));
+                                select.options[loopCounter + 1].value = tmpObj.Value;
+                            }
+                        }
+                        functionType++;
+                    }
+                    else if (results3[0] == "DDV") {
+                        var ddbox = UseID(results2[0]);
+                        var indx, funcID, funcAssigned = false;
+                        for (indx = 1; indx < ddbox.options.length; indx++) {
+                            funcID = ddbox.options[indx].value.split('X');
+                            if (funcID.length > 1) {
+                                UseID(results2[0] + '_cb').checked = false;
+                                UseID(results2[0]).selectedIndex = 0;
+                                UseID(results2[0] + '_24').checked = true;
+                                if (results3[1] != "0") {
+                                    if (results3[1] == funcID[0]) {
+                                        UseID(results2[0] + '_24').checked = true;
+                                        UseID(results2[0] + '_0').checked = false;
+                                        if (results3[2] == "1")
+                                            UseID(results2[0] + '_cb').checked = true;
+                                        else if (results3[2] == "0")
+                                            UseID(results2[0] + '_cb').checked = false;
+                                        UseID(results2[0]).selectedIndex = indx;
+                                        UseID(results2[0] + "_Prev").value = indx;
+                                        break;
+                                    }
+                                    else if (results3[1] == funcID[1]) {
+                                        UseID(results2[0] + '_0').checked = true;
+                                        UseID(results2[0] + '_24').checked = false;
+                                        if (results3[2] == "1")
+                                            UseID(results2[0] + '_cb').checked = true;
+                                        else if (results3[2] == "0")
+                                            UseID(results2[0] + '_cb').checked = false;
+                                        UseID(results2[0]).selectedIndex = indx;
+                                        UseID(results2[0] + "_Prev").value = indx;
+                                        break;
+                                    }
+                                }
+                            }
+                            else {
+                                UseID(results2[0] + '_cb').checked = false;
+                                UseID(results2[0]).selectedIndex = 0;
+                                if (results3[1] == ddbox.options[indx].value) {
+                                    if (results3[2] == "1")
+                                        UseID(results2[0] + '_cb').checked = true;
+                                    else if (results3[2] == "0")
+                                        UseID(results2[0] + '_cb').checked = false;
+                                    UseID(results2[0]).selectedIndex = indx;
+                                    UseID(results2[0] + "_Prev").value = indx; break;
+                                }
+                            }
+                        }
+                    }
+
+                }
+            } catch (err) { };
+        }
+        UpdateRadioButtonStatus();
+        UpdateCurrentInputSelection();
+        RefreshAttribute(document.main_form);
+    }
+}
+</script>
+</head>
+<body onload="HomeOnload()">
+<form name="temp_form" method="post" action="ConfigUserIO.html">
+<input type="hidden" name="lang" id="lang"  />
+<input type="hidden" name="usrid" id="usrid"  />
+<input type="hidden" name="passcode" id="passcode"  />
+	<input type="hidden" name="uniqueid" id="uniqueid" />	
+</form>
+<form name="main_form">
+<div id="wrapper">
+  <div id="header"></div>
+  <div id="PageHeader"></div>
+<div id="content">
+<table>
+<tr>
+<td>
+  	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">DIGITAL INPUTS</div>
+    	<div class="gradientBox400">
+<!-- begin J3 pin 1 //-->
+			<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 1</div>
+            	<div class="subBoxContent">
+                    <div class="checkboxLeft">
+                        <input type="checkbox"   id="dd_pin1_cb" onclick = "OnInputCheckDigital(this.checked,'dd_pin1_cb', 'dd_pin1')"/>
+ 					    <select id="dd_pin1" name="dd_pin1" size = "1" 	onchange="onDDchange(this,'dd_pin1','in')">
+                        </select>
+                    </div>
+					<input type="hidden" id="dd_pin1_Prev" name="dd_pin1_Prev"/>
+                        <div class="checkbox">
+                    <input type="radio" id ="dd_pin1_0" name="J3Pin1" value="0" onclick="onRadioButtonclick()"/></div>
+                    <div class="textLableAuto">0 V</div>
+                        <div class="checkbox">
+                     <input type="radio" id ="dd_pin1_24" name="J3Pin1" value="24"/></div>
+                     <div class="textLableAuto">24 V</div>
+				    <div class="clearit"></div>
+   			    </div>
+            </div>
+<!-- begin J3 pin 2 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 2</div>
+            	<div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input id="dd_pin2_cb" type="checkbox"  onclick = "OnInputCheckDigital(this.checked,'dd_pin2_cb', 'dd_pin2')"/>
+                        <select id="dd_pin2" name="dd_pin2" size = "1"  onchange="onDDchange(this,'dd_pin2', 'in')">
+					    </select>
+                    </div>
+					<input type="hidden" id="dd_pin2_Prev" name="dd_pin2_Prev"/>
+					    <div class="checkbox">
+                    <input type="radio" id ="dd_pin2_0" name="J3Pin2" value="0" onclick="onRadioButtonclick()"/></div>
+                    <div class="textLableAuto">0 V</div>
+                        <div class="checkbox">
+                    <input type="radio" id ="dd_pin2_24" name="J3Pin2" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+    				<div class="clearit"></div>
+   				</div>
+            </div>
+<!-- begin J3 pin 3 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 3</div>
+            	<div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin3_cb" onclick = "OnInputCheckDigital(this.checked,'dd_pin3_cb', 'dd_pin3')"/>
+    				    <select id="dd_pin3" name="dd_pin3" size="1"  onchange="onDDchange(this,'dd_pin3', 'in')">
+						</select>
+					</div>
+                    <input type="hidden" id="dd_pin3_Prev" name="dd_pin3_Prev"/>
+					    <div class="checkbox">
+                    <input type="radio" id ="dd_pin3_0" name="J3Pin3" value="0" onclick="onRadioButtonclick()"/></div>
+                    <div class="textLableAuto">0 V</div>
+                        <div class="checkbox">
+                    <input type="radio" id ="dd_pin3_24" name="J3Pin3" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+                    <div class="clearit"></div>
+   				</div>
+            </div>
+<!-- begin J3 pin 4 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 4</div>
+            	<div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin4_cb" onclick = "OnInputCheckDigital(this.checked,'dd_pin4_cb', 'dd_pin4')"/>
+    					<select id="dd_pin4" name="dd_pin4" size="1"  onchange="onDDchange(this,'dd_pin4', 'in')">
+						</select>
+                    </div>
+					<input type="hidden" id="dd_pin4_Prev" name="dd_pin4_Prev"/>
+					    <div class="checkbox">
+                    <input type="radio" id ="dd_pin4_0" name="J4Pin4" value="0" onclick="onRadioButtonclick()"/></div>
+                    <div class="textLableAuto">0 V</div>
+                        <div class="checkbox">
+                    <input type="radio" id ="dd_pin4_24" name="J4Pin4" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+				    <div class="clearit"></div>
+   				</div>
+           </div>
+<!-- begin J3 pin 11 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 11</div>
+            	<div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin11_cb" onclick = "OnInputCheckDigital(this.checked,'dd_pin11_cb', 'dd_pin11')"/>
+                        <select id="dd_pin11" name="dd_pin11" size="1" onchange="onDDchange(this,'dd_pin11', 'in')">
+						</select>
+                    </div>
+					<input type="hidden" id="dd_pin11_Prev" name="dd_pin11_Prev"/>
+                        <div class="checkbox">
+                    <input type="radio" id ="dd_pin11_0" name="J3Pin11" value="0" onclick="onRadioButtonclick()"/></div>
+                    <div class="textLableAuto">0 V</div>
+                        <div class="checkbox">
+                    <input type="radio" id ="dd_pin11_24" name="J3Pin11" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+				    <div class="clearit"></div>
+   				</div>
+             </div>
+<!-- begin J3 pin 12 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 12</div>
+            	<div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin12_cb" onclick = "OnInputCheckDigital(this.checked,'dd_pin12_cb', 'dd_pin12')"/>
+					    <select id="dd_pin12" name="dd_pin3" size="1"  onchange="onDDchange(this,'dd_pin12', 'in')">
+						</select>
+                    </div>
+					<input type="hidden" id="dd_pin12_Prev" name="dd_pin12_Prev"/>
+					    <div class="checkbox">
+                    <input type="radio" id ="dd_pin12_0" name="J3Pin12" value="0" onclick="onRadioButtonclick()"/></div>
+                    <div class="textLableAuto">0 V</div>
+                        <div class="checkbox">
+                    <input type="radio" id ="dd_pin12_24" name="J3Pin12" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+                    <div class="clearit"></div>
+   				</div>
+           </div>
+<!-- begin J3 pin 13 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 13</div>
+            	<div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin13_cb" onclick = "OnInputCheckDigital(this.checked,'dd_pin13_cb', 'dd_pin13')"/>
+        				<select id="dd_pin13" name="dd_pin3" size="1" onchange="onDDchange(this,'dd_pin13', 'in')">
+						</select>
+                    </div>
+				    <input type="hidden" id="dd_pin13_Prev" name="dd_pin13_Prev"/>
+                        <div class="checkbox">
+                    <input type="radio" id ="dd_pin13_0" name="J3Pin13" value="0" onclick="onRadioButtonclick()"/></div>
+                    <div class="textLableAuto">0 V</div>
+                        <div class="checkbox">
+                    <input type="radio" id ="dd_pin13_24" name="J3Pin13" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+                    <div class="clearit"></div>
+   				</div>
+             </div>
+<!-- begin J3 pin 16 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 16</div>
+            	<div class="subBoxContent">
+                    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin16_cb" onclick = "OnInputCheckDigital(this.checked,'dd_pin16_cb', 'dd_pin16')"/>
+    					<select id="dd_pin16" name="dd_pin16" size="1" onchange="onDDchange(this,'dd_pin16', 'in')">
+		    			</select>
+                    </div>
+					<input type="hidden" id="dd_pin16_Prev" name="dd_pin16_Prev"/>
+					    <div class="checkbox">
+                    <input type="radio" id ="dd_pin16_0" name="J3Pin16" value="0" onclick="onRadioButtonclick()"/></div>
+                    <div class="textLableAuto">0 V</div>
+                        <div class="checkbox">
+                    <input type="radio" id ="dd_pin16_24" name="J3Pin16" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+                    <div class="clearit"></div>
+   				</div>
+            </div>
+<!-- begin J3 pin 23 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 23</div>
+            	<div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input id="dd_pin23_cb" type="checkbox"  onclick = "OnInputCheckDigital(this.checked,'dd_pin23_cb', 'dd_pin23')"/>
+    					<select id= "dd_pin23" name="dd_pin2" size="1" onchange="onDDchange(this,'dd_pin23', 'in')">
+						</select>
+                    </div>
+					<input type="hidden" id="dd_pin23_Prev" name="dd_pin23_Prev"/>
+					    <div class="checkbox">
+                    <input type="radio" id ="dd_pin23_0" name="J3Pin23" value="0" onclick="onRadioButtonclick()" /></div>
+                    <div class="textLableAuto">0 V</div>
+                        <div class="checkbox">
+                    <input type="radio" id ="dd_pin23_24" name="J3Pin23" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+                    <div class="clearit"></div>
+   				</div>
+            </div>
+		</div>
+    </div>
+</td>
+<td class="td-top">
+	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">DIGITAL OUTPUTS</div>
+    	<div class="gradientBox400">
+<!-- begin J3 pin 7 //-->
+			<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 7</div>
+            	<div class="subBoxContent">
+                    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin7_cb"/>
+                  	    <select  id="dd_pin7" name="optone" size="1" onchange="onDDchange(this,'dd_pin7', 'out')">
+						</select>
+					</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin7_0" name="J3Pin7"value="0"/></div>
+                    <div class="textLableAuto">0 V</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin7_24" name="J3Pin7" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+				    <div class="clearit"></div>
+   				</div>
+            </div>
+<!-- begin J3 pin 8 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 8</div>
+            	<div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin8_cb"/>
+				        <select id="dd_pin8" name="optone" size="1" onchange="onDDchange(this,'dd_pin8', 'out')">
+						</select>
+					</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin8_0" name="J3Pin8" value="0"/></div>
+                    <div class="textLableAuto">0 V</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin8_24" name="J3Pin8" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+                    <div class="clearit"></div>
+   				</div>
+            </div>
+<!-- begin J3 pin 9 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 9</div>
+            	<div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin9_cb"/>
+                  	    <select id="dd_pin9" name="optone" size="1"  onchange="onDDchange(this,'dd_pin9', 'out')">
+						</select>
+					</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin9_0" name="J3Pin9" value="0"/></div>
+                    <div class="textLableAuto">0 V</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin9_24" name="J3Pin9" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+ 				    <div class="clearit"></div>
+   				</div>
+            </div>
+<!-- begin J3 pin 10 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 10</div>
+            	<div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin10_cb"/>
+				        <select id="dd_pin10" name="optone" size="1" onchange="onDDchange(this,'dd_pin10', 'out')">
+					    </select>
+					</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin10_0" name="J3Pin10" value="0"/></div>
+                    <div class="textLableAuto">0 V</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin10_24" name="J3Pin10" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+        			<div class="clearit"></div>
+   				</div>
+            </div>
+<!-- begin J3 pin 19 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 19</div>
+                <div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin19_cb"/>
+                  	    <select id="dd_pin19" name="optone" size="1" onchange="onDDchange(this,'dd_pin19', 'out')">
+						</select>
+					</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin19_0" name="J3Pin19" value="0"/></div>
+                    <div class="textLableAuto">0 V</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin19_24" name="J3Pin19" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+				    <div class="clearit"></div>
+   				</div>
+            </div>
+<!-- begin J3 pin 20 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 20</div>
+            	<div class="subBoxContent">
+                    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin20_cb"/>
+                        <select id="dd_pin20" name="optone" size="1" onchange="onDDchange(this,'dd_pin20', 'out')">
+						</select>
+					</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin20_0" name="J3Pin20" value="0"/></div>
+                    <div class="textLableAuto">0 V</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin20_24" name="J3Pin20" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+				    <div class="clearit"></div>
+   				</div>
+            </div>
+<!-- begin J3 pin 21 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 21</div>
+            	<div class="subBoxContent">
+                    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin21_cb"/>
+				        <select id="dd_pin21" name="optone" size="1" onchange="onDDchange(this,'dd_pin21','out')">
+						</select>
+					</div>
+                    <div class="checkbox"><input type="radio" id ="dd_pin21_0" name="J3Pin21" value="0"/></div>
+                    <div class="textLableAuto">0 V</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin21_24" name="J3Pin21" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+				    <div class="clearit"></div>
+   				</div>
+            </div>
+<!-- begin J3 pin 22 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 22</div>
+            	<div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin22_cb"/>
+    				   	<select id="dd_pin22" name="optone" size="1" onchange="onDDchange(this,'dd_pin22','out')">
+					    </select>
+					</div>
+                    <div class="checkbox">
+                    <input type="radio" id ="dd_pin22_0" name="J3Pin22" value="0"/></div>
+                    <div class="textLableAuto">0 V</div>
+                    <div class="checkbox"><input type="radio" id ="dd_pin22_24" name="J3Pin22" value="24"/></div>
+                    <div class="textLableAuto">24 V</div>
+				    <div class="clearit"></div>
+   				</div>
+            </div>
+		</div>
+    </div>
+</td>
+</tr>
+<tr><td>
+    <div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">ANALOG INPUTS</div>
+    	<div class="gradientBox400">
+<!-- begin J3 pin 17 //-->
+			<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 17</div>
+            	<div class="subBoxContent">
+                    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin17_cb" onclick = "OnInputCheckAnalog(this.checked,'dd_pin17_cb', 'dd_pin17')"/>
+        				<select id="dd_pin17" name="dd_pin17" size="1"   onchange="onDD2change(this,'dd_pin17');">
+					    </select>
+					    <input type="hidden" id="dd_pin17_Prev" name="dd_pin17_Prev"/>
+					</div>
+				    <div class="clearit"></div>
+   				</div>
+            </div>
+<!-- begin J3 pin 18 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 18</div>
+            	<div class="subBoxContent">
+               	    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin18_cb" onclick = "OnInputCheckAnalog(this.checked,'dd_pin18_cb','dd_pin18')"/>
+                  		<select id="dd_pin18" name="dd_pin18" size="1"   onchange="onDD2change(this,'dd_pin18');">
+					    </select>
+					    <input type="hidden" id="dd_pin18_Prev" name="dd_pin18_Prev"/>
+					</div>
+				    <div class="clearit"></div>
+   			    </div>
+            </div>
+		</div>
+    </div>
+ </td>
+ <td>
+     <div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">ANALOG OUTPUTS</div>
+    	<div class="gradientBox400">
+<!-- begin J3 pin 24 //-->
+			<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 24</div>
+            	<div class="subBoxContent">
+                    <div class="checkboxLeft">
+                        <input type="checkbox"   id="dd_pin24_cb"/>
+                  	    <select id="dd_pin24" name="optone" size="1">
+					    </select>
+					</div>
+				    <div class="clearit"></div>
+   				</div>
+            </div>
+<!-- begin J3 pin 25 //-->
+       		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">J3 - 25</div>
+            	<div class="subBoxContent">
+                    <div class="checkboxLeft">
+                        <input type="checkbox"  id="dd_pin25_cb"/>
+                  	    <select id="dd_pin25" name="optone" size="1">
+						</select>
+					</div>
+				    <div class="clearit"></div>
+   				</div>
+            </div>
+		</div>
+    </div>
+</td>
+</tr>
+</table>
+        <div id="contentButtonBank">
+    	    <input name="Save" type="button" class="button"  value="Save" onclick="PageRefTo=null;onIOConfigSaveClick('0');"/>
+		    <input name="CustomSave" type="button" value="Save As Custom Default" onclick="onIOConfigSaveClick('1')"/>
+    	    <input name="Cancel" type="button" class="button"  value="Cancel" onclick="onIOConfigCancelClick()"/>
+    	    <input id="RestoreDefaults" disabled="disabled" type="button" class="button" value="Restore Defaults" onclick="onIOConfigRestoreClick()"/>
+		    <select id="DefaultTypeID" size="1" onchange="DefaultSelectDDChange()">
+			    <option>Select IO Default Type</option>
+			    <option>Branson Default</option>					
+			    <option>Actuator Default</option>
+			    <option>RF Switching Default</option>					
+			    <option>Custom Default</option>
+		    </select>
+        </div>
+  </div>
+  <div class="clearit"></div>
+  <div id="footer"></div>
+</div>
+</form>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitStickyFooter();
+    });
+</script>
+</html>

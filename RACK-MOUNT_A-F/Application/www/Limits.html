@@ -1,0 +1,523 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+    <link rel="stylesheet" type="text/css" href="superfishDCXAFRackMt-v1.css" media="screen" />
+    <script type="text/javascript" src="jqueryDCXAFRackMt-v1.js"></script>
+    <script type="text/javascript" src="hoverIntentDCXAFRackMt-v1.js"></script>
+    <script type="text/javascript" src="superfishDCXAFRackMt-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="handlerDCXAFRackMt-v1.js"></script>
+    <script type="text/javascript"></script>
+    <script type="text/JavaScript" language="javascript" src="formchange-detectDCXAFRackMt-v1.js"></script>
+    <title>BRANSON DCX GUI</title>
+    <link href="styleDCXAFRackMt-v1.css" rel="stylesheet" type="text/css" />
+<script language="javascript" type="text/javascript">
+var TimeArr = new Array(), restoreFlag = false;
+var RestoreMsg = "Parameters Restored";
+var PageRefTo = null;
+var pageRefresh = false;
+var minAin1Val, maxAin1Val, minAin2Val, maxAin2Val, CustomInput1, CustomInput2;
+var CustomAin1Configured = 0 , CustomAin2Configured = 0;
+var http = getHTTPObject(); 
+function HandleModifyLimitsOnLoad() {
+  if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {		
+		var i, j,results, GroupVal, SingleVal;
+		results = http.responseText.split("@");
+		var UserType = results[0].split("/");
+		SetUserType(UserType[0]);
+		SetToken(UserType[1], restoreFlag);
+		SetSystemType(UserType[2]);
+		for (i = 1; i < results.length; i++) {
+			GroupVal = results[i].split(":");
+			try {
+				SingleVal = GroupVal[1].split(",");
+				if(GroupVal[0] == "CustomAin1Configured")
+					CustomAin1Configured = SingleVal[1];
+				else if(GroupVal[0] == "CustomAin2Configured")
+					CustomAin2Configured = SingleVal[1];
+				switch(SingleVal[0])
+				{
+					case "CB":
+						UseID(GroupVal[0]).checked = (SingleVal[1] == "1");
+					break;
+					case "TT": if((GroupVal[0] == "EnergyMLR") || (GroupVal[0] == "EnergyPLR") || (GroupVal[0] == "EnergyCutoff"))
+									UseID(GroupVal[0]).value = ((SingleVal[1] / 10) < 1000)?(SingleVal[1] / 10).toFixed(1): (SingleVal[1] / 10);
+							   else
+									UseID(GroupVal[0]).value = SingleVal[1];
+						if (SingleVal.length > 2){
+							if((GroupVal[0] == "EnergyMLR") || (GroupVal[0] == "EnergyPLR") || (GroupVal[0] == "EnergyCutoff"))
+								UseID(GroupVal[0] + 'MaxMin').value = (SingleVal[2] / 10) + ',' + (SingleVal[3] / 10);
+							else
+								UseID(GroupVal[0] + 'MaxMin').value = SingleVal[2] + ',' + SingleVal[3]; 
+						}
+						break;
+					case "RB":
+						UseID(GroupVal[0] + '_' + SingleVal[1]).checked = true;
+					break;
+					default: break;
+				}                        
+			} catch (err) { }
+		}
+		if (restoreFlag) {
+			alert(RestoreMsg);
+			restoreFlag = false;
+		}	
+		CheckForDisableControlsOnLoad();
+		FormatLimitsParams();
+		FormatMinMaxLimitsParam();
+		RefreshAttribute(document.main_form);
+	}
+}
+function ModifyLimitsOnLoad() {
+    window.history.forward(1);
+    var ModifyLimitsOnLoadUrl = "func=" + Func.SetupLimitsGetDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+    ModifyLimitsOnLoadUrl += SendCookies();
+    http.open("POST", ModifyLimitsOnLoadUrl, true);
+    http.onreadystatechange = HandleModifyLimitsOnLoad;
+    http.send(null);
+}
+function HandleModifyLimitsSave() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+        if (http.responseText == "TOKENNOTAVAILABLE") {
+            SetToken(0,0);
+            alert(Notoken);
+            return;
+        }
+        else if (http.responseText == "OK") {
+            alert("Saved");
+            SetToken(1,0);
+            RefreshAttribute(document.main_form);
+			if (PageRefTo != null)
+				SubmitForm(PageRefTo);
+        }
+        else {
+            alert("Error Cannot be Saved");
+        }
+    }
+}
+function CheckIfNoneSelected(){
+	var retstr1 = "" ,retstr2 = "";
+	if(UseID('CutOff_1').checked){
+		retstr1 = "* No CutOff Selected.\n";
+		for(var i = 0; UseName('CutOff').item(i) != null && retstr1 != ""; i++)
+			if(UseName('CutOff').item(i).checked)
+				retstr1 = "";
+	}
+	if(UseID('ControlLimits_1').checked){
+		retstr2 = "* No Limit Selected.\n"
+		for(var i = 0; UseName('Limits').item(i) != null && retstr2 != ""; i++)
+			if(UseName('Limits').item(i).checked)
+				retstr2 = "";
+	}
+	return (retstr2 + retstr1);
+}
+function formvalidate() {
+    var minVal, maxVal, currVal,temp,validationstring = "";
+	var IdName = ["Minus Time Limit", "Plus Time Limit", "Time Cutoff"];
+    validationstring += CheckIfNoneSelected();   
+	validationstring += IfValidEnergy("Minus Energy Limit","EnergyMLR");
+	validationstring += IfValidEnergy("Plus Energy Limit","EnergyPLR");
+	validationstring += IfValid("Minus Power Limit","PowerMLR");
+	validationstring += IfValid("Plus Power Limit","PowerPLR");
+	validationstring += IfValidEnergy("Energy Cutoff","EnergyCutoff");
+	validationstring += IfValid("Peak Power Cutoff","PeakPowerCutoff");
+	validationstring += IfValid("Weld Frequency Low","WeldFreqLow");
+	validationstring += IfValid("Weld Frequency High","WeldFreqHigh");
+	for (var i = 0; i < UseName("Time").length; i++){
+		temp = IfValidTime(UseName("Time").item(i).id,IdName[i]);
+		if (temp == true) {
+		    var FloatVal = parseFloat(UseName("Time").item(i).value).toFixed(3);
+		    var TempTime = FloatVal.toString().split(".");		    
+			TimeArr[i] = parseInt((TempTime[0] * 1000), 10) + parseInt(TempTime[1], 10);
+		}
+		else
+			validationstring += temp;
+	}
+	var AInPat = /^(\d{1,2})[.](\d{1})$/;
+	if(CustomAin1Configured == 1){		
+		AIn = UseID('CustomAin1Cutoff').value;
+		matchArray = AIn.match(AInPat);
+		if (matchArray == null) 
+			validationstring += "Custom Input1 should be in XX.Y format.\n";
+		else {
+			minVal = minAin1Val * 10;
+			maxVal = maxAin1Val * 10;
+			currVal = (AIn * 10);
+			if ((currVal < minVal) || (currVal > maxVal)) 
+				validationstring += "Custom Input1 should be between " + minAin1Val + " and " + maxAin1Val + "\n";
+			CustomInput1 = currVal;
+		}
+	}
+	else
+		CustomInput1 = UseID('CustomAin1Cutoff').value * 10;
+	if(CustomAin2Configured == 1){
+		AIn = UseID('CustomAin2Cutoff').value;
+		matchArray = AIn.match(AInPat);
+		if (matchArray == null)
+			validationstring += "Custom Input2 should be in XX.Y format.\n";
+		else {
+			minVal = minAin2Val * 10;
+			maxVal = maxAin2Val * 10;
+			currVal = (AIn * 10);
+			if ((currVal < minVal) || (currVal > maxVal)) 
+				validationstring += "Custom Input2 should be between " + minAin2Val + " and " + maxAin2Val + "\n";
+			CustomInput2 = currVal;
+		}
+	}
+	else
+		CustomInput2 = UseID('CustomAin2Cutoff').value * 10;
+		
+	if ( UseID('PowerN').checked && UseID('PowerP').checked  && (parseInt(UseID('PowerMLR').value) >= parseInt(UseID('PowerPLR').value ))   )
+		validationstring+=("+Peak Power(%) must be greater than -Peak Power(%)\n");
+
+		
+    if (!validationstring)
+        return true;
+    else {
+        alert(validationstring);
+        return false;
+    }
+}
+function ModifyLimitsSave() {
+	if (formvalidate()) {
+		SpecialHandlingforRounding();
+
+			var SaveString = "func=" + Func.SetupLimitsPostDatahandler + "cmd=" + Command.REQ_NONE + "?param=&EnergyMLR=";
+			SaveString += UseID('EnergyMLR').value * 10;
+			SaveString += "&EnergyPLR=" + UseID('EnergyPLR').value * 10;
+			SaveString += "&PowerMLR=" + UseID('PowerMLR').value;
+			SaveString += "&PowerPLR=" + UseID('PowerPLR').value;
+			SaveString += "&WeldTimeMLR=" + TimeArr[0];
+			SaveString += "&WeldTimePLR=" + TimeArr[1];
+			SaveString += "&PeakPowerCutoff=" + UseID('PeakPowerCutoff').value;
+			SaveString += "&EnergyCutoff=" + UseID('EnergyCutoff').value * 10;
+			SaveString += "&TimeCutOff=" + TimeArr[2];
+			SaveString += "&WeldFreqLow=" + UseID('WeldFreqLow').value;
+			SaveString += "&WeldFreqHigh=" + UseID('WeldFreqHigh').value;
+			SaveString += "&CustomAin1Cutoff=" + CustomInput1;
+			SaveString += "&CustomAin2Cutoff=" + CustomInput2;
+			SaveString += "&ControlLimits=" + ((UseID('ControlLimits_0').checked)? "0": "1");
+			SaveString += "&CutOffEnabled=" + ((UseID('CutOff_0').checked)? "0": "1");
+			SaveString += "&EnergyN=" + (UseID('EnergyN').checked ? "1" : "0");
+			SaveString += "&EnergyP=" + (UseID('EnergyP').checked ? "1" : "0");
+			SaveString += "&PowerN=" + (UseID('PowerN').checked ? "1" : "0");
+			SaveString += "&PowerP=" + (UseID('PowerP').checked ? "1" : "0");
+			SaveString += "&TimeN=" + (UseID('TimeN').checked ? "1" : "0");
+			SaveString += "&TimeP=" + (UseID('TimeP').checked ? "1" : "0");
+			SaveString += "&TimeCutOffFlag=" + (UseID('TimeCutOffFlag').checked ? "1" : "0");
+			SaveString += "&EnergyCutoffFlag=" + (UseID('EnergyCutoffFlag').checked ? "1" : "0");
+			SaveString += "&PeakPowerCutoffFlag=" + (UseID('PeakPowerCutoffFlag').checked ? "1" : "0");
+			SaveString += "&WeldFreqHighFlag=" + (UseID('WeldFreqHighFlag').checked ? "1" : "0");
+			SaveString += "&WeldFreqLowFlag=" + (UseID('WeldFreqLowFlag').checked ? "1" : "0");
+			SaveString += "&CustomAin1CutoffFlag=" + (UseID('CustomAin1CutoffFlag').checked ? "1" : "0");
+			SaveString += "&CustomAin2CutoffFlag=" + (UseID('CustomAin2CutoffFlag').checked ? "1" : "0");		
+			SaveString += SendCookies();		
+			http.open("POST", SaveString, true);
+			http.onreadystatechange = HandleModifyLimitsSave;
+			http.send(null);
+	}
+}
+function ModifyLimitsCancel() {
+    pageRefresh = true;
+    SubmitForm('Limits.html');
+}
+function ModifyLimitsRestore() {
+    var ret = confirm(strRestoreDefault);
+    if (ret == true) {
+        window.history.forward(1);
+        var ModifyLimitsRestoreUrl = "func=" + Func.SetupLimitsGetDatahandler + "cmd=" + Command.REQ_RESTORE + "?param=";
+        ModifyLimitsRestoreUrl += SendCookies();
+        http.open("POST", ModifyLimitsRestoreUrl, true);
+        restoreFlag = true;
+        http.onreadystatechange = HandleModifyLimitsOnLoad;
+        http.send(null);
+    }
+}
+function SubmitForm(hrefpage) {
+    if (pageRefresh == false) {
+        var ret;
+        if (IsFormModified(document.main_form)) {
+            ret = confirm(formChangeMessage);
+           if (ret == true){
+			   PageRefTo = hrefpage;
+			   ModifyLimitsSave();
+			  }
+        }
+    }
+    if (hrefpage == "index.html")
+        location.href = hrefpage;
+    else {
+        SubmitCookies(hrefpage);
+        document.temp_form.submit();
+    }
+}
+function FormatLimitsParams() {
+    var ParamIds = ['WeldTimePLR', 'WeldTimeMLR', 'TimeCutOff'];
+    var temp, temp2, temp3;
+    for (indx = 0; indx < ParamIds.length; indx++) 
+        UseID(ParamIds[indx]).value = FormatTime(parseInt(UseID(ParamIds[indx]).value, 10));
+	var temp1 = parseInt(UseID("CustomAin1Cutoff").value);
+	var temp4 = parseInt(temp1/10, 10);
+	var temp5 = parseInt(temp1%10, 10);
+    UseID("CustomAin1Cutoff").value = temp4 + "." + temp5; 
+	temp1 = parseInt(UseID("CustomAin2Cutoff").value);
+	temp4 = parseInt(temp1/10, 10);
+	temp5 = parseInt(temp1%10, 10);
+    UseID("CustomAin2Cutoff").value = temp4 + "." + temp5; 
+}
+function FormatMinMaxLimitsParam() {
+	temp = UseID("CustomAin1CutoffMaxMin").value.split(",");
+    minVal = parseInt(temp[0], 10);
+    secs = parseInt(minVal / (10), 10).toString();
+    msecs = parseInt(minVal % (10), 10).toString();
+    minAin1Val = secs + "." + msecs;
+    maxVal = parseInt(temp[1], 10);
+    secs = parseInt(maxVal / (10), 10).toString();
+    msecs = parseInt(maxVal % (10), 10).toString();
+    maxAin1Val = secs + "." + msecs;
+	temp = UseID("CustomAin2CutoffMaxMin").value.split(",");
+    minVal = parseInt(temp[0], 10);
+    secs = parseInt(minVal / (10), 10).toString();
+    msecs = parseInt(minVal % (10), 10).toString();
+    minAin2Val = secs + "." + msecs;
+    maxVal = parseInt(temp[1], 10);
+    secs = parseInt(maxVal / (10), 10).toString();
+    msecs = parseInt(maxVal % (10), 10).toString();
+    maxAin2Val = secs + "." + msecs;
+}
+function CheckForDisableControlsOnLoad() {
+    var retstr = 0;
+    if (UseID('CutOff_1').checked) {
+        for (var i = 0; UseName('CutOff').item(i) != null && retstr == 0; i++)
+            if (UseName('CutOff').item(i).checked)
+                retstr = 1;
+    }
+    UseID('CutOff_' + retstr).checked = true;
+    retstr = 0;
+    if (UseID('ControlLimits_1').checked) {
+        for (var i = 0; UseName('Limits').item(i) != null && retstr == 0; i++)
+            if (UseName('Limits').item(i).checked)
+                retstr = 1;
+    }
+    UseID('ControlLimits_' + retstr).checked = true;
+    var CutoffsIds = ["CutOff_0", "CutOff_1"];
+    for (indx = 0; indx < CutoffsIds.length; indx++) {
+        if (UseID(CutoffsIds[indx]).checked == true)
+            OncutoffsModeSelect(indx);
+    }
+    var ModeIds = ["ControlLimits_0", "ControlLimits_1"];
+    for (indx = 0; indx < ModeIds.length; indx++) {
+        if (UseID(ModeIds[indx]).checked == true)
+            OnModeSelect(indx);
+    }
+
+}
+function OnModeSelect(ControlLimits) {
+    var textName = ['TimeN', 'TimeP', 'WeldTimeMLR', 'WeldTimePLR', 'EnergyN', 'EnergyP', 'EnergyMLR', 'EnergyPLR', 'PowerN', 'PowerP', 'PowerMLR', 'PowerPLR'];
+    for (indx = 0; indx < textName.length; indx++) 
+        UseID(textName[indx]).disabled = true;
+    if (ControlLimits == 1) {
+        for (indx = 0; indx < textName.length; indx++) 
+            UseID(textName[indx]).disabled = false;
+    }
+}
+function OncutoffsModeSelect(CutOffEnabled) {
+    var NameText = ['TimeCutOffFlag', 'TimeCutOff', 'EnergyCutoffFlag', 'EnergyCutoff', 'PeakPowerCutoffFlag', 'PeakPowerCutoff', 'WeldFreqLowFlag', 'WeldFreqLow', 'WeldFreqHighFlag', 'WeldFreqHigh', 'CustomAin1Cutoff', 'CustomAin1CutoffFlag', 'CustomAin2Cutoff', 'CustomAin2CutoffFlag'];
+	var EnabledFlag;
+    for (indx = 0; indx < NameText.length; indx++) {
+		UseID(NameText[indx]).disabled = true;
+    }
+    if (CutOffEnabled != 0) {
+        for (indx = 0; indx < NameText.length; indx++) {
+			EnabledFlag = true;
+			if((indx == 10) || (indx == 11)){
+				if(CustomAin1Configured == 0)
+					EnabledFlag = false;
+			}
+			if((indx == 12) || (indx == 13)){
+				if(CustomAin2Configured == 0)
+					EnabledFlag = false;
+			}
+			if(EnabledFlag == true)
+				UseID(NameText[indx]).disabled = false;
+        }
+    }
+}
+function SpecialHandlingforRounding () {
+    var TempEnergyMLR = UseID('EnergyMLR').value;           
+
+    if(parseFloat(TempEnergyMLR)<1000){
+       TempEnergyMLR = TempEnergyMLR * 10;
+    }
+    else{
+       TempEnergyMLR = Math.round(TempEnergyMLR) * 10;
+    }
+	UseID('EnergyMLR').value = ((TempEnergyMLR/10) < 1000) ?(TempEnergyMLR/10).toFixed(1):(TempEnergyMLR/10);
+	
+    var TempEnergyPLR = UseID('EnergyPLR').value;           
+    if(parseFloat(TempEnergyPLR)<1000){
+       TempEnergyPLR = TempEnergyPLR * 10;
+    }
+    else{
+       TempEnergyPLR = Math.round(TempEnergyPLR) * 10;
+    }
+	UseID('EnergyPLR').value = ((TempEnergyPLR/10) < 1000) ? (TempEnergyPLR/10).toFixed(1): (TempEnergyPLR/10);
+
+    var TempEnergyCutoff = UseID('EnergyCutoff').value;           
+    if(parseFloat(TempEnergyCutoff)<1000){
+       TempEnergyCutoff = TempEnergyCutoff * 10;
+    }
+    else{
+       TempEnergyCutoff = Math.round(TempEnergyCutoff) * 10;
+    }
+	UseID('EnergyCutoff').value = ((TempEnergyCutoff/10)  < 1000) ?(TempEnergyCutoff/10).toFixed(1): (TempEnergyCutoff/10);
+}
+
+jQuery(function () {
+	UseID('header').innerHTML = MainHeader;
+	SetTabAttribute(0,4);
+    jQuery('ul.sf-menu').superfish();
+});
+</script>
+</head>
+<body onload='ModifyLimitsOnLoad()'>
+    <form name="temp_form" method="post" action="Limits.html">
+    <input type="hidden" name="lang" id="lang" />
+    <input type="hidden" name="usrid" id="usrid" />
+    <input type="hidden" name="passcode" id="passcode" />
+	<input type="hidden" name="uniqueid" id="uniqueid" />	
+    </form>
+    <form name="main_form">
+    <div id="wrapper">
+        <div id="header"></div>
+        <div id="PageHeader"></div>
+        <div id="content">
+            <div class="contentBoxWrapper">
+                <div class="contentBoxHeader">Limits</div>
+                <div class="gradientBox">
+                    <div class="checkbox">
+                    <input type="radio" id="ControlLimits_0" name="ControlLimits" value="0" onclick="OnModeSelect(0)" /></div>
+                    <div class="textLabelBigLeft">OFF</div>
+                    <div class="clearit"></div>
+                    <div class="checkbox">
+                    <input type="radio" id="ControlLimits_1" name="ControlLimits" value="0" onclick="OnModeSelect(1)" /></div>
+                    <div class="textLabelBigLeft">ON</div>
+                    <div class="clearit"></div>
+                    <div class="checkboxLeft">
+                    <input name="Limits" type="checkbox" id="TimeN" /></div>
+                    <div class="textLabelBigLeft">- Time(s)</div>
+                    <input name="Time" type="text" class="textInput" id="WeldTimeMLR" />
+                    <input type="hidden" id="WeldTimeMLRMaxMin" />
+                    <div class="textLabelBigLeft"></div>
+                    <div class="checkboxLeft">
+                    <input name="Limits" type="checkbox" id="TimeP" /></div>
+                    <div class="textLabelBigLeft">+ Time(s)</div>
+                    <input name="Time" type="text" class="textInput" id="WeldTimePLR" />
+                    <input type="hidden" id="WeldTimePLRMaxMin" />
+                    <div class="clearit"></div>
+                    <div class="checkboxLeft">
+                    <input name="Limits" type="checkbox" id="EnergyN" /></div>
+                    <div class="textLabelBigLeft">- Energy(J)</div>
+                    <input type="text" class="textInput" id="EnergyMLR" />
+                    <input type="hidden"id="EnergyMLRMaxMin" />
+                    <div class="textLabelBigLeft"></div>
+                    <div class="checkboxLeft">
+                    <input name="Limits" type="checkbox" id="EnergyP" /></div>
+                    <div class="textLabelBigLeft">+ Energy(J)</div>
+                    <input type="text" class="textInput" id="EnergyPLR" />
+                    <input type="hidden" id="EnergyPLRMaxMin" />
+                    <div class="clearit"></div>
+                    <div class="checkboxLeft">
+                    <input name="Limits" type="checkbox" id="PowerN" /></div>
+                    <div class="textLabelBigLeft">- Peak Power(%)</div>
+                    <input type="text" class="textInput" id="PowerMLR" />
+                    <input type="hidden" id="PowerMLRMaxMin" />
+                    <div class="textLabelBigLeft"></div>
+                    <div class="checkboxLeft">
+                    <input name="Limits" type="checkbox" id="PowerP" /></div>
+                    <div class="textLabelBigLeft">+ Peak Power(%)</div>
+                    <input type="text" class="textInput" id="PowerPLR" />
+                    <input type="hidden" id="PowerPLRMaxMin" />
+                    <div class="clearit"></div>
+                </div>
+            </div>
+            <div class="clearit"></div>
+            <div class="contentBoxWrapper">
+                <div class="contentBoxHeader">CUTOFFS</div>
+                <div class="gradientBox">
+                    <div class="checkbox">
+                    <input type="radio" id="CutOff_0" name="CutOffEnabled" value="0" onclick="OncutoffsModeSelect(0)" /></div>
+                    <div class="textLabelBigLeft">OFF</div>
+                    <div class="clearit"></div>
+                    <div class="checkbox">
+                    <input type="radio" id="CutOff_1" name="CutOffEnabled" value="0" onclick="OncutoffsModeSelect(1)" /></div>
+                    <div class="textLabelBigLeft">ON</div>
+                    <div class="clearit"></div>
+                    <div class="checkboxLeft">
+                    <input name="CutOff" type="checkbox" id="TimeCutOffFlag" /></div>
+                    <div class="textLabelBigLeft">Time(s)</div>
+                    <input name="Time" type="text" class="textInput" id="TimeCutOff" />
+					<input type="hidden" id="TimeCutOffMaxMin" />
+                    <div class="clearit"></div>
+                    <div class="checkboxLeft">
+                    <input name="CutOff" type="checkbox" id="EnergyCutoffFlag" /></div>
+                    <div class="textLabelBigLeft">Energy(J)</div>
+                    <input type="text" class="textInput" id="EnergyCutoff" />
+                    <input type="hidden" id="EnergyCutoffMaxMin" />
+                    <div class="clearit"></div>
+                    <div class="checkboxLeft">
+                    <input name="CutOff" type="checkbox" id="PeakPowerCutoffFlag" /></div>
+                    <div class="textLabelBigLeft">Peak Power(%)</div>
+                    <input type="text" class="textInput" maxlength="3" id="PeakPowerCutoff" />
+                    <input type="hidden" id="PeakPowerCutoffMaxMin" />
+                    <div class="clearit"></div>
+                    <div class="checkboxLeft">
+                    <input name="CutOff" type="checkbox" id="WeldFreqLowFlag" /></div>
+                    <div class="textLabelBigLeft">Frequency Low(Hz)</div>
+                    <input type="text" class="textInput" id="WeldFreqLow" maxlength="5" />
+                    <input type="hidden" id="WeldFreqLowMaxMin" />
+                    <div class="clearit"></div>
+                    <div class="checkboxLeft">
+                    <input name="CutOff" type="checkbox" id="WeldFreqHighFlag" /></div>
+                    <div class="textLabelBigLeft">Frequency High(Hz)</div>
+                    <input type="text" class="textInput" id="WeldFreqHigh" maxlength="5" />
+                    <input type="hidden" id="WeldFreqHighMaxMin" />
+                    <div class="clearit"></div>
+					<div class="checkboxLeft">
+                    <input name="CutOff" type="checkbox" id="CustomAin1CutoffFlag" disabled="disabled"/></div>
+                    <div class="textLabelBigLeft">Custom Input1(V)</div>
+                    <input type="text" class="textInput" id="CustomAin1Cutoff" maxlength="4" disabled="disabled"/>
+                    <input type="hidden" id="CustomAin1CutoffMaxMin" />
+                    <div class="clearit"></div>
+					<div class="checkboxLeft">
+                    <input name="CutOff" type="checkbox" id="CustomAin2CutoffFlag" disabled="disabled"/></div>
+                    <div class="textLabelBigLeft">Custom Input2(V)</div>
+                    <input type="text" class="textInput" id="CustomAin2Cutoff" maxlength="4" disabled="disabled"/>
+                    <input type="hidden" id="CustomAin2CutoffMaxMin" />
+                    <div class="clearit"></div>
+                </div>
+            </div>
+			<div class="clearit"></div>
+        <div id="contentButtonBank">
+            <input name="Save" type="button" class="button" value="Save" onclick="PageRefTo=null; ModifyLimitsSave();" />
+            <input name="Cancel" type="button" class="button" value="Cancel" onclick="ModifyLimitsCancel()" />
+            <input name="RestoreDefaults" type="button" class="button" value="Restore Defaults" onclick="ModifyLimitsRestore()" />
+        </div>
+        <div class="clearit"></div>
+		</div>
+        <div id="footer"></div>
+ </div>
+</form>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitStickyFooter();
+    });
+</script>
+</html>

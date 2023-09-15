@@ -1,0 +1,1219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="pragma" content="no-cache" />
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+	<title>BRANSON DCX GUI</title>
+	<link href="styleDCXHD-v1.css" rel="stylesheet" type="text/css" />
+	<script type="text/JavaScript" language="javascript" src="jqueryDCXHD-v1.js"></script>
+	<!--[if IE]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
+	<!--[if IE 6]><link href="ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+	<!--[if IE 7]><link href="ie7.css" rel="stylesheet" type="text/css" /><![endif]-->
+	<!--[if IE 6]>
+	<script src="DD_belatedPNGDCXHD-v1.js"></script>
+<script>
+  /* EXAMPLE */
+  DD_belatedPNG.fix('#headerLogo');
+  
+  
+  /* string argument can be any CSS selector */
+  /* .png_bg example is unnecessary */
+  /* change it to what suits you! */
+</script>
+<![endif]-->
+<style>
+.divClass{
+    height:12px;
+    width:6px; 
+    background-color:gray;
+    margin-bottom:4px;
+    border: 0px;
+}
+.divClassSegOn{
+    height:12px;
+    width:6px; 
+    background-color:blue;
+    margin-bottom:4px;
+    border: 0px;
+}
+.labelBar {
+	width: 100px;
+	padding: 2px 2px 2px 2px;
+	background: #ffffff;
+	border: solid 1px #CCCCCC;
+	margin: 11px 10px 0px 10px;
+	float: left;
+	text-align: right;
+}
+</style>
+</head>
+<script language="javascript"  type="text/javascript">
+var parenttype = "HS"; 
+var DataSize = 2000; 
+var DefaultDataSize = 2000,PhaseLimit = 180,PhaseCutOff = 225;
+var FrequencyStep = 1,HSPresetData = "",w,DataLength;
+var Phase= new Array(), Current = new Array(), Amplitude = new Array(), Frequency = new Array(),ResFreqArr = new Array(),ResFreqType = new Array();
+var sOption = "toolbar=0, location=0, directories=0, menubar=0,";
+	sOption += " scrollbars=0, width=400, height=120, left=300, top=250";
+var UserComment;
+var userbranson = "1", usermf1 = "3", usermf2 = "4";
+var tab1 = "<li><a href=\"javascript:GetLanguageAndUserID('ip-setup.html')\">IP Setup</a></li>";
+var tab2 = "<li><a  href=\"javascript:GetLanguageAndUserID('weld-preset.html')\">Weld Preset</a></li>";
+var tab3 = "<li><a  href=\"javascript:GetLanguageAndUserID('advanced-preset.html')\">Advanced Preset</a></li>";
+var tab4 = "<li><a  href=\"javascript:GetLanguageAndUserID('diagnostic-IO.html')\">I/O Diagnostics</a></li>";
+var tab5 = "<li><a href=\"javascript:GetLanguageAndUserID('Seek&WeldGraphs.html')\">Seek & </br>Weld Graphs</a></li>";
+var tab6 = "<li><a  href=\"javascript:GetLanguageAndUserID('system-information.html')\">System Information</a></li>";
+var tab7 = "<li><a  href=\"javascript:GetLanguageAndUserID('IO-configuration.html')\">I/O Configuration</a></li>";
+var tab8 = "<li><a  href=\"javascript:GetLanguageAndUserID('event-log.html')\">Event Log</a></li>";
+var tab9 = "<li><a  href=\"javascript:GetLanguageAndUserID('alarm-log.html')\">Alarm Log</a></li>";
+var tab10 = "<li><a  href=\"javascript:GetLanguageAndUserID('manufacturing.html')\">Manufacturing</a></li>";
+var tab11 = "<li><a  href=\"javascript:GetLanguageAndUserID('mfboardtest.html')\">Manufacturing Board Test</a></li>";
+var tab12 = "<li class=\"active\"><a  href=\"javascript:GetLanguageAndUserID('hornsignature.html')\">Horn <br/> Signature</a></li>";
+var tab13 = "<li><a  href=\"javascript:GetLanguageAndUserID('HD-param.html')\">HD Parameters</a></li>";
+var CSVstring = " ";
+var tabBranson = tab1 + tab2 + tab3 + tab4 + tab5 + tab12 + tab6 + tab7 + tab8 + tab9 + tab13;
+var tabMf = tabBranson + tab10;
+var tabBoardtest = tab1 + tab2 + tab3 + tab11 + tab4 + tab5 + tab12 + tab6 + tab7 + tab8 + tab9;
+var TabArr =["", tabBranson, "", tabMf, tabBoardtest];
+var UserArr=["", "Current User: Branson", "","Current User: Manufacturing","Current User: Manufacturing"];
+function getHTTPObject() {
+  var xmlhttp; 
+  if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+    try {
+      xmlhttp = new XMLHttpRequest();
+    } catch (e) {
+      xmlhttp = false;
+    }
+  }
+  return xmlhttp;
+}
+
+var http = getHTTPObject(); // create the HTTP Object
+var datastate = 1;
+var ScanStartTimeOut = 6;//3 secs
+var ScanPollTimeOut = 2;
+var ScanAbortTimeOut = 6;//3 secs
+var timerid = 0;
+var state = 0;
+var missedCount = 0;
+var missedCountMax = 20;
+var SCAN_START = 1, WAIT_SCAN_START = 2, SCAN_POLL = 3, WAIT_SCAN_POLL = 4, 
+SCAN_POLL_TIMEOUT = 5,SCAN_ABORT = 6, WAIT_SCAN_ABORT = 7;
+var msCount;
+function TimerCallBack()
+{   
+	switch(state)
+	{  
+		case SCAN_START:
+			msCount = ScanStartTimeOut;
+			state = WAIT_SCAN_START;   
+			break;
+		case WAIT_SCAN_START:
+			if(--msCount <= 0)
+			{
+				state = 0;
+				missedCount = 0;
+				TimeOutAlertScan("Scan Start Command Not responded");
+			}
+			break;
+		case SCAN_POLL:
+			SendScanPollCommand();
+			mscount = ScanPollTimeOut;
+			state = WAIT_SCAN_POLL;
+			break;
+		case WAIT_SCAN_POLL:
+			if(--msCount <= 0)
+			{
+				missedCount++;
+				if(missedCount >= missedCountMax)
+				{
+					TimeOutAlertScan("Scan Poll Command Not responded");               
+					missedCount = 0;
+					state = 0;
+				}
+				else
+					state = SCAN_POLL;
+			}
+			break;
+		case SCAN_POLL_TIMEOUT:
+			if(--msCount <= 0)
+			{
+				state = SCAN_POLL;
+			}
+			break;
+		case SCAN_ABORT:
+			msCount = ScanAbortTimeOut;
+			state = WAIT_SCAN_ABORT;
+			break;
+		case WAIT_SCAN_ABORT:
+			if(--msCount <= 0)
+			{
+				state = 0;
+				missedCount = 0;            
+				TimeOutAlertScan("Scan Abort Command Not responded");
+			}
+			break;       
+	}
+}
+
+function ResetScanControlsToDefaults()
+{
+	if(timerid)
+	{
+		clearInterval(timerid);
+		timerid = 0;
+	}
+	document.getElementById('StartHS').disabled = false;
+	document.getElementById('AbortHS').disabled = false;
+	var scnProgrs = document.getElementById('HSProgress');
+	scnProgrs.style.width = parseInt(0) + 'px';
+}
+
+function handleScanResponse()
+{
+    if (http.readyState == 4) 
+	{
+	    var str = http.responseText.split("@");
+	    var res = str[1].split(":");	    
+ 		if(res[0] == "SYSTEMBUSY")
+		{	
+		    state = 0;
+		    missedCount = 0;
+		    TimeOutAlertScan("Sytem is either busy or in error state");
+		}
+		else if(res[0] == "SCANSTARTED")
+		{ 			
+			state = SCAN_POLL;
+			missedCount = 0;
+			OffAllLedsScan();
+            ResetFrequencyValues();
+			document.getElementById('AbortHS').disabled = false;
+			UpdateScanResult("INPROGRESS", "");						
+		}
+		else if(res[0] == "SCANINPROGRESS")
+		{   
+			msCount = ScanPollTimeOut;
+			missedCount = 0;
+			state = SCAN_POLL_TIMEOUT;			
+			UpdateScanResult("INPROGRESS", res[1]);
+		}
+		else if(res[0] == "SCANCOMPLETED")
+		{
+		    missedCount = 0;
+		    state = 0;
+		    UpdateScanResult("DONE", res[1]);	
+		    datastate = 1;
+			GetScanData();						// Get Horn Scan data & plot graph
+        }
+		else if(res[0] == "SCANABORTED")
+		{
+		    missedCount = 0;
+		    state = 0;
+		    UpdateScanResult("ABORTED", "");
+		}
+		else if(res[0] == "SCANFAILED")
+		{
+		    missedCount = 0;
+		    state = 0;
+		    UpdateScanResult("FAILED", "");
+			  datastate = 1;
+			  GetScanData();						// Get Horn Scan data & plot graph
+		}
+	}
+}
+
+function ResetFrequencyValues()
+{
+    var indx;
+    for(indx = 0; indx < 3 ; indx++)
+    {
+        document.getElementById("sfreq" + indx).innerHTML = "&nbsp";
+        document.getElementById("pfreq" + indx).innerHTML = "&nbsp";
+    }
+}
+
+function TimeOutAlertScan(msg)
+{
+    if(timerid)
+    {
+        clearInterval(timerid);
+        timerid = 0;
+    }
+    alert(msg);
+    ResetScanControlsToDefaults();       
+    state = 0;
+}
+
+
+function OffAllLedsScan()
+{
+    document.getElementById('imgScanDone').src = "greyDot.gif";		
+    document.getElementById('imgScanFailed').src = "greyDot.gif";
+    document.getElementById('imgScanAborted').src = "greyDot.gif";
+}
+
+function SetLedStatus(ID, status)
+{   
+    if(status == "ON")
+        document.getElementById(ID).src = (ID == "imgScanFailed")? "redDot.gif" : "greenDot.gif";
+    else if(status == "OFF")
+        document.getElementById(ID).src = "greyDot.gif"
+}
+
+/*This funtion is called to start Horn Scan*/
+function OnStartScan()
+{
+    if (w)
+    if (!w.closed) w.window.close();
+	if(state == SCAN_START)
+	   return;
+	if(!timerid)            
+	timerid = setInterval("TimerCallBack()", 500); 
+	var postUrl;
+	document.getElementById('StartHS').disabled = true;
+	document.getElementById('AbortHS').disabled = true;
+	ResetFrequencyValues();
+	postUrl = "func=14cmd=6?param=";
+	state = SCAN_START;
+	postUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+				   + getCookie('USERID'));
+	http.open("POST", postUrl, true);
+	http.onreadystatechange = handleScanResponse;
+	http.send(null);    
+}
+
+function SendScanPollCommand()
+{  
+	postUrl = "func=14cmd=7?param="; 
+	postUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+				   + getCookie('USERID'));                   
+	http.open("POST", postUrl, true);
+	http.onreadystatechange = handleScanResponse;
+	http.send(null);      
+}
+
+function OnAbortScan()
+{   
+	if (w)
+	if (!w.closed) w.window.close();
+	if(state == SCAN_ABORT)
+		return;
+	if((state >= SCAN_START) && (state <= SCAN_POLL_TIMEOUT))
+	{     
+		postUrl = "func=14cmd=8?param="; 
+		postUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+					   + getCookie('USERID'));                   
+		http.open("POST", postUrl, true);
+		http.onreadystatechange = handleScanResponse;
+		state = SCAN_ABORT;
+		http.send(null); 
+	}     
+}
+
+/*to be called after/during scan*/
+function UpdateScanResult(scanRes, resFreq)
+{
+    var indx;
+    /*Update result after scan DONE*/
+    if(scanRes == "DONE")
+    {
+        ResetScanControlsToDefaults();
+        ResetFrequencyValues();
+        OffAllLedsScan();
+        SetLedStatus("imgScanDone" , "ON");
+        document.getElementById("HSProgress").style.width = parseInt(600) + 'px';
+        var freqs = resFreq.split(",");        
+        var fNoS = 0, fNoP = 0;
+        for(indx = 0; indx < 12 ; indx = indx + 2)
+        {
+            if(freqs[indx] == "1")   
+            {
+                if(parseInt(freqs[indx + 1]) > 0)
+                {   
+					document.getElementById("sfreq" + fNoS).style.color = "Red";
+					document.getElementById("sfreq" + fNoS).innerHTML = freqs[indx + 1] + "HZ";
+                    fNoS++;                               
+                }
+            }
+            else if(freqs[indx] == "2")   
+            {
+                if(parseInt(freqs[indx + 1]) > 0)
+                {
+					if(indx == 0 || indx == 2)
+						document.getElementById("pfreq" + fNoP).style.color = "Blue";
+					else
+						document.getElementById("pfreq" + fNoP).style.color = "Red";
+                    document.getElementById("pfreq" + fNoP).innerHTML = freqs[indx + 1] + "HZ";
+                    fNoP++;
+                 }
+            }
+        }     
+    }    
+    else if(scanRes == "ABORTED")
+    {
+        ResetScanControlsToDefaults();
+        SetLedStatus("imgScanAborted" , "ON");
+        document.getElementById("HSProgress").style.width =  parseInt(0) + 'px';
+        ResetFrequencyValues();
+    }
+    else if(scanRes == "FAILED")
+    {
+        ResetScanControlsToDefaults();
+        SetLedStatus("imgScanFailed" , "ON");
+        document.getElementById("HSProgress").style.width =  parseInt(0) + 'px';
+        ResetFrequencyValues();
+    }
+    else if(scanRes == "INPROGRESS")
+    {
+        var currWidth = parseInt(document.getElementById("HSProgress").style.width);
+        if(currWidth >= 600)
+            currWidth = 0;
+        else
+            currWidth = (resFreq * 600) / 100;       
+        document.getElementById("HSProgress").style.width = (parseInt(currWidth) + 'px');
+    }
+}
+
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{
+			c_start=c_start + c_name.length+1;
+			c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) c_end=document.cookie.length;
+				return unescape(document.cookie.substring(c_start,c_end));
+		}
+	}
+	return "";
+}
+/* This funtion is called to get Scan Data from the server after scan is complete*/
+function GetScanData()
+{
+	if(document.getElementById('StartHS').disabled == true)
+		return;    //return if Horn Scan under progress
+	if (w)
+	if (!w.closed) w.window.close();   //close user comment window 
+	if(timerid)
+	{
+	    clearInterval(timerid);
+	    timerid = 0;                      // reset timer  
+	}
+	if(PhaseLimit == 180)
+		PhaseCutOff = 225;
+	else
+		PhaseCutOff = 113;
+	document.getElementById("Td1").innerHTML = "INFO : Getting Scan Data";
+	EnableDiv();
+	switch(datastate)
+	{
+		case 1:
+			var  GetScanDataFrequencyUri = "func=22cmd=42?param=";
+			GetScanDataFrequencyUri += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+							   + getCookie('USERID'));
+			http.open("POST", GetScanDataFrequencyUri, true);
+			http.onreadystatechange = UpdateGraphData;
+			http.send(null);    
+			break;
+		case 2:
+			var  GetScanDataCurrentUri = "func=22cmd=38?param=";
+			GetScanDataCurrentUri += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+							   + getCookie('USERID'));
+			http.open("POST", GetScanDataCurrentUri, true);
+			http.onreadystatechange = UpdateGraphData;
+			http.send(null);
+			break;
+
+		case 3:
+			var  GetScanDataPhaseUri = "func=22cmd=37?param=";
+			GetScanDataPhaseUri += ("&lang=" + getCookie('LANGUAGE') + "&userid1=" 
+								+ getCookie('USERID'));
+			http.open("POST", GetScanDataPhaseUri, true);
+			http.onreadystatechange = UpdateGraphData;
+			http.send(null);    
+			break;
+		case 4:
+			var  GetScanDataAmplitudeUri = "func=22cmd=39?param=";
+			GetScanDataAmplitudeUri += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+							   + getCookie('USERID'));
+			http.open("POST", GetScanDataAmplitudeUri, true);
+			http.onreadystatechange = UpdateGraphData;
+			http.send(null);    
+			break;
+		case 5:
+			var  GetScanDataPresetUri = "func=22cmd=43?param=";
+			GetScanDataPresetUri += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+							   + getCookie('USERID'));
+			HSPresetData = "";
+			http.open("POST", GetScanDataPresetUri, true);
+			http.onreadystatechange = UpdateGraphData;
+			http.send(null);    
+			break;
+		case 6:
+			var  GetScanDataFreqUri = "func=22cmd=44?param=";
+			GetScanDataFreqUri += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+							   + getCookie('USERID'));
+			http.open("POST", GetScanDataFreqUri, true);
+			http.onreadystatechange = UpdateGraphData;
+			http.send(null);    
+			break;
+		default : 
+			DefaultSetting();
+	}
+}
+
+function GetLanguageAndUserID(hrefpage)
+{
+    document.getElementById("lang").value= getCookie('LANGUAGE');
+	document.getElementById("userid1").value= getCookie('USERID');
+	document.temp_form.action = hrefpage;
+	document.temp_form.submit();        
+}
+
+function UpdateGraphData()
+{
+  if (http.readyState == 4 && http.responseText.length !=0) 
+  { 				
+        var i,j,results,results1,results2;   
+        if(http.responseText == "SCANINPROGRESS")
+        {
+            DisableDiv();
+            alert("Already running a scan!! Try Later");
+            return;
+        }    
+		results = http.responseText.split(","); 
+        if(results[0] == "Frequency")    
+		{
+			for(i = 0; i < results.length; i++)
+				Frequency[i] = parseFloat(results[i]);
+			Frequency[DefaultDataSize] = Frequency[i - 1];
+		}
+		else if (results[0] == "Phase")
+			for(i = 0; i < results.length; i++)
+				Phase[i] = ((parseFloat(results[i]) * PhaseCutOff) / 2047).toFixed(3);
+		else if (results[0] == "Current")
+			for(i = 0; i < results.length; i++)
+				Current[i] = ((parseFloat(results[i]) > 50)? 50 : parseFloat(results[i]));
+		else if (results[0] == "Amplitude")
+		{
+			for(i = 0; i < results.length; i++)
+				Amplitude[i] = ((parseFloat(results[i]) > 50)? 50 : parseFloat(results[i]));
+			DataLength = i - 2;
+		}
+		else if (results[0] == "PresetData")
+		{
+			FrequencyStep = parseInt(results[1]);
+			Frequency[1] = parseInt(results[2]);
+			Frequency[DataLength] = parseInt(results[3]);
+			PhaseLimit = parseInt(results[4]);
+			document.getElementById("StartFrequency:tt").value = parseInt(results[2]);
+			document.getElementById("EndFrequency:tt").value = parseInt(results[3]);
+			for(i = 5; i < results.length; i++)
+				HSPresetData += results[i] + ',';
+		}
+		else if (results[0] == "ResonFreq")
+		{	
+			for(i = 1; i < results.length; i++)
+			{
+				results1 = results[i].split(":");
+				ResFreqArr[i - 1] =  parseInt(results1[1]);
+				ResFreqType[i - 1] = results1[0];
+			}
+		}
+		datastate = datastate + 1;
+		GetScanData();
+	}
+}
+	
+function handleDiagHSLoadResponse()
+{
+	if (http.readyState == 4 && http.responseText.length!=0) 
+	{  
+		if (http.readyState == 4) 
+		{   
+			var i,j,results2,results3;       
+			results = http.responseText.split("@"); 
+			if((results[0] == userbranson) || (results[0] == usermf1) ||(results[0] == usermf2))
+			{       
+				document.getElementById('tabmenu').innerHTML = TabArr[parseInt(results[0])];                        
+				document.getElementById("CurrUser").innerHTML = UserArr[parseInt(results[0])];             
+			}
+			else
+				document.getElementById("CurrUser").innerHTML = "Current User: " + getCookie('USERID');
+			results2 = results[2].split(":"); 
+			if(results2[0] == "PSFreqType")
+			{
+				results3 = results2[1].split(","); 
+				Frequency[1] = parseInt(results3[0]);
+				Frequency[DataLength] = parseInt(results3[1]);
+				PhaseLimit = parseInt(results3[2]);
+				document.getElementById("StartFrequency:tt").value = parseInt(results3[0]);
+				document.getElementById("EndFrequency:tt").value = parseInt(results3[1]);
+			}
+			results2 = results[3].split(":"); 
+			if(results2[0] == "SCANCOMPLETED")
+			{
+				UpdateScanResult("DONE", results2[1]);	
+			}
+			document.getElementById("StartHS").disabled = false;
+			document.getElementById("AbortHS").disabled = false;
+			DrawGraph();
+		}
+	}
+	else if(http.readyState == 4)
+		EnableDiv();
+}
+
+function DiagnosticHSOnLoad()
+{
+    window.history.forward(1);
+    var DiagPSOnLoadUrl = "func=17cmd=0?param=";   
+    var postUrl = DiagPSOnLoadUrl;
+    postUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                   + getCookie('USERID'));
+    http.open("POST", postUrl, true);
+    http.onreadystatechange = handleDiagHSLoadResponse;
+    http.send(null);
+}
+
+function EnableDiv()
+{
+	window.scrollTo(0,540);	
+	document.getElementById('fade_div').style.display = 'block';
+    document.getElementById('info_div').style.display = 'block';
+    document.getElementById('fade_div').style.width = "980px";
+	document.getElementById('fade_div').style.height = "955px"; 
+    var temp = (parseInt(document.getElementById('fade_div').style.width)
+		- parseInt(document.getElementById('info_div').style.width)) / 2;
+    document.getElementById('info_div').style.left = temp + "Px";
+}
+
+function DisableDiv()
+{
+    document.getElementById('fade_div').style.display = 'none';
+    document.getElementById('info_div').style.display = 'none';
+}
+function GetUserManual(hrefpage)
+{
+    window.open(hrefpage);
+}
+function DisplayGraphValue()
+{
+	if (w)
+	if (!w.closed) w.window.close();
+	var value = parseFloat(document.getElementById('XValue').value);
+	if(document.getElementById('SelectedGraph').selectedIndex != 0)
+	{
+			if(value >= parseFloat(Frequency[1]) && value < (parseFloat(Frequency[1]) + DefaultDataSize))
+			{
+					value = value - Frequency[1];
+					value = parseFloat(value / FrequencyStep) + 1
+					switch(document.getElementById('SelectedGraph').selectedIndex)
+					{	
+						case 1:
+								document.getElementById('YValue').value = Phase[value];
+								break;
+						case 2:
+								document.getElementById('YValue').value = Current[value];
+								break;
+						case 3:
+								document.getElementById('YValue').value = Amplitude[value];
+								break;
+					}
+			}
+			else			
+				alert("Enter correct Frequency");
+	}
+	else
+	alert("Select Graph");
+}
+			
+	var graph,c;
+	var xPadding;
+	var yPadding;
+	var y1Padding
+	var DiffFreq;
+	var MaxX;
+	var MaxY;
+	var MinY;
+	var DiffCurrent;
+	var DiffFrequency;
+	var DiffPower;
+	var DiffCurrent;
+	var DiffAmplitude;
+	var DiffPhase;
+	var MaxX;
+	var MaxY;
+	var graphheight;
+	var graphwidth;
+	var reverseScan = false;
+
+	function getMaxY(arr) {
+		var max = 0,max1,ma2;
+		for(var i = 1; i < DefaultDataSize - 1; i ++) {
+			if(arr[i] > max) {
+				max = arr[i];
+			}
+		}
+		max1 = (max - (max % 10))/10 ;
+		max = max1 * 10 + 100;
+		return max;
+	}
+
+	function getMinY(arr) {
+		var min = 0;
+		for(var i = 1; i < DefaultDataSize - 1; i ++){
+			if(arr[i] < min) {
+				min = arr[i];
+			}
+		}
+		return min;
+	}
+
+	function getMaxX(arr) {
+		var max = 0,max1,ma2;
+		for(var i = 1; i < DefaultDataSize - 1; i ++){
+			if(arr[i] > max) {
+				max = arr[i];
+			}
+		}
+		max1 = (max - (max % 10))/10 ;
+		max = max1 * 10 + 120;
+		return max;
+	}
+	function getXPixel(val,max) {
+		return ((graphwidth - xPadding) / max) * val + (xPadding * 1.5) - 75;
+	}
+	// Return the y pixel for a graph point
+	function getYPixel(val,max) {
+		return graphheight - (((graphheight - yPadding) / max) * val) - yPadding;
+	}
+/* It sets the graph Display to default*/          
+function DefaultSetting()
+{
+	if (w)
+	if (!w.closed) w.window.close();
+	document.getElementById("Phase:cb").checked = true;
+	document.getElementById("Current:cb").checked = true;
+	document.getElementById("Amplitude:cb").checked = true;
+	document.getElementById("StartFrequency:tt").value = Frequency[1];
+	document.getElementById("EndFrequency:tt").value = Frequency[DataLength];
+	document.getElementById("XValue").value = Frequency[1];
+	document.getElementById("YValue").value = 0;
+	document.getElementById('SelectedGraph').selectedIndex = 1;
+	missedCount = 0;
+	state = 0;
+	if(timerid)
+	{
+		clearInterval(timerid);
+		timerid = 0;
+	}
+	DrawGraph();
+}
+function RedrawGraph(){
+	if (w)
+	if (!w.closed) w.window.close();
+	var StartFrequency;
+	var EndFrequency;
+	if(Frequency[DataLength] <  Frequency[1])//reverse scan case
+	{	   
+	    reverseScan = true;
+        StartFrequency = parseFloat(document.getElementById("EndFrequency:tt").value);
+	    EndFrequency = parseFloat(document.getElementById("StartFrequency:tt").value);
+	}
+	else
+	{
+	    StartFrequency = parseFloat(document.getElementById("StartFrequency:tt").value);
+	    EndFrequency = parseFloat(document.getElementById("EndFrequency:tt").value);
+	}
+	if((EndFrequency - StartFrequency) >= 100)
+	{
+	        if(reverseScan)
+	        {      	
+				document.getElementById("EndFrequency:tt").value = StartFrequency - (StartFrequency % 10);
+				if(EndFrequency > Frequency[1])
+					EndFrequency = Frequency[1];
+			    if((EndFrequency % 10) != 0)
+				    document.getElementById("StartFrequency:tt").value = EndFrequency + (10 - (EndFrequency % 10));				
+	        }
+	        else
+	        {
+				if(StartFrequency < Frequency[1])
+					StartFrequency = Frequency[1];
+				document.getElementById("StartFrequency:tt").value = StartFrequency - (StartFrequency % 10);
+			    if((EndFrequency % 10) != 0)
+				    document.getElementById("EndFrequency:tt").value = EndFrequency + (10 - (EndFrequency % 10));
+			}
+			DrawGraph();
+	}
+	else
+		alert("Minimum Frequency difference should be of 100 Hz");
+}
+
+function DrawGraph(){ 
+	document.getElementById("Td1").innerHTML = "INFO : System is busy";
+	DisableDiv();	
+	graph = $('#graph');
+	c = graph[0].getContext('2d');            
+	c.clearRect(0,0, 900,500);
+	datastate = 1;
+	c.strokeStyle = '#333';
+	c.font = '8pt arial';
+	c.textAlign = "center";
+	xPadding = 150;
+	yPadding = 40;
+	y1Padding = 0;
+	DiffFreq = 10;
+	MinY = 0;
+	DiffCurrent = 10;
+	DiffAmplitude = 10;
+	DiffPhase = 10;
+	var StartFrequency, EndFrequency;
+	document.getElementById("XValue").value = Frequency[1];
+	if(Frequency[DataLength] <  Frequency[1])//reverse scan case
+	{
+		reverseScan = true;
+        StartFrequency = Frequency[1] - parseFloat(document.getElementById("StartFrequency:tt").value); 
+	    EndFrequency = Frequency[1] - parseFloat(document.getElementById("EndFrequency:tt").value);
+	}
+	else
+	{
+		StartFrequency = parseFloat(document.getElementById("StartFrequency:tt").value) - Frequency[1];
+	    EndFrequency = parseFloat(document.getElementById("EndFrequency:tt").value) - Frequency[1];
+	}
+	DataSize = EndFrequency - StartFrequency;
+	MaxY = 100;
+	MaxX = EndFrequency - StartFrequency; 
+	if((MaxX % 10) != 0)
+		MaxX = MaxX - (MaxX % 10) + 10;
+	DiffFrequency = MaxX / 10;
+	MaxX = MaxX + DiffFrequency;
+	graphheight = graph.height();
+	graphwidth = graph.width();
+	if (DataLength < DataSize)
+		DataSize = DataLength + 1;
+    // Draw the axises
+    c.clearRect(0,0, 900,500);
+	c.stroke();
+	c.lineWidth = 2;
+    c.beginPath();
+	c.strokeStyle = "Black";
+    c.moveTo(xPadding, yPadding);
+	c.lineTo(xPadding, graphheight - yPadding);             // Draw Y axis
+		// Draw X axis
+	c.lineTo(graphwidth - 68, graphheight - yPadding);
+	c.moveTo(xPadding, graphheight/ 2 + 3);
+	c.lineTo(graphwidth - 68, graphheight / 2 + 3); // Draw X1 axis
+	c.moveTo(xPadding, yPadding);
+	c.lineTo(graphwidth - 68, yPadding);          // Draw X2 axis
+	c.lineTo(graphwidth - 68, graphheight - yPadding); // Draw Y' axis
+	c.stroke();
+		// Draw the X value texts
+	c.fillStyle = "Black";
+	c.beginPath();
+	c.lineWidth = .5;	
+	if(reverseScan == true)//reverse scan case
+	{
+	    tempFreqDiff = DiffFrequency; 
+		for(var i = 0, j = StartFrequency; i < MaxX; i += DiffFrequency, j += DiffFrequency)
+		{
+			if(i % DiffFrequency == 0)
+			{	c.fillText(Frequency[1] - j, getXPixel(i,MaxX), graphheight - yPadding + 20);
+				c.moveTo(getXPixel(i,MaxX),graphheight - yPadding - 2);
+				c.lineTo(getXPixel(i,MaxX),graphheight - yPadding + 3);
+			}
+		}
+	}
+	else
+	{
+		for(var i = 0, j = StartFrequency; i < MaxX; i += DiffFrequency, j += DiffFrequency)
+		{
+			if(i % DiffFrequency == 0)
+			{	c.fillText(Frequency[1] + j, getXPixel(i,MaxX), graphheight - yPadding + 20);
+				c.moveTo(getXPixel(i,MaxX),graphheight - yPadding - 2);
+				c.lineTo(getXPixel(i,MaxX),graphheight - yPadding + 3);
+			}
+		}
+	}
+   	c.stroke();
+	document.getElementById("Phase:cb").checked = true;
+	if(document.getElementById("Phase:cb").checked == true)
+	{
+        // Draw the Y value texts
+		MaxY = PhaseLimit;  //getMaxY(Phase);
+		DiffPhase = MaxY / 10;
+		MaxY = MaxY + (DiffPhase - (DiffPhase % 10) + 10);
+		MinY = -PhaseLimit;  // getMinY(Phase);
+        c.textAlign = "right";
+        c.textBaseline = "middle";
+		c.strokeStyle = 'Black';
+		var temp = 1;
+		if((MinY + MaxY) < 0)
+			MaxY = - MinY;
+		temp = PhaseLimit / 5;       //MaxY / 5;
+		var temp2 = 0;
+		temp2 = -PhaseLimit;
+		c.beginPath();
+		var PhOffset = 0;
+		if(PhaseLimit == 120)
+			PhOffset = 7;
+        for(var i = 0; i < MaxY - DiffPhase; i += DiffPhase, temp2 += temp)
+        {
+			if(i % DiffPhase == 0)
+			{	
+				c.fillText(temp2, xPadding - 8, getYPixel(i,MaxY - PhOffset));
+				c.moveTo(xPadding + 2,getYPixel(i,MaxY- PhOffset));
+				c.lineTo(xPadding - 3,getYPixel(i,MaxY- PhOffset));
+			}
+        }
+		c.stroke();
+		// Draw the line graph Phase
+		c.strokeStyle = 'Black';
+        c.beginPath();
+		c.moveTo(getXPixel(0,MaxX), getYPixel(0,MaxY - PhOffset) - 207);
+        c.moveTo(getXPixel(0,MaxX), getYPixel(Phase[StartFrequency]/2,MaxY - PhOffset) - 207);
+        for(var i = 1, j = StartFrequency; i < DataSize - 1; i += 1, j += 1)
+			c.lineTo(getXPixel(i,MaxX / FrequencyStep), getYPixel(Phase[j]/2,MaxY - PhOffset) - 207);
+        c.stroke();
+    }
+	if(document.getElementById("Current:cb").checked == true)
+	{
+	    y1Padding = y1Padding + 50;
+		// Draw Y1
+		MaxY = 50;
+		DiffCurrent = MaxY / 10;           //getMaxY(Current) / 10;
+		MaxY = MaxY + (DiffCurrent - (DiffCurrent % 10) + 10);
+		c.lineWidth = 1;
+		c.strokeStyle = "Blue";
+		c.lineWidth = .5;
+		c.beginPath();
+		c.moveTo(xPadding - y1Padding, yPadding);
+		c.lineTo(xPadding - y1Padding, graphheight - yPadding);
+		c.stroke();
+		// Draw the Y1 value texts
+        c.textAlign = "right";
+        c.textBaseline = "middle";
+		c.beginPath();
+        for(var i = 0; i < MaxY - 5; i += DiffCurrent) {
+			if(i % DiffCurrent == 0)
+			{
+				c.fillText(i, xPadding - y1Padding - 5, getYPixel(i,MaxY - 5));
+				c.moveTo(xPadding - y1Padding + 5,getYPixel(i,MaxY - 5));
+				c.lineTo(xPadding - y1Padding,getYPixel(i,MaxY - 5));
+			}
+        }
+		c.stroke();
+        // Draw the line graph Current
+		c.strokeStyle = "Blue";
+        c.beginPath();
+		c.moveTo(getXPixel(0,MaxX), getYPixel(0,MaxY - 5));
+        c.moveTo(getXPixel(0,MaxX), getYPixel(Current[StartFrequency],MaxY - 5));
+        for(var i = 1, j = StartFrequency; i < DataSize - 1;i += 1, j += 1) {
+            c.lineTo(getXPixel(i,MaxX / FrequencyStep),getYPixel(Current[j],MaxY - 5));
+        }
+        c.stroke();
+    }
+	if(document.getElementById("Amplitude:cb").checked == true)
+	{
+		y1Padding = y1Padding + 50;
+		// Draw Y2 Amplitude
+		MaxY = 50; // getMaxY(Amplitude);
+		DiffAmplitude = MaxY / 10;
+		MaxY = MaxY + (DiffAmplitude - (DiffAmplitude % 10) + 10);
+		c.lineWidth = 1;
+		c.strokeStyle = "Green";
+		c.beginPath();
+		c.moveTo(xPadding - y1Padding, yPadding);
+		c.lineTo(xPadding - y1Padding, graphheight - yPadding);   
+		c.stroke();
+		// Draw the Y2 value texts
+        c.textAlign = "right";
+        c.textBaseline = "middle";
+		c.beginPath();
+        for(var i = 0; i < MaxY - 5; i += DiffAmplitude)
+        {
+			if(i % DiffAmplitude == 0)
+			{
+				c.fillText(i, xPadding - y1Padding - 5, getYPixel(i,MaxY - 5));
+				c.moveTo(xPadding - y1Padding + 5,getYPixel(i,MaxY - 5));
+				c.lineTo(xPadding - y1Padding,getYPixel(i,MaxY - 5));
+			}
+        }
+		c.stroke();
+        // Draw the line graph Amplitude
+		c.strokeStyle = "Green";
+        c.beginPath();
+		c.moveTo(getXPixel(0,MaxX),getYPixel(0,MaxY - 5));
+        c.moveTo(getXPixel(0,MaxX),getYPixel(Amplitude[StartFrequency],MaxY - 5));
+        for(var i = 1, j = StartFrequency; i < DataSize - 1;i += 1, j += 1) {
+            c.lineTo(getXPixel(i,MaxX / FrequencyStep), getYPixel(Amplitude[j],MaxY - 5));
+        }
+        c.stroke();
+    }
+    y1Padding = 115;
+	c.textAlign = "left";
+    c.font = 'Bold 10pt sans-serif';
+	c.fillText("FREQUENCY (Hz)", 350 ,495);
+	for(i = 0; i < ResFreqType.length; i++)
+	{
+		DrawRasonanceMarker(ResFreqType[i],ResFreqArr[i],i);
+	}
+	c.rotate(-90*Math.PI/180);
+	if(document.getElementById("Phase:cb").checked == true)
+	{
+		c.fillStyle = "Black";
+		c.fillText("PHASE (Deg)", - 280 ,y1Padding);
+	}
+	if(document.getElementById("Current:cb").checked == true)
+	{
+		y1Padding = y1Padding - 50;
+		c.fillStyle = "Blue";
+		c.fillText("CURRENT (%)", - 280 ,y1Padding);
+	}
+	if(document.getElementById("Amplitude:cb").checked == true)
+	{
+		y1Padding = y1Padding - 50;
+		c.fillStyle = "Green";
+		c.fillText("AMPLITUDE (%)", - 280 ,y1Padding);
+	}
+	c.rotate(90*Math.PI/180);
+	// Draw the Dummy Y axis
+	c.stroke();
+	c.strokeStyle = "Black";
+	c.lineWidth = .5;
+	c.beginPath();
+	c.moveTo(0,0);
+	c.moveTo(xPadding, yPadding);
+	c.lineTo(xPadding + 1, yPadding + 1); 
+	c.stroke();
+}
+function DrawRasonanceMarker(Type,ResFreq,Index)
+{
+	if(reverseScan == true)
+		ResFreq = parseInt(document.getElementById("StartFrequency:tt").value) - ResFreq;
+	else
+		ResFreq = ResFreq - parseFloat(document.getElementById("StartFrequency:tt").value);
+	if (Phase[1]  && ResFreq >0 && ResFreq < DataSize)
+	{	
+		c.beginPath();
+		c.lineWidth = .5;
+		if ((Index == 0 || Index == 1) && (Type == "P"))
+		{
+			c.strokeStyle = "Blue";
+			c.fillStyle = "Blue";
+		}
+		else
+		{
+			c.strokeStyle = "Red";
+			c.fillStyle = "Red";
+		}
+		MaxY = 100;
+		for(var i =0; i < MaxY - 7; i+= 1)
+		{
+			if(i % 2 == 0)
+				c.moveTo(getXPixel(ResFreq,MaxX / FrequencyStep), getYPixel(i,100));
+			else
+				c.lineTo(getXPixel(ResFreq,MaxX / FrequencyStep), getYPixel(i,100));
+		}
+		c.stroke();
+		c.textAlign = "left";
+		c.font = 'Bold 10pt sans-serif';
+		if (Type == "P")
+			c.fillText("P", getXPixel(ResFreq,MaxX / FrequencyStep), yPadding - 10);
+		else
+			c.fillText("S", getXPixel(ResFreq,MaxX / FrequencyStep), yPadding - 10);
+		c.stroke();
+	}
+}
+function ExportGraphDataToExcel()
+{
+	if (!Phase[1])
+	{
+		alert("   No Graph Data   ");
+		return;
+	}
+	if(document.getElementById('StartHS').disabled == true)
+		return;
+	clearInterval(timerid);
+	timerid = 0;
+	if (w)
+	if(!w.closed) return;
+	w = window.open('UserComment.html','',sOption);
+	var FileHeader = "\n\nFREQUENCY(Hz),CURRENT(%),AMPLITUDE(%),PHASE(Degree)\n";
+	var temp = "";
+	temp += HSPresetData + FileHeader;
+	for(j = 1; j < DataLength; j++ )
+		temp += Frequency[j] + "," + Current[j] + "," + Amplitude[j] + "," + Phase[j] + "\n";
+	document.getElementById("tempdata").value = temp;
+}
+
+$(document).ready(function() {
+	document.getElementById("Phase:cb").checked = true;
+	document.getElementById("Current:cb").checked = true;
+	document.getElementById("Amplitude:cb").checked = true;
+	document.getElementById("StartFrequency:tt").value = Frequency[1];
+	document.getElementById("EndFrequency:tt").value = Frequency[DataLength];
+	document.getElementById("XValue").value = Frequency[1];
+	document.getElementById("YValue").value = 0;
+	document.getElementById('SelectedGraph').selectedIndex = 1;		
+});
+
+</script>
+<body onload = "DiagnosticHSOnLoad()">
+<div id="wrapper">
+  <div id="header">
+  	<div id="headerNav">
+   	  <div id="headerLogo">
+       	<!-- <img src="images/bransonLogo.png" alt="Branson" /> //-->
+      </div><!-- end headerLogo //-->
+      <div id="headerLinks">
+      	<span class="user" id = "CurrUser">Current User: </span>  <!--<a href="javascript:GetUserManual('DCXManual.pdf')">User Manual</a> | --><a href="index.html">Logout</a>
+      </div><!-- end HeaderLinks //-->
+    </div><!-- end headerNav //-->
+    <div id="mainNav">
+    	<ul id="tabmenu" onclick="if (w) if (!w.closed) w.window.close();">
+    	    <li><a href="javascript:GetLanguageAndUserID('ip-setup.html')">IP Setup</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('weld-preset.html')">Weld Preset</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('diagnostic-IO.html')">I/O <br/>Diagnostics</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('Seek&WeldGraphs.html')">Seek & </br>Weld Graphs</a></li>
+            <li class="active"><a href="javascript:GetLanguageAndUserID('hornsignature.html')">Horn <br/> Signature</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('system-information.html')">System<br/> Information</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('IO-configuration.html')">I/O <br/>Configuration</a></li>            
+            <li><a href ="javascript:GetLanguageAndUserID('alarm-log.html')">Alarm Log</a></li>    	  
+        </ul>
+    </div><!-- end mainNav //-->
+  </div><!-- end header //-->
+  <div id="content">     
+  <div id="fade_div" style="width:840px;height:680px;filter:alpha(opacity=50);background-color:#FFFFFF;z-index:100;display:none;position:absolute">
+	<table summary="" border="0" height="600px" width="1100px">
+			<tr><td style="height:600px;width:1100px">&nbsp;</td></tr>
+		</table>
+	<div id="info_div" style="display:none;position:absolute;width:250px;height:80px; z-index:102;left:50%;top:420px;">
+		<table summary="" cellspacing="3" border="0" style="background-color:#000000;width:250px;height:80px;">
+			<tr>
+			<td>
+			<table summary="" cellspacing="0" border="0" style="background-color:#FFFFFF;width:245px;height:80px;">		    
+				<tr><td id="Td1" style="font-weight:bold;font-size:14pt;text-align:center">INFO : System is busy</td></tr>
+			</table>
+			</td>
+			</tr>
+		</table>
+	</div>
+	</div>
+  	<div class="contentBoxWrapper" style="width:700px">
+    	<div class="contentBoxHeader">
+    	<h1>Horn Signature</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox" style="padding-top:10px;padding-bottom:0px">
+			<div class="buttonInGradient"><input id = "StartHS" name="StartScan" type="button" class="button" value="Start Horn Scan" onclick = "OnStartScan()"/>
+		  <input id = "AbortHS" name="AbortScan" type="button" class="button" value="Abort Horn Scan" onclick = "OnAbortScan()"/>
+		  </div><!-- end buttonInGradient //-->
+    		<div class="subBoxWrapper">
+            	<div class="subBoxHeader">
+            		Status
+           		</div><!-- end subBoxHeader //-->
+            	<div class="subBoxContent">  
+            	<table style ="margin-top:10px;margin-left:3px">
+            	<tr>
+            	<td>
+                	<div class="ieDropFix"><div style="border: 1px solid black; width:600px; height:20px; margin-left:12px">
+					<div class="ieDropFix"><div id="HSProgress" style="height:20px; width:0px; background-color:green;"/></div>
+					</div>
+					</div>
+					</td>
+					</tr>
+				</table>              	
+                	<div class="clearit"></div><!-- end clearit //-->
+                	
+     			</div><!-- end subBoxContent //--></div><!-- end subBoxWrapper //-->
+<table style ="margin-top:10px;margin-left:3px">
+<tr>
+<td>
+
+			<div class="subBoxWrapper" style="width:200px">
+            	<div class="subBoxHeader">
+            		Result
+           		</div><!-- end subBoxHeader //-->
+            	<div class="subBoxContent">
+                	<div class="checkbox" style="padding-left:30px"><img id = "imgScanDone" src="greyDot.gif" alt="On" /></div><!-- end checkbox //--><div class="textLabel" style="padding-left:20px">Passed</div><!-- end label //--><div class="clearit"></div><!-- end clearit //-->
+     				<div class="checkbox" style="padding-left:30px"><img id = "imgScanFailed" src="greyDot.gif" alt="On" /></div><!-- end checkbox //--><div class="textLabel" style="padding-left:20px">Failed</div><!-- end label //--><div class="clearit"></div><!-- end clearit //-->
+     				<div class="checkbox" style="padding-left:30px"><img id = "imgScanAborted" src="greyDot.gif" alt="On" /></div><!-- end checkbox //--><div class="textLabel" style="padding-left:20px">Aborted</div><!-- end label //--><div class="clearit"></div><!-- end clearit //-->
+                </div><!-- end subBoxContent //--></div><!-- end subBoxWrapper //-->
+</td>
+<td>                <div class="subBoxWrapper" style="width:200px">
+	            	<div class="subBoxHeader">
+    	        		Parallel Resonant Points
+        	   		</div><!-- end subBoxHeader //-->
+            		<div class="subBoxContent">
+                		<div class="textLabelBigCenter" id = "pfreq0">&nbsp</div><!-- end label //--><div class="clearit"></div><!-- end clearit //-->
+     					<div class="textLabelBigCenter" id = "pfreq1">&nbsp</div><!-- end label //--><div class="clearit"></div><!-- end clearit //-->
+                    	<div class="textLabelBigCenter" id = "pfreq2">&nbsp</div><!-- end label //--><div class="clearit"></div><!-- end clearit //-->                    	
+                	</div><!-- end subBoxContent //--></div><!-- end subBoxWrapper //-->
+</td>
+<td>			<div class="subBoxWrapper" style="width:200px">
+	            	<div class="subBoxHeader">
+    	        		Series Resonant Points
+        	   		</div><!-- end subBoxHeader //-->
+            		<div class="subBoxContent">
+                		<div class="textLabelBigCenter" id = "sfreq0">&nbsp</div><!-- end label //--><div class="clearit"></div><!-- end clearit //-->
+     					<div class="textLabelBigCenter" id = "sfreq1">&nbsp</div><!-- end label //--><div class="clearit"></div><!-- end clearit //-->
+                    	<div class="textLabelBigCenter" id = "sfreq2">&nbsp</div><!-- end label //--><div class="clearit"></div><!-- end clearit //-->                    	
+                	</div><!-- end subBoxContent //--></div><!-- end subBoxWrapper //-->
+ </td>
+ </tr>
+ </table>
+			</div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->
+	 <div class="clearit"></div><!-- end clearit //-->
+	<div id="parent">
+		<canvas id="graph" width="900" height="500" > </canvas> 
+		<div class="clearit"></div><!-- end clearit //-->
+		<div style="position:absolute; top:1000px">
+	 		<div  class="ieDropFix"><div class="checkboxLeft"><input name="" type="checkbox" value="" id="Phase:cb" disabled="disabled"/></div><!-- end checkbox //--><div class="textLabelBigLeft">PHASE</div><!-- end label //--><input type="hidden" id="tempid2"/></div><!-- end ieDropFix //-->
+			<div class="ieDropFix"><div class="checkboxLeft"><input name="" type="checkbox" value="" id="Current:cb"/></div><!-- end checkbox //--><div class="textLabelBigLeft">CURRENT</div><!-- end label //--><input type="hidden" id="tempid3"/></div><!-- end ieDropFix //-->
+			<div class="ieDropFix" ><div class="checkboxLeft"><input name="" type="checkbox" value="" id="Amplitude:cb"/></div><!-- end checkbox //--><div class="textLabelBigLeft">AMPLITUDE</div><!-- end label //--><input type="hidden" id="tempid4"/></div><!-- end ieDropFix //-->
+			<input name="Update Graph" type="button" class="button" value="Update Graph" onclick="GetScanData()"/>
+			<input name="Export Graph" type="button" id="ExportGraph" class="button" value="Export Graph Data" onclick="ExportGraphDataToExcel()"/>
+			<div class="clearit"></div>
+		</div>
+
+		<div style="position:absolute; top:1040px; border:0.5px solid black; width:780px; height:100px" >
+			<div class="clearit"></div>
+			<div class="ieDropFix" ><div class="textLabelBigLeft" style="width:72px; text-align:right">Draw from</div><!-- end label //--><input name="" class="textInput" id = "StartFrequency:tt" style="width:50px" /><div class="textLabelBigLeft" style="width:20px"> Hz </div><div class="textLabelBigLeft" style="width:20px; text-align:right">To</div><!-- end label //--><input name="" class="textInput" id = "EndFrequency:tt" style="width:50px" /><div class="textLabelBigLeft" style="width:20px"> Hz </div><div class="textLabelBigLeft" style="width:23px"></div><!-- end label //--><br/><input name="Redraw Graph" type="button" class="button" value="Redraw Graph" onclick="RedrawGraph()"/><input name="SetDefault" type="button" class="button" value="Set Default" onclick="DefaultSetting()"/><input type="hidden" id="tempid6"/></div><!-- end ieDropFix //-->
+			<div class="clearit"></div>
+			<div class="ieDropFix" ><div class="textLabelBigLeft" style="width:107px; text-align:right">Graph Selection</div><!-- end label //-->
+						<div class="dropdown">
+				<select id="SelectedGraph" size="width:150px">
+						<option >Select Graph&nbsp&nbsp&nbsp</option>
+						<option>PHASE</option>					
+						<option>CURRENT</option>
+						<option>AMPLITUDE</option>
+				</select>				
+			</div>
+			<div class="textLabelBigLeft" style="width:70px; text-align:right"> X Value</div><!-- end label //--><input name="" class="textInput" id = "XValue" style="width:50px" /></div><!-- end ieDropFix //--><div class="textLabelBigLeft" style="width:70px; text-align:right"> Y Value</div><!-- end label //--><input name="" class="textInput" id = "YValue" style="width:50px" disabled="disabled" /><div class="textLabelBigLeft" style="width:40px;text-align:right"></div> <br/><input name="UpdateValue" type="button" class="button" value="Update Value" onclick="DisplayGraphValue()" /></div><input type="hidden" id="tempid7"/></div><!-- end ieDropFix //-->
+		</div>
+		<div>
+		</div>
+    <div>
+  </div><!-- end content //-->
+  <div class="clearit"></div>
+  <div style="position:absolute; top:1165px" id="footer"><p>©2011 Branson, All Rights Reserved<br />
+    <img src="Emerson-IA.jpg" alt="Emersin Industrial Automation" /></p></div><!-- end clearit //-->
+    <div>
+</div><!-- end wrapper //-->
+<form name="temp_form" method="post" action="hornsignature.html">
+<input type="hidden" name="lang" id="lang" value="" />
+<input type="hidden" name="userid1" id="userid1" value="" />
+</form>
+<form name="temp_form_test" method="post" action="hornsignature.html">
+	<input type="hidden" name="UserComment:," id="tempdata" value=""  />
+</form>
+</body>
+</html>

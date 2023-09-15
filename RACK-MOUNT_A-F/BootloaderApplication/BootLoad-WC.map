@@ -1,0 +1,1549 @@
+Archive member included because of file (symbol)
+
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+                              obj-WC/SerialBootTask_cpp.o (CPU::Restart())
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o) (Exception::SetDefault(int, void (*)(int, void*), int))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o) (PIT::PIT(int, int, int, int, void (*)(), int))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o) (MMU::Map(unsigned long))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+                              obj-WC/SerialBootTask_cpp.o (MultiBootCpu::Init())
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_asm.o)
+                              C:/RTOS-MCF5445x/Start.o (CPU::Init())
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_asm.o)
+                              C:/RTOS-MCF5445x/Start.o (AsmExceptionHandler)
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xRTOS_asm.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_asm.o) (RTOS::TaskSwitch())
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+                              obj-WC/MultiBootBoard_cpp.o (DisableInterrupts())
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_MemoryInit_asm.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_asm.o) (MemoryInit)
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_asm.o)
+                              obj-WC/Main_cpp.o (memcpy)
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+                              obj-WC/SerialBootTask_cpp.o (SystemCrash(char*, char*, int))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+                              obj-WC/Main_cpp.o (operator new(unsigned long, char*, int))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+                              obj-WC/MultiBootBoard_cpp.o (pprintf)
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o) (memset)
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+                              obj-WC/SerialBootTask_cpp.o (atoi)
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o) (CyGOS::EnableDebugFlag)
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+                              obj-WC/SerialBootTask_cpp.o (LinkedListBase::LinkedListBase())
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o) (CyGOS::WriteSystemEvent(int, int, int, unsigned int, bool))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o) (RTOS::tasks)
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+                              obj-WC/SerialBootTask_cpp.o (TaskBase::Tick())
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+                              obj-WC/SerialBootTask_cpp.o (getcharWait)
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o) (Debug::Poll())
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o) (TaskDispLed::TaskDispLed(void (*)(int, int)))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o) (TaskManager::intCount)
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o) (Terminal::OutPoll(int))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o) (Serial::Init(int, int, int, int, bool))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o) (Task::GetTickAddress() const)
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o) (WatchDog::EnableWatchDog(bool))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o) (FifoBase::FifoBase(int, int, char const*))
+C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o) (Board::GetProfilerTimerCounter())
+C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+                              obj-WC/MultiBootBoard_cpp.o (Board::GetFlash())
+C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+                              C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o) (LED::Init())
+C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_asm.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_asm.o) (Board::MultiBootMemoryInit())
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+                              C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o) (Cache::Init(int, int))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+                              C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o) (DSPI::DSPI(int, int, int))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+                              C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o) (I2C::I2C(int, int, int, int, int))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o) (Mutex::~Mutex())
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+                              C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o) (FlashM29W128GL::FlashM29W128GL(unsigned int, int))
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o) (Flash::access)
+C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o) (FlashAMD::UnlockChip())
+C:/RTOS-MCF5445x\libgcc.a(_double.o)
+                              C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o) (__adddf3)
+C:/RTOS-MCF5445x\libgcc.a(_floatex.o)
+                              C:/RTOS-MCF5445x\libgcc.a(_double.o) (_fpCCR)
+
+Discarded input sections
+
+ _ZN14SerialBootTaskD1Ev
+                0x00000000        0x0 obj-WC/SerialBootTask_cpp.o
+ _ZN14SerialBootTaskD0Ev
+                0x00000000        0x0 obj-WC/SerialBootTask_cpp.o
+ _ZTV14SerialBootTask
+                0x00000000        0x0 obj-WC/SerialBootTask_cpp.o
+ _ZN8IdleTaskD0Ev
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ _ZN8IdleTaskD1Ev
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ _ZTV8IdleTask  0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ _ZTV4Task      0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+ _ZTV8TaskBase  0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+ _ZN10PrintfTaskD0Ev
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ _ZN10PrintfTaskD1Ev
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ _ZTV10PrintfTask
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ _ZN11TaskSlowLedD0Ev
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ _ZN11TaskSlowLedD1Ev
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ _ZN11TaskFastLedD0Ev
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ _ZN11TaskFastLedD1Ev
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ _ZN11TaskDispLedD0Ev
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ _ZN11TaskDispLedD1Ev
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ _ZTV11TaskDispLed
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ _ZTV11TaskFastLed
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ _ZTV11TaskSlowLed
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ _ZN11TaskManagerD0Ev
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ _ZN11TaskManagerD1Ev
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ _ZTV11TaskManager
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ _ZTV8WatchDog  0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+ _ZN3SPI14SetDelayParamsEiiiiiii
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ _ZTV4DSPI      0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ _ZTV3SPI       0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ _ZTV14FlashM29W128GL
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ _ZTV11FlashAccess
+                0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+ _ZTV5Flash     0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+ _ZTV8FlashAMD  0x00000000        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+vectors          0x50000000         0x00000400         xrw
+config           0x50000400         0x00000100         xrw
+sdram            0x50000500         0x07fffb00         xrw
+boot_flash       0x00000000         0x01000000         xrw
+boot_rom         0x00040000         0x00fc0000         xrw
+fram             0x0b000000         0x00020000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD C:/RTOS-MCF5445x/Start.o
+LOAD obj-WC/Main_cpp.o
+LOAD obj-WC/MultiBootBoard_cpp.o
+LOAD obj-WC/SerialBootTask_cpp.o
+START GROUP
+LOAD C:/RTOS-MCF5445x/libRTOS-MCF5445x.a
+LOAD C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a
+END GROUP
+LOAD C:/RTOS-MCF5445x\libgcc.a
+
+.textvect       0x50000000      0x400
+                0x50000000                __FLASH_RAM = .
+                0x50000000                __VECTOR_TABLE = .
+                0x50000000                __INIT_SP = .
+                0x50000000        0x4 LONG 0x0
+                0x50000004                __INIT_PC = .
+                0x50000004        0x4 LONG 0x52e (_MultiBootStart + __FLASH_DIFF)
+ *(.textvect)
+ .textvect      0x50000008      0x3f8 C:/RTOS-MCF5445x/Start.o
+
+.config         0x50000400       0x16
+                0x50000400                . = ALIGN (0x10)
+                0x50000400                __SYSTEM_CLOCK = .
+                0x50000400        0x4 LONG 0x7d
+                0x50000404                __TERMINAL_PORT = .
+                0x50000404        0x4 LONG 0x1
+                0x50000408                __TERMINAL_BAUD = .
+                0x50000408        0x4 LONG 0x1c200
+                0x5000040c                __SERIAL_NUMBER = .
+                0x5000040c        0x4 LONG 0xffffffff
+                0x50000410                __ETHERNET_MAC = .
+                0x50000410                __ETHERNET_MAC0 = .
+                0x50000410                __ETHERNET_MAC1 = .
+                0x50000410        0x4 LONG 0xffffffff
+                0x50000414        0x2 SHORT 0xffff
+
+.text           0x50000500     0xdf80
+                0x50000500                __TEXT_START = .
+ *(.text)
+ .text          0x50000500       0x50 C:/RTOS-MCF5445x/Start.o
+                0x50000516                _RAMstart
+                0x50000508                _start
+                0x5000052e                _MultiBootStart
+ .text          0x50000550      0x1b2 obj-WC/Main_cpp.o
+                0x50000550                ByteCRC(unsigned char*, unsigned int)
+                0x500005fa                UpdateBootLoaderInfo()
+                0x5000063a                PowerUpInitialization()
+                0x50000588                CalculateFlashCRC()
+                0x50000660                main
+                0x500006d2                SetLeds(int, int)
+ *fill*         0x50000702        0x2 00
+ .text          0x50000704      0x206 obj-WC/MultiBootBoard_cpp.o
+                0x500008e0                SerialBootTask::Init(void*)
+                0x5000084a                SerialBootTask::PrintData()
+                0x50000704                SerialBootTask::FlashAddress(unsigned short*)
+                0x50000716                SerialBootTask::MoveImageToSdram()
+                0x50000800                SerialBootTask::CheckPrompts(int)
+                0x50000788                SerialBootTask::ExecuteFlash()
+                0x500007c6                SerialBootTask::PrintPrompts()
+ *fill*         0x5000090a        0x2 00
+ .text          0x5000090c      0xbfc obj-WC/SerialBootTask_cpp.o
+                0x5000117c                SerialBootTask::EnterSerialNumber()
+                0x500012f0                SerialBootTask::Run()
+                0x50000e82                SerialBootTask::SerialDownload(bool)
+                0x50000ab8                SerialBootTask::SerialReceiveHexRecord(unsigned char*)
+                0x50000ce8                SerialBootTask::SerialBootTask()
+                0x50000d7e                SerialBootTask::SerialBootTask()
+                0x50000d2a                ProgramCallback(int, int)
+                0x50000dc0                SerialBootTask::IdentifyFlash()
+                0x5000090c                SerialBootTask::HexToInt(char*&, int)
+                0x50000d5c                EraseCallback(int, int)
+                0x50000fc4                SerialBootTask::EnterMacAddress(unsigned char*)
+                0x50000974                SerialBootTask::BurnImageToFlash()
+ .text          0x50001508      0x4c0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+                0x50001702                CPU::SetupDefaultHandler(void (*)(int, void*), CpuInterrupt, int, int, int)
+                0x50001508                CPU::InstallTaskSwitchRoutine(void (*)())
+                0x500015c8                CPU::Restart()
+                0x500015de                CPU::ClearExternalInterrupt(int)
+                0x50001922                CPU::SetupChipSelect(int, int, int, void volatile*)
+                0x500016a8                CPU::InstallRtosTimer(int, void (*)(), int)
+                0x5000161a                CPU::DisableExternalInterrupt(int)
+                0x5000151a                CPU::DelayMs(int)
+                0x50001558                CPU::DelayUs(int)
+                0x5000179a                CPU::SetupHandler(void (*)(int, void*), CpuInterrupt, int, int, int)
+                0x500015a6                CPU::InitInterrupts()
+                0x50001664                CPU::EnableExternalInterrupt(int)
+                0x50001882                CPU::InitExternalInterrupt(void (*)(int, void*), int, int, int, CpuInterruptMode, bool)
+ .text          0x500019c8      0xed0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+                0x500019c8                Exception::Init()
+                0x500019e4                Exception::DefaultHandler(int, void*)
+                0x50002688                Exception::SetDefault(int, void (*)(int, void*), int)
+                0x50002702                Exception::FirstHandler(void*)
+                0x500026c6                Exception::Set(int, void (*)(int, void*), int)
+ .text          0x50002898      0x6aa C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+                0x50002ee8                PIT::IntHandler2(int, void*)
+                0x50002954                PIT::StartInt(int)
+                0x500029a6                PIT::Remove(int)
+                0x50002912                PIT::StopInt(int)
+                0x500028ba                PIT::IntHandler1(int, void*)
+                0x50002c7e                PIT::PIT(int, int, int, int, void (*)(), int)
+                0x50002898                PIT::ResetInt(int)
+                0x50002e36                PIT::IntHandler0(int, void*)
+                0x50002ac6                PIT::PIT(int, int, int, int, void (*)(), int)
+                0x50002e8e                PIT::IntHandler3(int, void*)
+ *fill*         0x50002f42        0x2 00
+ .text          0x50002f44      0x5dc C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+                0x50003010                MMU::Init()
+                0x50002f44                MMU::Map(int, int, int, int, int, int, int, int, int, int)
+                0x50003368                MMU::AccessError(void*)
+                0x500031f0                MMU::UnMap(int, int)
+                0x50003268                MMU::RemapCodeData(bool, bool)
+                0x50002f9e                MMU::Map(unsigned long)
+ .text          0x50003520       0x26 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+                0x50003530                MultiBootCpu::WriteProtectCs()
+                0x50003520                MultiBootCpu::Init()
+ *fill*         0x50003546        0x2 00
+ .text          0x50003548       0x3e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_asm.o)
+                0x50003562                CPU::MultiBootInit()
+                0x50003548                CPU::Init()
+                0x5000357c                CPU::SwitchStack(void*)
+ *fill*         0x50003586        0x2 00
+ .text          0x50003588       0x3a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_asm.o)
+                0x50003588                AsmExceptionHandler
+ *fill*         0x500035c2        0x2 00
+ .text          0x500035c4       0x2c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xRTOS_asm.o)
+                0x500035d6                RTOS::ExecuteFirstTask()
+                0x500035c4                RTOS::TaskSwitch()
+ .text          0x500035f0       0x6e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+                0x50003602                ExitCritical(short)
+                0x500035f0                EnterCritical()
+                0x50003644                __cxa_pure_virtual
+                0x5000363c                __cxa_atexit
+                0x50003610                DisableInterrupts()
+                0x50003634                __cxa_guard_release
+                0x5000361e                EnableInterrupts()
+                0x5000362c                __cxa_guard_acquire
+ *fill*         0x5000365e        0x2 00
+ .text          0x50003660       0xc8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_MemoryInit_asm.o)
+                0x500036e8                SkipBss
+                0x50003660                MemoryInit
+ .text          0x50003728       0x6a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_asm.o)
+                0x50003728                memcpy
+ *fill*         0x50003792        0x2 00
+ .text          0x50003794      0x1d8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+                0x50003794                SystemCrash(char*, char*, int)
+                0x50003880                AssertFailed(char*, char*, int)
+ .text          0x5000396c      0xd88 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+                0x500039fa                MemHeader::FillDeallocatedData()
+                0x50003e38                operator new(unsigned long)
+                0x50003de0                malloc
+                0x500041dc                MemHeader::SafetyTest(bool)
+                0x500046ea                operator delete(void*)
+                0x50004614                Memrealloc
+                0x50003e86                operator new[](unsigned long, char*, int)
+                0x500040c0                ShowMemory
+                0x50003dfa                calloc
+                0x50003b04                MallocAlignedNoCache
+                0x50003ab6                InitMemoryAllocation
+                0x50003aee                FreeAlignedNoCache
+                0x50003dc6                mallocNoInit
+                0x500046e0                operator delete[](void*)
+                0x5000396c                MemHeader::FillSafetyAreas(bool)
+                0x50003ea0                MemHeader::PTrace()
+                0x50003e52                operator new(unsigned long, char*, int)
+                0x50003e6c                operator new[](unsigned long)
+                0x50003b10                CallocAlignedNoCache
+                0x50004368                CheckMemory(char*)
+                0x500043e2                free
+ .text          0x500046f4      0xecc C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+                0x500054de                putchar
+                0x50005472                printf
+                0x50005546                puts
+                0x500053ee                sprintf
+                0x5000542c                pprintf
+ .text          0x500055c0      0x610 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+                0x500056b8                strcpy
+                0x5000597c                strlower
+                0x500059b4                strrchr
+                0x500057ec                stricmp
+                0x50005646                strcat
+                0x50005746                memchr
+                0x50005a00                strstr
+                0x500058d0                strncmp
+                0x50005b7a                memmove(void*, void const*, unsigned int)
+                0x50005a66                strncpy
+                0x500056e0                memcmp
+                0x5000567a                strncat
+                0x50005b32                strdup
+                0x500055c0                memset
+                0x50005718                strcmp
+                0x500057a2                strnchr
+                0x50005862                strnicmp
+                0x50005aae                strnstr
+                0x50005944                strupr
+                0x50005622                strlen
+                0x5000577a                strchr
+ .text          0x50005bd0      0x114 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+                0x50005c42                xtoi
+                0x50005cb2                otoi
+                0x50005bd0                atoi
+ .text          0x50005ce4      0x23a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+                0x50005d0e                CyGOS::EnableDebug()
+                0x50005d4a                CyGOS::DisableDebug()
+                0x50005d82                CyGOS::RegisterWatchdogCallback(void (*)())
+                0x50005e06                CyGOS::InstallTimer(int, void (*)(), int)
+                0x50005dee                CyGOS::StopTimer(int)
+                0x50005daa                CyGOS::DisableWatchDog()
+                0x50005dc2                CyGOS::EnableWatchDog(bool)
+                0x50005dd6                CyGOS::InitWatchDog(int)
+                0x50005f06                CyGOS::Start(int)
+                0x50005d1e                CyGOS::RegisterTaskLoadLogCallback(void (*)(bool))
+                0x50005e12                CyGOS::Restart()
+                0x50005efa                CyGOS::Stop()
+                0x50005d30                CyGOS::LogTaskLoad()
+                0x50005db6                CyGOS::KickWatchDog()
+                0x50005de2                CyGOS::RemoveTimer(int)
+                0x50005e52                CyGOS::CreateLedTasks(int, int, void (*)(int, int))
+                0x50005e46                CyGOS::PrintStatus(PrintStatusMode)
+                0x50005f12                CyGOS::Init()
+                0x50005d94                CyGOS::WatchDogCallback()
+                0x50005e2a                CyGOS::CreateTask(Task*, int&)
+                0x50005dfa                CyGOS::StartTimer(int)
+                0x50005d6c                CyGOS::ApplicationCrashCallBack()
+                0x50005ce4                CyGOS::GetTaskName(int)
+                0x50005d5a                CyGOS::RegisterAppCrashCallback(void (*)())
+                0x50005e1e                CyGOS::DelayMs(int)
+ *fill*         0x50005f1e        0x2 00
+ .text          0x50005f20      0x2fc C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+                0x50005fa0                LinkedListBase::GetNext(void*&) const
+                0x50005f44                LinkedListBase::GetCount() const
+                0x5000603c                LinkedListBase::RemoveTail()
+                0x50006106                LinkedListBase::~LinkedListBase()
+                0x500060b0                LinkedListBase::AddHead(void*)
+                0x50005f32                LinkedListBase::LinkedListBase()
+                0x50005f82                LinkedListBase::GetTail() const
+                0x500061c2                LinkedListBase::AddTail(void*)
+                0x50005fce                LinkedListBase::RemoveAt(void*)
+                0x50006144                LinkedListBase::RemoveHead()
+                0x50006072                LinkedListBase::~LinkedListBase()
+                0x50006178                LinkedListBase::Find(void*) const
+                0x50005f66                LinkedListBase::GetHead() const
+                0x50005f20                LinkedListBase::LinkedListBase()
+ .text          0x5000621c      0x138 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+                0x50006280                CyGOS::GetSysEventStrigFromID(int)
+                0x50006256                CyGOS::WriteSystemEvent(int, int, int, unsigned int, bool)
+                0x50006244                CyGOS::RegisterSysLogCallback(void (*)(short, int, int, unsigned int, bool))
+                0x5000621c                CyGOS::RegisterBoardTestCallback(void (*)())
+                0x5000622e                CyGOS::DOBoardTest()
+ .text          0x50006354      0x93a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+                0x50006a6c                RTOS::Delete(Task*)
+                0x50006ad8                RTOS::Create(Task*, int)
+                0x50006bde                RTOS::Init()
+                0x500065c0                RTOS::DelayUs(int)
+                0x500063c6                RTOS::RemoveFromTickChain(Task*)
+                0x50006412                RTOS::Gettaskloadinformation()
+                0x50006b66                RTOS::Create(Task*, int, int)
+                0x50006432                RTOS::PrintStatus(PrintStatusMode)
+                0x5000676e                IdleTask::IdleTask()
+                0x50006420                RTOS::SetTickHandler(void (*)())
+                0x50006692                RTOS::Start(int)
+                0x50006354                IdleTask::Run()
+                0x500067a2                IdleTask::IdleTask()
+                0x50006614                RTOS::DelayMs(int)
+                0x50006372                RTOS::InsertIntoTickChain(Task*)
+                0x500067d6                RTOS::TickHandler()
+                0x50006666                RTOS::Stop()
+                0x5000697c                RTOS::Schedule()
+ *fill*         0x50006c8e        0x2 00
+ .text          0x50006c90      0x438 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+                0x50006ef4                Task::Suspend()
+                0x50006ce2                TaskBase::~TaskBase()
+                0x50006d88                Task::Task(char*, int)
+                0x50006d36                Task::~Task()
+                0x50006ffc                Task::Delay(long)
+                0x50006cf4                TaskBase::~TaskBase()
+                0x50006c90                TaskBase::Tick()
+                0x50006cb2                TaskBase::Run()
+                0x5000706c                Task::Wakeup()
+                0x50006c98                Task::ReturnFromTask()
+                0x50006d06                Task::~Task()
+                0x50006ccc                TaskBase::~TaskBase()
+                0x50006e3e                Task::Task(char*, int)
+                0x50006d5e                Task::~Task()
+                0x50006f5a                Task::Resume()
+ .text          0x500070c8      0x356 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+                0x500070c8                getcharWait
+                0x50007114                gets
+                0x50007230                PrintfTask::Run()
+                0x5000731a                PrintfTask::PrintfTask()
+                0x50007106                getchar
+                0x50007194                PrintfTask::Print(unsigned char)
+                0x5000739c                PrintfTask::PrintfTask()
+ *fill*         0x5000741e        0x2 00
+ .text          0x50007420      0x368 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+                0x500076ba                Debug::Poll()
+                0x50007520                Debug::ReadMemory(int, int)
+                0x500075b4                Debug::Run()
+                0x50007494                Debug::ReadLine()
+                0x50007420                Debug::HexToInt(char*&, int)
+                0x5000774e                Debug::Init()
+                0x500076fe                Debug::Debug(int)
+                0x50007726                Debug::Debug(int)
+ .text          0x50007788      0x572 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                0x50007914                TaskFastLed::TaskFastLed(int)
+                0x500079b6                TaskSlowLed::TaskSlowLed(int)
+                0x500078a8                TaskDispLed::TaskDispLed(void (*)(int, int))
+                0x5000794a                TaskFastLed::TaskFastLed(int)
+                0x500078de                TaskDispLed::TaskDispLed(void (*)(int, int))
+                0x50007980                TaskSlowLed::TaskSlowLed(int)
+                0x50007788                TaskDispLed::Run()
+                0x50007be2                TaskFastLed::Run()
+                0x500079ec                TaskSlowLed::Run()
+ *fill*         0x50007cfa        0x2 00
+ .text          0x50007cfc      0x4ec C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+                0x50008190                CyGOS::CreateTaskManager(int&, int, void (*)())
+                0x50007cfc                CyGOS::GetTaskTime(int)
+                0x50007e78                TaskManager::Run()
+                0x50007d74                CyGOS::GetIntrTimeHighest(int)
+                0x500080a4                TaskManager::TaskManager(void (*)(), int)
+                0x50007d9e                CyGOS::GetIntCount(int)
+                0x5000811a                TaskManager::TaskManager(void (*)(), int)
+                0x50007d5e                CyGOS::GetIntrTime(int)
+                0x50007dca                TaskManager::Tick()
+                0x50007d12                CyGOS::GetTaskTimeHighest(int)
+                0x50007db4                CyGOS::GetSystemTime(int)
+ .text          0x500081e8      0x30a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+                0x50008218                Terminal::In()
+                0x5000829a                Terminal::Out(int)
+                0x50008248                Terminal::Peek()
+                0x500081e8                Terminal::OutPoll(int)
+                0x500082c6                Terminal::Init()
+                0x5000826c                Terminal::OutPoll(char*)
+ *fill*         0x500084f2        0x2 00
+ .text          0x500084f4      0x956 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+                0x50008c54                Serial::Send(Task*, unsigned char, int)
+                0x50008ba4                Serial::Serial(int, int)
+                0x5000851e                Serial::EnableUARTInterrupt()
+                0x50008566                Serial::IntHandler()
+                0x500084f4                Serial::WriteIMR(int)
+                0x500087ce                Serial::Init(int, int, int, int, bool)
+                0x50008af4                Serial::Serial(int, int)
+                0x50008dbe                Serial::Receive(Task*, unsigned char&, int)
+                0x50008764                Serial::IntHandler(int, void*)
+                0x50008d0a                Serial::FlushOutputBuffer()
+ *fill*         0x50008e4a        0x2 00
+ .text          0x50008e4c       0xda C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+                0x50008e4c                Task::GetRunAddress() const
+                0x50008e5e                Task::GetTickAddress() const
+                0x50008e70                Task::Initialize()
+ *fill*         0x50008f26        0x2 00
+ .text          0x50008f28      0x1c8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+                0x50008f28                WatchDog::WatchDog()
+                0x50008f7e                WatchDog::DisableWatchDog()
+                0x500090b6                WatchDog::~WatchDog()
+                0x500090cc                WatchDog::~WatchDog()
+                0x50008f4c                WatchDog::EnableWatchDog(bool)
+                0x50008faa                WatchDog::IntHandler(int, void*)
+                0x5000907a                WatchDog::InitWatchDog(int)
+                0x50008f94                WatchDog::kickWatchDog()
+                0x500090de                WatchDog::~WatchDog()
+                0x50008f3a                WatchDog::WatchDog()
+ .text          0x500090f0      0x2b4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+                0x500091d4                FifoBase::WriteTest(Task*, int)
+                0x50009118                FifoBase::FifoBase(int, int, char const*)
+                0x5000918a                FifoBase::WriteCleanup()
+                0x500090f0                FifoBase::FifoBase(int, int, char const*)
+                0x50009140                FifoBase::ReadCleanup()
+                0x500092f8                FifoBase::ReadTest(Task*, int)
+ .text          0x500093a4      0x404 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+                0x50009684                Board::UpdateLEDs(unsigned char*)
+                0x500094c2                Board::RemoveTimer(int)
+                0x500093ae                Board::EthCount()
+                0x500095e4                Board::FreeAlignedNoCache(void*)
+                0x500095ca                Board::SetupSlowCS8bit(int, int, void volatile*)
+                0x500094ce                Board::StopTimer(int)
+                0x5000955a                Board::GetSPI(int, int, int)
+                0x50009602                Board::AllocAlignedNoCache(unsigned long, int)
+                0x5000944a                Board::GetI2C(int, int, int, int)
+                0x500094da                Board::StartTimer(int)
+                0x500093b8                Board::GetProfilerTimerCounter()
+                0x5000969e                Board::Init(bool)
+                0x500094e6                Board::InstallTimer(int, void (*)(), int)
+                0x500093a4                Board::GetRTCTime()
+                0x500093c6                Board::InitProfilerTimer()
+ .text          0x500097a8       0x2e C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+                0x500097a8                Board::GetFlash()
+ *fill*         0x500097d6        0x2 00
+ .text          0x500097d8      0x13e C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+                0x500097f6                LED::Set(int, int)
+                0x500097d8                LED::Init()
+                0x5000990e                LED::SetAll(unsigned char*)
+ *fill*         0x50009916        0x2 00
+ .text          0x50009918      0x14a C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_asm.o)
+                0x50009918                Board::MultiBootMemoryInit()
+ *fill*         0x50009a62        0x2 00
+ .text          0x50009a64       0x5c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+                0x50009a64                Cache::Init(int, int)
+ .text          0x50009ac0      0xa7e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+                0x50009b6a                DSPI::SingleTransfer(int, unsigned short*, int, bool, int)
+                0x50009f06                DSPI::LongWordTransfer(int, unsigned char*, int, int, int)
+                0x5000a488                DSPI::DSPI(int, int, int)
+                0x50009e9e                DSPI::ReadInput()
+                0x50009eb8                DSPI::SetSignals(int, int, int)
+                0x50009ac0                DSPI::ConfigureSPIPins()
+                0x5000a360                DSPI::~DSPI()
+                0x50009ed2                DSPI::EnableGPIO()
+                0x5000a436                DSPI::~DSPI()
+                0x5000a380                DSPI::DSPI(int, int, int)
+                0x50009e6c                DSPI::InterruptHandler(int, void*)
+                0x5000a05c                DSPI::GetBaudRate(unsigned long, unsigned long, bool, bool)
+                0x5000a456                DSPI::~DSPI()
+                0x5000a1a0                DSPI::EnableSPI(bool, int, int, bool, bool, int)
+                0x50009ce0                DSPI::IntHandler()
+                0x50009af6                DSPI::SetDelayParams(int, int, int, int, int, int, int)
+                0x50009eec                DSPI::ReadByte(unsigned char, int)
+ *fill*         0x5000a53e        0x2 00
+ .text          0x5000a540      0x654 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+                0x5000a5c6                I2C::Release()
+                0x5000a598                I2C::InterruptHandler()
+                0x5000ab62                I2C::Acquire(int)
+                0x5000a8ba                I2C::Read(int, int, int, unsigned char*, int&, int)
+                0x5000a766                I2C::I2C(int, int, int, int, int)
+                0x5000a612                I2C::I2C(int, int, int, int, int)
+                0x5000a540                I2C::GetClockDividerValue(int, int)
+                0x5000a5a0                I2C::WaitForInterrupt()
+                0x5000a5ec                I2C::InterruptHandler(int, void*)
+                0x5000aa6e                I2C::Write(int, int, int, unsigned char const*, int)
+ .text          0x5000ab94      0x34e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+                0x5000ac34                Mutex::Release(Task*)
+                0x5000ae66                Mutex::Mutex(char*)
+                0x5000ad30                Mutex::Acquire(Task*, int)
+                0x5000ab94                Mutex::~Mutex()
+                0x5000abe4                Mutex::~Mutex()
+                0x5000ad18                Mutex::Unlock()
+                0x5000aec6                Mutex::Lock()
+                0x5000ae96                Mutex::Mutex(char*)
+ *fill*         0x5000aee2        0x2 00
+ .text          0x5000aee4      0x514 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+                0x5000af9e                FlashM29W128GL::Erase(void*, int, void (*)(int, int))
+                0x5000aee4                FlashM29W128GL::GetSectorSize(int)
+                0x5000b14a                FlashM29W128GL::Program(void*, void*, int, void (*)(int, int))
+                0x5000b298                FlashM29W128GL::ReadFlashType()
+                0x5000af5e                FlashM29W128GL::FlashM29W128GL(unsigned int, int)
+                0x5000af1e                FlashM29W128GL::FlashM29W128GL(unsigned int, int)
+ .text          0x5000b3f8      0x164 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+                0x5000b3f8                FlashAccess::FlashAccess(int)
+                0x5000b418                FlashAccess::FlashAccess(int)
+                0x5000b45e                FlashAccess::Read(unsigned int)
+                0x5000b4ec                Flash::Flash(char*, unsigned int, int, int, int)
+                0x5000b47c                Flash::Flash(char*, unsigned int, int, int, int)
+                0x5000b438                FlashAccess::Write(unsigned int, unsigned int)
+ .text          0x5000b55c      0x65a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+                0x5000b9a2                FlashAMD::ReadFlashType()
+                0x5000b5aa                FlashAMD::Unlock(void*, int)
+                0x5000b806                FlashAMD::Program(void*, void*, int, void (*)(int, int))
+                0x5000b5ce                FlashAMD::FlashAMD(char*, unsigned int, int, int, int)
+                0x5000bb92                FlashAMD::Identify()
+                0x5000b676                FlashAMD::Erase(void*, int, void (*)(int, int))
+                0x5000b608                FlashAMD::FlashAMD(char*, unsigned int, int, int, int)
+                0x5000b586                FlashAMD::Lock(void*, int)
+                0x5000b55c                FlashAMD::UnlockChip()
+                0x5000b56c                FlashAMD::GetSectorSize(void*)
+                0x5000b564                FlashAMD::LockChip()
+                0x5000b642                FlashAMD::WaitFor(unsigned int, unsigned int)
+ *fill*         0x5000bbb6        0x2 00
+ .text          0x5000bbb8      0xba0 C:/RTOS-MCF5445x\libgcc.a(_double.o)
+                0x5000c6b6                __cmpdf2
+                0x5000bc18                __adddf3
+                0x5000c580                __negdf2
+                0x5000c290                __divdf3
+                0x5000c5de                __cmpdf2_internal
+                0x5000c0b4                __muldf3
+                0x5000bc12                __subdf3
+ .text          0x5000c758       0x74 C:/RTOS-MCF5445x\libgcc.a(_floatex.o)
+                0x5000c764                $_exception_handler
+                0x5000c758                __clear_sticky_bit
+ *(.text.*)
+ .text._ZN14SerialBootTaskD1Ev
+                0x5000c7cc       0x2c obj-WC/SerialBootTask_cpp.o
+                0x5000c7cc                SerialBootTask::~SerialBootTask()
+ .text._ZN14SerialBootTaskD0Ev
+                0x5000c7f8       0x34 obj-WC/SerialBootTask_cpp.o
+                0x5000c7f8                SerialBootTask::~SerialBootTask()
+ .text._ZN8IdleTaskD0Ev
+                0x5000c82c       0x2a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+                0x5000c82c                IdleTask::~IdleTask()
+ .text._ZN8IdleTaskD1Ev
+                0x5000c856       0x16 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+                0x5000c856                IdleTask::~IdleTask()
+ .text._ZN10PrintfTaskD0Ev
+                0x5000c86c       0x44 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+                0x5000c86c                PrintfTask::~PrintfTask()
+ .text._ZN10PrintfTaskD1Ev
+                0x5000c8b0       0x3c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+                0x5000c8b0                PrintfTask::~PrintfTask()
+ .text._ZN11TaskSlowLedD0Ev
+                0x5000c8ec       0x2a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                0x5000c8ec                TaskSlowLed::~TaskSlowLed()
+ .text._ZN11TaskSlowLedD1Ev
+                0x5000c916       0x16 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                0x5000c916                TaskSlowLed::~TaskSlowLed()
+ .text._ZN11TaskFastLedD0Ev
+                0x5000c92c       0x2a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                0x5000c92c                TaskFastLed::~TaskFastLed()
+ .text._ZN11TaskFastLedD1Ev
+                0x5000c956       0x16 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                0x5000c956                TaskFastLed::~TaskFastLed()
+ .text._ZN11TaskDispLedD0Ev
+                0x5000c96c       0x2a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                0x5000c96c                TaskDispLed::~TaskDispLed()
+ .text._ZN11TaskDispLedD1Ev
+                0x5000c996       0x16 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                0x5000c996                TaskDispLed::~TaskDispLed()
+ .text._ZN11TaskManagerD0Ev
+                0x5000c9ac       0x44 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+                0x5000c9ac                TaskManager::~TaskManager()
+ .text._ZN11TaskManagerD1Ev
+                0x5000c9f0       0x3c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+                0x5000c9f0                TaskManager::~TaskManager()
+ .text._ZN3SPI14SetDelayParamsEiiiiiii
+                0x5000ca2c        0x8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+                0x5000ca2c                SPI::SetDelayParams(int, int, int, int, int, int, int)
+                0x5000ca34                . = ALIGN (0x4)
+ *(.rodata)
+ .rodata        0x5000ca34      0x200 obj-WC/Main_cpp.o
+ .rodata        0x5000cc34        0x4 obj-WC/MultiBootBoard_cpp.o
+ .rodata        0x5000cc38        0x8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+                0x5000cc38                CPU::ResetD0
+                0x5000cc3c                CPU::ResetD1
+ .rodata        0x5000cc40       0x88 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+ .rodata        0x5000ccc8        0xc C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+                0x5000cccc                Board::i2cNum
+                0x5000ccd0                Board::profileTimerNum
+                0x5000ccc8                Board::spiNum
+ .rodata        0x5000ccd4       0x50 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ .rodata        0x5000cd24       0x80 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+                0x5000cd24                I2C::divider
+ *(.rodata.*)
+ .rodata.str1.1
+                0x5000cda4       0x4d obj-WC/Main_cpp.o
+ .rodata.str1.1
+                0x5000cdf1       0x6b obj-WC/MultiBootBoard_cpp.o
+                                 0x8b (size before relaxing)
+ .rodata.str1.1
+                0x5000ce5c      0x387 obj-WC/SerialBootTask_cpp.o
+                                0x3c3 (size before relaxing)
+ *fill*         0x5000d1e3        0x1 00
+ .rodata._ZTV14SerialBootTask
+                0x5000d1e4       0x18 obj-WC/SerialBootTask_cpp.o
+                0x5000d1e4                vtable for SerialBootTask
+ .rodata.str1.1
+                0x5000d1fc       0x88 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+                                 0x8a (size before relaxing)
+ .rodata.str1.1
+                0x5000d284      0x3fb C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+                                0x40c (size before relaxing)
+ .rodata.str1.1
+                0x5000d67f       0xe3 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+ .rodata.str1.1
+                0x5000d762      0x11a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+                                0x126 (size before relaxing)
+ .rodata.str1.1
+                0x5000d87c       0x2f C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+ .rodata.str1.1
+                0x5000d8ab       0x4e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+                                 0x57 (size before relaxing)
+ .rodata.str1.1
+                0x5000d8f9      0x13f C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+                                0x154 (size before relaxing)
+ .rodata.str1.1
+                0x00000000        0x9 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+ .rodata.str1.1
+                0x5000da38       0x1b C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+ .rodata.str1.1
+                0x5000da53       0x24 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+                                 0x2d (size before relaxing)
+ .rodata.str1.1
+                0x5000da77       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+ .rodata.str1.1
+                0x5000da97       0xf2 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+                                 0xfb (size before relaxing)
+ .rodata.str1.1
+                0x5000db89      0x10b C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+                                0x121 (size before relaxing)
+ .rodata._ZTV8IdleTask
+                0x5000dc94       0x18 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+                0x5000dc94                vtable for IdleTask
+ .rodata.str1.1
+                0x5000dcac       0x63 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+                                 0x6c (size before relaxing)
+ *fill*         0x5000dd0f        0x1 00
+ .rodata._ZTV4Task
+                0x5000dd10       0x18 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+                0x5000dd10                vtable for Task
+ .rodata._ZTV8TaskBase
+                0x5000dd28       0x18 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+                0x5000dd28                vtable for TaskBase
+ .rodata.str1.1
+                0x5000dd40       0x1c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+                                 0x25 (size before relaxing)
+ .rodata._ZTV10PrintfTask
+                0x5000dd5c       0x18 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+                0x5000dd5c                vtable for PrintfTask
+ .rodata.str1.1
+                0x5000dd74       0x52 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+                                 0x60 (size before relaxing)
+ .rodata.str1.1
+                0x5000ddc6       0x42 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                                 0x4b (size before relaxing)
+ .rodata._ZTV11TaskDispLed
+                0x5000de08       0x18 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                0x5000de08                vtable for TaskDispLed
+ .rodata._ZTV11TaskFastLed
+                0x5000de20       0x18 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                0x5000de20                vtable for TaskFastLed
+ .rodata._ZTV11TaskSlowLed
+                0x5000de38       0x18 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                0x5000de38                vtable for TaskSlowLed
+ .rodata.str1.1
+                0x5000de50       0x26 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+                                 0x44 (size before relaxing)
+ *fill*         0x5000de76        0x2 00
+ .rodata._ZTV11TaskManager
+                0x5000de78       0x18 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+                0x5000de78                vtable for TaskManager
+ .rodata.str1.1
+                0x5000de90       0x22 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+                                 0x2b (size before relaxing)
+ .rodata.str1.1
+                0x5000deb2      0x12f C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+                                0x159 (size before relaxing)
+ .rodata.str1.1
+                0x5000dfe1        0xd C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+                                 0x18 (size before relaxing)
+ *fill*         0x5000dfee        0x2 00
+ .rodata._ZTV8WatchDog
+                0x5000dff0       0x10 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+                0x5000dff0                vtable for WatchDog
+ .rodata.str1.1
+                0x5000e000       0x54 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+                                 0x5d (size before relaxing)
+ .rodata.str1.1
+                0x5000e054       0xff C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+                                0x108 (size before relaxing)
+ .rodata.str1.1
+                0x5000e153      0x101 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+                                0x11e (size before relaxing)
+ .rodata._ZTV4DSPI
+                0x5000e254       0x30 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+                0x5000e254                vtable for DSPI
+ .rodata._ZTV3SPI
+                0x5000e284       0x28 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+                0x5000e284                vtable for SPI
+ .rodata.str1.1
+                0x5000e2ac       0x58 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+                                 0x71 (size before relaxing)
+ .rodata.str1.1
+                0x5000e304       0x80 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+                                 0x89 (size before relaxing)
+ .rodata.str1.1
+                0x5000e384       0x3f C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ *fill*         0x5000e3c3        0x1 00
+ .rodata._ZTV14FlashM29W128GL
+                0x5000e3c4       0x30 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+                0x5000e3c4                vtable for FlashM29W128GL
+ .rodata._ZTV11FlashAccess
+                0x5000e3f4       0x10 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+                0x5000e3f4                vtable for FlashAccess
+ .rodata._ZTV5Flash
+                0x5000e404       0x28 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+                0x5000e404                vtable for Flash
+ .rodata.str1.1
+                0x5000e42c       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+ *fill*         0x5000e453        0x1 00
+ .rodata._ZTV8FlashAMD
+                0x5000e454       0x2c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+                0x5000e454                vtable for FlashAMD
+                0x5000e480                . = ALIGN (0x4)
+                0x5000e480                __CTOR_START = .
+ *(.ctors)
+                0x5000e480                __CTOR_END = .
+                0x5000e480                . = ALIGN (0x10)
+                0x5000e480                __TEXT_END = .
+
+.data           0x51000000     0x6980 load address 0x5000e480
+                0x51000000                . = ALIGN (0x10)
+                0x51000000                __DATA_START = .
+ *(.data)
+ .data          0x51000000        0x0 C:/RTOS-MCF5445x/Start.o
+ .data          0x51000000        0x8 obj-WC/Main_cpp.o
+                0x51000000                BootLoaderVersion
+ .data          0x51000008        0x0 obj-WC/MultiBootBoard_cpp.o
+ .data          0x51000008        0x0 obj-WC/SerialBootTask_cpp.o
+ .data          0x51000008        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+ .data          0x51000008        0x4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+ .data          0x5100000c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+ .data          0x5100000c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+ .data          0x5100000c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+ .data          0x5100000c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_asm.o)
+ .data          0x5100000c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_asm.o)
+ .data          0x5100000c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xRTOS_asm.o)
+ .data          0x5100000c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+ .data          0x5100000c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_MemoryInit_asm.o)
+ .data          0x5100000c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_asm.o)
+ .data          0x5100000c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+ .data          0x5100000c       0x10 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+ .data          0x5100001c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+ .data          0x5100001c        0x1 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+                0x5100001c                CyGOS::EnableDebugFlag
+ *fill*         0x5100001d        0x3 00
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+ .data          0x51000020        0x0 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+ .data          0x51000020        0x0 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+ .data          0x51000020        0x0 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+ .data          0x51000020        0x0 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_asm.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+ .data          0x51000020        0x0 C:/RTOS-MCF5445x\libgcc.a(_double.o)
+ .data          0x51000020       0x1c C:/RTOS-MCF5445x\libgcc.a(_floatex.o)
+                0x51000020                _fpCCR
+                0x5100003c                . = ALIGN (0x4)
+                0x5100003c                __DATA_END = .
+                0x5100003c                __BSS_START = .
+ *(.bss)
+ .bss           0x5100003c        0x0 C:/RTOS-MCF5445x/Start.o
+ .bss           0x5100003c        0x0 obj-WC/Main_cpp.o
+ .bss           0x5100003c        0x0 obj-WC/MultiBootBoard_cpp.o
+ .bss           0x5100003c        0xc obj-WC/SerialBootTask_cpp.o
+                0x5100003c                SerialBootTask::bootImageBuffer
+                0x51000040                SerialBootTask::bootImageLength
+                0x51000044                SerialBootTask::bootImageFlash
+ .bss           0x51000048        0x4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+                0x51000048                CPU::rtosPit
+ .bss           0x5100004c     0x44d4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+                0x51004110                ExStkPtr
+                0x51004120                Exception::ExceptionHandlerArray
+                0x510040fc                StackEnd
+                0x5100004c                CrashBuffer
+                0x510040f0                CrashValid
+                0x510040f8                Stackbegin
+                0x51004114                ExStkSize
+                0x51004108                ExTaskPtr
+                0x51004104                MMUAR
+                0x5100411c                LastInterruptLevel
+                0x51004118                ExIndx
+                0x510040d8                TaskName
+                0x510040f4                CurrStackPtr
+                0x5100410c                ExStkBegin
+                0x51004100                CrashBuffPrintLen
+ .bss           0x51004520       0x10 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+                0x51004520                PIT::pit
+ .bss           0x51004530       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+                0x51004530                MMU::mapped
+ .bss           0x51004550        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+ .bss           0x51004550        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_asm.o)
+ .bss           0x51004550        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_asm.o)
+ .bss           0x51004550        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xRTOS_asm.o)
+ .bss           0x51004550        0x4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+                0x51004550                __dso_handle
+ .bss           0x51004554        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_MemoryInit_asm.o)
+ .bss           0x51004554        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_asm.o)
+ .bss           0x51004554        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+ .bss           0x51004554        0x8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+ .bss           0x5100455c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+ .bss           0x5100455c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+ .bss           0x5100455c        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+ .bss           0x5100455c        0xc C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+                0x51004564                WatchDogCallbackFun
+                0x5100455c                LoadLogCallBack
+                0x51004560                AppCrashCallBackFun
+ .bss           0x51004568        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+ .bss           0x51004568       0x3a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+                0x5100456c                BoardTestCallBack
+                0x51004568                sysLogCallBack
+ *fill*         0x510045a2        0x2 00
+ .bss           0x510045a4      0x126 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+                0x510045aa                RTOS::taskCurrent
+                0x510046ba                RTOS::ticking
+                0x510045ae                RTOS::taskHighest
+                0x510045a4                RTOS::running
+                0x510046b6                RTOS::taskPrintf
+                0x510046be                RTOS::timestamp
+                0x510045b6                RTOS::tasks
+                0x510045a6                RTOS::intNesting
+                0x510046c6                RTOS::tickHandler
+                0x510045b2                RTOS::taskIdle
+ *fill*         0x510046ca        0x2 00
+ .bss           0x510046cc        0x4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+                0x510046cc                Task::usecPerTick
+ .bss           0x510046d0        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ .bss           0x510046d0        0x8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+                0x510046d0                Debug::stack
+                0x510046d4                Debug::debug
+ .bss           0x510046d8       0x10 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ .bss           0x510046e8     0x2240 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+                0x51005f18                TaskManager::lastTime
+                0x5100651c                TaskManager::intrTimesHighest
+                0x51005ae8                TaskManager::systemData
+                0x5100691c                TaskManager::systemTime
+                0x51004ae8                TaskManager::intrData
+                0x5100601c                TaskManager::TaskTimesHighest
+                0x51005b18                TaskManager::intCount
+                0x51005f1c                TaskManager::taskTimes
+                0x510046e8                TaskManager::taskData
+                0x5100611c                TaskManager::intrTimes
+ .bss           0x51006928        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+ .bss           0x51006928        0xc C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+                0x51006928                Serial::serial
+ .bss           0x51006934        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+ .bss           0x51006934       0x10 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+                0x51006934                TaskPriority
+                0x5100693c                MaxTaskTime
+                0x51006940                MaxVectorTime
+                0x51006938                VectorNumber
+ .bss           0x51006944        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+ .bss           0x51006944        0xc C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+                0x51006948                Board::i2c
+                0x5100694c                Board::dmaTimers
+                0x51006944                Board::spi
+ .bss           0x51006950        0x0 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+ .bss           0x51006950        0x4 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+                0x51006950                LED::lptr
+ .bss           0x51006954        0x0 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_asm.o)
+ .bss           0x51006954        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+ .bss           0x51006954        0x4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+                0x51006954                DSPI::thisPtr
+ .bss           0x51006958        0x8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+                0x5100695c                I2CRetries
+                0x51006958                I2C::i2c
+ .bss           0x51006960        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+ .bss           0x51006960        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ .bss           0x51006960        0x4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+                0x51006960                Flash::access
+ .bss           0x51006964        0x0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+ .bss           0x51006964        0x0 C:/RTOS-MCF5445x\libgcc.a(_double.o)
+ .bss           0x51006964        0x0 C:/RTOS-MCF5445x\libgcc.a(_floatex.o)
+                0x51006980                . = ALIGN (0x20)
+ *fill*         0x51006964       0x1c 00
+                0x51006980                __BSS_END = .
+                0x00006980                ___DATA_SIZE = (__BSS_END - __DATA_START)
+
+.fram           0x0b000000       0x10 load address 0x50014e00
+                0x0b000000                __FRAM_START = .
+                0x0b000000        0x4 LONG 0x12345678
+                0x0b000004        0x4 LONG 0x12345678
+                0x0b000008        0x4 LONG 0x12345678
+                0x0b00000c        0x4 LONG 0x12345678
+ *(.FRAM)
+                0x0b000010                . = ALIGN (0x10)
+                0x0b000010                __FRAM_END = .
+                0x51006980                __FLASH_END = __BSS_END
+                0x40000000                __SDRAM = 0x40000000
+                0x08000000                __SDRAM_SIZE = 0x8000000
+                0x58000000                __SP_INIT = (__SDRAM_BASE + __SDRAM_SIZE)
+                0x57fff000                __SP_END = (__SP_INIT - 0x1000)
+                0x51006980                __HEAP_START = __FLASH_END
+                0x57fff000                __HEAP_END = __SP_END
+                0x40000000                __VECTOR_RAM = __SDRAM
+                0x00040000                __BOOTLOADER_SIZE = 0x40000
+                0x00040000                __USER_FLASH_ROM = (__FLASH_ROM + __BOOTLOADER_SIZE)
+                0x50040000                __USER_FLASH_RAM = (__SDRAM_BASE + __BOOTLOADER_SIZE)
+                0x00fc0000                __USER_FLASH_SIZE = (0x1000000 - __BOOTLOADER_SIZE)
+                0x00000000                __FLASH_ROM = 0x0
+                0x01000000                __FLASH_SIZE = 0x1000000
+                0x80000000                __CORE_SRAM = 0x80000000
+                0x00008000                __CORE_SRAM_SIZE = 0x8000
+                0x80008000                __SRAM_SP = (__CORE_SRAM + __CORE_SRAM_SIZE)
+                0x50000000                __SDRAM_BASE = 0x50000000
+                0x00000000                __FLASH_BASE = 0x0
+                0xb0000000                __FLASH_DIFF = (__FLASH_BASE - __SDRAM_BASE)
+                0xe1000000                __MMU_BAR = 0xe1000000
+OUTPUT(obj-WC/BootLoad.elf elf32-m68k)
+
+.debug_abbrev   0x00000000     0x5b9f
+ .debug_abbrev  0x00000000      0x175 obj-WC/Main_cpp.o
+ .debug_abbrev  0x00000175      0x29e obj-WC/MultiBootBoard_cpp.o
+ .debug_abbrev  0x00000413      0x42f obj-WC/SerialBootTask_cpp.o
+ .debug_abbrev  0x00000842      0x2a7 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+ .debug_abbrev  0x00000ae9      0x2e4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+ .debug_abbrev  0x00000dcd      0x1f7 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+ .debug_abbrev  0x00000fc4      0x247 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+ .debug_abbrev  0x0000120b       0x51 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+ .debug_abbrev  0x0000125c       0xc8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+ .debug_abbrev  0x00001324       0xff C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+ .debug_abbrev  0x00001423      0x34c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+ .debug_abbrev  0x0000176f      0x30c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+ .debug_abbrev  0x00001a7b      0x16c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+ .debug_abbrev  0x00001be7       0xb0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+ .debug_abbrev  0x00001c97      0x1bc C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+ .debug_abbrev  0x00001e53      0x24e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+ .debug_abbrev  0x000020a1      0x17f C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+ .debug_abbrev  0x00002220      0x4b0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ .debug_abbrev  0x000026d0      0x39b C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+ .debug_abbrev  0x00002a6b      0x3a9 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ .debug_abbrev  0x00002e14      0x257 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+ .debug_abbrev  0x0000306b      0x319 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ .debug_abbrev  0x00003384      0x3bb C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ .debug_abbrev  0x0000373f      0x1d0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+ .debug_abbrev  0x0000390f      0x400 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+ .debug_abbrev  0x00003d0f       0xbd C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+ .debug_abbrev  0x00003dcc      0x22c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+ .debug_abbrev  0x00003ff8      0x250 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+ .debug_abbrev  0x00004248      0x3af C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+ .debug_abbrev  0x000045f7       0xb5 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+ .debug_abbrev  0x000046ac      0x145 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+ .debug_abbrev  0x000047f1       0xec C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+ .debug_abbrev  0x000048dd      0x504 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ .debug_abbrev  0x00004de1      0x37c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+ .debug_abbrev  0x0000515d      0x286 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+ .debug_abbrev  0x000053e3      0x289 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ .debug_abbrev  0x0000566c      0x240 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+ .debug_abbrev  0x000058ac      0x2f3 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+
+.debug_info     0x00000000    0x1425c
+ .debug_info    0x00000000      0x308 obj-WC/Main_cpp.o
+ .debug_info    0x00000308      0x927 obj-WC/MultiBootBoard_cpp.o
+ .debug_info    0x00000c2f     0x124e obj-WC/SerialBootTask_cpp.o
+ .debug_info    0x00001e7d      0x9af C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+ .debug_info    0x0000282c      0xb86 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+ .debug_info    0x000033b2      0x696 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+ .debug_info    0x00003a48      0x63f C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+ .debug_info    0x00004087       0x9d C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+ .debug_info    0x00004124      0x14f C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+ .debug_info    0x00004273      0x2d2 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+ .debug_info    0x00004545      0xc6b C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+ .debug_info    0x000051b0      0x91b C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+ .debug_info    0x00005acb      0x7d1 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+ .debug_info    0x0000629c      0x16e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+ .debug_info    0x0000640a      0x82e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+ .debug_info    0x00006c38      0x746 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+ .debug_info    0x0000737e      0x2f7 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+ .debug_info    0x00007675     0x1360 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ .debug_info    0x000089d5      0xb01 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+ .debug_info    0x000094d6      0xbc6 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ .debug_info    0x0000a09c      0x532 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+ .debug_info    0x0000a5ce      0xdad C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ .debug_info    0x0000b37b      0xfd5 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ .debug_info    0x0000c350      0x3a6 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+ .debug_info    0x0000c6f6      0xea8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+ .debug_info    0x0000d59e      0x172 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+ .debug_info    0x0000d710      0x710 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+ .debug_info    0x0000de20      0x5d3 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+ .debug_info    0x0000e3f3     0x114f C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+ .debug_info    0x0000f542      0x11e C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+ .debug_info    0x0000f660      0x1a7 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+ .debug_info    0x0000f807      0x263 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+ .debug_info    0x0000fa6a     0x1488 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ .debug_info    0x00010ef2      0xed3 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+ .debug_info    0x00011dc5      0x62d C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+ .debug_info    0x000123f2      0xa9b C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ .debug_info    0x00012e8d      0x6a0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+ .debug_info    0x0001352d      0xd2f C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+
+.debug_line     0x00000000     0x33ef
+ .debug_line    0x00000000       0xb1 obj-WC/Main_cpp.o
+ .debug_line    0x000000b1      0x105 obj-WC/MultiBootBoard_cpp.o
+ .debug_line    0x000001b6      0x31a obj-WC/SerialBootTask_cpp.o
+ .debug_line    0x000004d0       0xf1 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+ .debug_line    0x000005c1      0x33b C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+ .debug_line    0x000008fc      0x121 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+ .debug_line    0x00000a1d      0x10c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+ .debug_line    0x00000b29       0x57 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+ .debug_line    0x00000b80       0x6c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+ .debug_line    0x00000bec       0xbd C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+ .debug_line    0x00000ca9      0x2c9 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+ .debug_line    0x00000f72      0x2e1 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+ .debug_line    0x00001253      0x16e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+ .debug_line    0x000013c1       0x83 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+ .debug_line    0x00001444      0x107 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+ .debug_line    0x0000154b      0x10a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+ .debug_line    0x00001655       0x8e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+ .debug_line    0x000016e3      0x329 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ .debug_line    0x00001a0c      0x1b4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+ .debug_line    0x00001bc0      0x1b1 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ .debug_line    0x00001d71      0x11a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+ .debug_line    0x00001e8b      0x21e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ .debug_line    0x000020a9      0x1d5 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ .debug_line    0x0000227e      0x10c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+ .debug_line    0x0000238a      0x28a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+ .debug_line    0x00002614       0x77 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+ .debug_line    0x0000268b       0xcc C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+ .debug_line    0x00002757      0x11b C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+ .debug_line    0x00002872      0x162 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+ .debug_line    0x000029d4       0x67 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+ .debug_line    0x00002a3b       0x8e C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+ .debug_line    0x00002ac9       0x66 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+ .debug_line    0x00002b2f      0x279 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ .debug_line    0x00002da8      0x1c6 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+ .debug_line    0x00002f6e      0x164 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+ .debug_line    0x000030d2      0x130 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ .debug_line    0x00003202       0x94 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+ .debug_line    0x00003296      0x159 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+
+.debug_frame    0x00000000     0x355c
+ .debug_frame   0x00000000       0xdc obj-WC/Main_cpp.o
+ .debug_frame   0x000000dc      0x108 obj-WC/MultiBootBoard_cpp.o
+ .debug_frame   0x000001e4      0x2c4 obj-WC/SerialBootTask_cpp.o
+ .debug_frame   0x000004a8      0x190 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+ .debug_frame   0x00000638      0x228 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+ .debug_frame   0x00000860      0x160 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+ .debug_frame   0x000009c0       0xf0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+ .debug_frame   0x00000ab0       0x44 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+ .debug_frame   0x00000af4       0xd8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+ .debug_frame   0x00000bcc       0x94 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+ .debug_frame   0x00000c60      0x398 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+ .debug_frame   0x00000ff8      0x1bc C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+ .debug_frame   0x000011b4      0x28c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+ .debug_frame   0x00001440       0x68 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+ .debug_frame   0x000014a8      0x2bc C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+ .debug_frame   0x00001764      0x1a4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+ .debug_frame   0x00001908       0x98 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+ .debug_frame   0x000019a0      0x2c8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ .debug_frame   0x00001c68      0x1f0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+ .debug_frame   0x00001e58      0x168 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ .debug_frame   0x00001fc0      0x13c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+ .debug_frame   0x000020fc      0x250 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ .debug_frame   0x0000234c      0x1c4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ .debug_frame   0x00002510       0xb8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+ .debug_frame   0x000025c8      0x1e8 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+ .debug_frame   0x000027b0       0x64 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+ .debug_frame   0x00002814      0x120 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+ .debug_frame   0x00002934       0xd0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+ .debug_frame   0x00002a04      0x20c C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+ .debug_frame   0x00002c10       0x34 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+ .debug_frame   0x00002c44       0x60 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+ .debug_frame   0x00002ca4       0x2c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+ .debug_frame   0x00002cd0      0x280 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ .debug_frame   0x00002f50      0x188 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+ .debug_frame   0x000030d8      0x11c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+ .debug_frame   0x000031f4      0x100 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ .debug_frame   0x000032f4       0xb4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+ .debug_frame   0x000033a8      0x1b4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+
+.debug_loc      0x00000000     0xa5f7
+ .debug_loc     0x00000000      0x183 obj-WC/Main_cpp.o
+ .debug_loc     0x00000183      0x1a5 obj-WC/MultiBootBoard_cpp.o
+ .debug_loc     0x00000328      0x9c6 obj-WC/SerialBootTask_cpp.o
+ .debug_loc     0x00000cee      0x7aa C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+ .debug_loc     0x00001498      0x2a5 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+ .debug_loc     0x0000173d      0x72c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+ .debug_loc     0x00001e69      0x344 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+ .debug_loc     0x000021ad       0x40 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+ .debug_loc     0x000021ed      0x138 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+ .debug_loc     0x00002325      0x15c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+ .debug_loc     0x00002481      0xd90 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+ .debug_loc     0x00003211      0xf0f C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+ .debug_loc     0x00004120      0xd00 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+ .debug_loc     0x00004e20      0x1ad C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+ .debug_loc     0x00004fcd      0x35e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+ .debug_loc     0x0000532b      0x567 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+ .debug_loc     0x00005892      0x120 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+ .debug_loc     0x000059b2      0x7a9 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ .debug_loc     0x0000615b      0x42e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+ .debug_loc     0x00006589      0x26d C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ .debug_loc     0x000067f6      0x36c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+ .debug_loc     0x00006b62      0x32d C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ .debug_loc     0x00006e8f      0x2ec C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ .debug_loc     0x0000717b      0x194 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+ .debug_loc     0x0000730f      0x529 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+ .debug_loc     0x00007838       0x73 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+ .debug_loc     0x000078ab      0x1d7 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+ .debug_loc     0x00007a82      0x38d C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+ .debug_loc     0x00007e0f      0x2f7 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+ .debug_loc     0x00008106       0x20 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+ .debug_loc     0x00008126      0x134 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+ .debug_loc     0x0000825a       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+ .debug_loc     0x0000827a      0xb13 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ .debug_loc     0x00008d8d      0x937 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+ .debug_loc     0x000096c4      0x3aa C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+ .debug_loc     0x00009a6e      0x3c7 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ .debug_loc     0x00009e35      0x2d2 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+ .debug_loc     0x0000a107      0x4f0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+
+.debug_pubnames
+                0x00000000     0x27f3
+ .debug_pubnames
+                0x00000000       0x92 obj-WC/Main_cpp.o
+ .debug_pubnames
+                0x00000092       0xf2 obj-WC/MultiBootBoard_cpp.o
+ .debug_pubnames
+                0x00000184      0x245 obj-WC/SerialBootTask_cpp.o
+ .debug_pubnames
+                0x000003c9      0x19a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+ .debug_pubnames
+                0x00000563      0x185 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+ .debug_pubnames
+                0x000006e8       0xd2 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+ .debug_pubnames
+                0x000007ba       0x85 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+ .debug_pubnames
+                0x0000083f       0x4a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+ .debug_pubnames
+                0x00000889       0xc9 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+ .debug_pubnames
+                0x00000952       0x33 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+ .debug_pubnames
+                0x00000985      0x1b9 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+ .debug_pubnames
+                0x00000b3e       0x4a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+ .debug_pubnames
+                0x00000b88      0x105 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+ .debug_pubnames
+                0x00000c8d       0x2d C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+ .debug_pubnames
+                0x00000cba      0x2da C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+ .debug_pubnames
+                0x00000f94      0x1bd C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+ .debug_pubnames
+                0x00001151       0xd7 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+ .debug_pubnames
+                0x00001228      0x283 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ .debug_pubnames
+                0x000014ab      0x140 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+ .debug_pubnames
+                0x000015eb       0xcf C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ .debug_pubnames
+                0x000016ba       0xc3 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+ .debug_pubnames
+                0x0000177d      0x1b3 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ .debug_pubnames
+                0x00001930      0x284 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ .debug_pubnames
+                0x00001bb4       0x87 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+ .debug_pubnames
+                0x00001c3b      0x102 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+ .debug_pubnames
+                0x00001d3d       0x58 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+ .debug_pubnames
+                0x00001d95      0x156 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+ .debug_pubnames
+                0x00001eeb       0xa4 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+ .debug_pubnames
+                0x00001f8f      0x1ea C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+ .debug_pubnames
+                0x00002179       0x26 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+ .debug_pubnames
+                0x0000219f       0x4b C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+ .debug_pubnames
+                0x000021ea       0x22 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+ .debug_pubnames
+                0x0000220c      0x19d C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ .debug_pubnames
+                0x000023a9      0x104 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+ .debug_pubnames
+                0x000024ad       0xa0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+ .debug_pubnames
+                0x0000254d       0xd2 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ .debug_pubnames
+                0x0000261f       0xad C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+ .debug_pubnames
+                0x000026cc      0x127 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+
+.debug_aranges  0x00000000      0x538
+ .debug_aranges
+                0x00000000       0x20 obj-WC/Main_cpp.o
+ .debug_aranges
+                0x00000020       0x20 obj-WC/MultiBootBoard_cpp.o
+ .debug_aranges
+                0x00000040       0x30 obj-WC/SerialBootTask_cpp.o
+ .debug_aranges
+                0x00000070       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+ .debug_aranges
+                0x00000090       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+ .debug_aranges
+                0x000000b0       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+ .debug_aranges
+                0x000000d0       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+ .debug_aranges
+                0x000000f0       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+ .debug_aranges
+                0x00000110       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+ .debug_aranges
+                0x00000130       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+ .debug_aranges
+                0x00000150       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+ .debug_aranges
+                0x00000170       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+ .debug_aranges
+                0x00000190       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+ .debug_aranges
+                0x000001b0       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+ .debug_aranges
+                0x000001d0       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+ .debug_aranges
+                0x000001f0       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+ .debug_aranges
+                0x00000210       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+ .debug_aranges
+                0x00000230       0x30 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ .debug_aranges
+                0x00000260       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+ .debug_aranges
+                0x00000280       0x30 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ .debug_aranges
+                0x000002b0       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+ .debug_aranges
+                0x000002d0       0x50 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ .debug_aranges
+                0x00000320       0x30 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ .debug_aranges
+                0x00000350       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+ .debug_aranges
+                0x00000370       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+ .debug_aranges
+                0x00000390       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+ .debug_aranges
+                0x000003b0       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+ .debug_aranges
+                0x000003d0       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+ .debug_aranges
+                0x000003f0       0x20 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+ .debug_aranges
+                0x00000410       0x20 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+ .debug_aranges
+                0x00000430       0x20 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+ .debug_aranges
+                0x00000450       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+ .debug_aranges
+                0x00000470       0x28 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ .debug_aranges
+                0x00000498       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+ .debug_aranges
+                0x000004b8       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+ .debug_aranges
+                0x000004d8       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ .debug_aranges
+                0x000004f8       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+ .debug_aranges
+                0x00000518       0x20 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+
+.debug_str      0x00000000     0x52ab
+ .debug_str     0x00000000      0x2a9 obj-WC/Main_cpp.o
+                                0x307 (size before relaxing)
+ .debug_str     0x000002a9      0x759 obj-WC/MultiBootBoard_cpp.o
+                                0x944 (size before relaxing)
+ .debug_str     0x00000a02      0x34d obj-WC/SerialBootTask_cpp.o
+                                0xc7f (size before relaxing)
+ .debug_str     0x00000d4f      0x9cb C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+                                0xa8a (size before relaxing)
+ .debug_str     0x0000171a      0x5be C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+                                0xd51 (size before relaxing)
+ .debug_str     0x00001cd8       0x3a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+                                0x71c (size before relaxing)
+ .debug_str     0x00001d12      0x20b C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+                                0x417 (size before relaxing)
+ .debug_str     0x00001f1d       0x6a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+                                0x116 (size before relaxing)
+ .debug_str     0x00001f87       0xf5 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+                                0x19c (size before relaxing)
+ .debug_str     0x0000207c       0x74 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+                                0x35a (size before relaxing)
+ .debug_str     0x000020f0      0x31a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+                                0x661 (size before relaxing)
+ .debug_str     0x0000240a      0x2b0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+                                0x4a5 (size before relaxing)
+ .debug_str     0x000026ba       0xf0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+                                0x1c2 (size before relaxing)
+ .debug_str     0x000027aa       0x3e C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+                                 0xf8 (size before relaxing)
+ .debug_str     0x000027e8      0x50c C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+                                0x803 (size before relaxing)
+ .debug_str     0x00002cf4       0x21 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+                                0x3c0 (size before relaxing)
+ .debug_str     0x00002d15      0x190 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+                                0x2b3 (size before relaxing)
+ .debug_str     0x00002ea5      0x660 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+                                0xc74 (size before relaxing)
+ .debug_str     0x00003505      0x1fd C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+                                0x6b3 (size before relaxing)
+ .debug_str     0x00003702      0x313 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+                                0x779 (size before relaxing)
+ .debug_str     0x00003a15       0xf1 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+                                0x35d (size before relaxing)
+ .debug_str     0x00003b06      0x12a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+                                0x461 (size before relaxing)
+ .debug_str     0x00003c30      0x3c1 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+                                0xb22 (size before relaxing)
+ .debug_str     0x00003ff1       0xbd C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+                                0x340 (size before relaxing)
+ .debug_str     0x000040ae       0x3d C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+                                0xa29 (size before relaxing)
+ .debug_str     0x000040eb       0x11 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+                                0x15b (size before relaxing)
+ .debug_str     0x000040fc       0xfd C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+                                0x9b1 (size before relaxing)
+ .debug_str     0x000041f9       0x2a C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+                                0x3c9 (size before relaxing)
+ .debug_str     0x00004223      0x6de C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+                                0xd83 (size before relaxing)
+ .debug_str     0x00004901       0x3a C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+                                0x161 (size before relaxing)
+ .debug_str     0x0000493b       0x86 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+                                0x160 (size before relaxing)
+ .debug_str     0x000049c1       0xbc C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+                                0x17f (size before relaxing)
+ .debug_str     0x00004a7d      0x2e2 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+                                0xc11 (size before relaxing)
+ .debug_str     0x00004d5f       0x87 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+                                0xb71 (size before relaxing)
+ .debug_str     0x00004de6       0x18 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+                                0x3b9 (size before relaxing)
+ .debug_str     0x00004dfe      0x2d0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+                                0x411 (size before relaxing)
+ .debug_str     0x000050ce       0x85 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+                                0x354 (size before relaxing)
+ .debug_str     0x00005153      0x158 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+                                0x4c8 (size before relaxing)
+
+.comment        0x00000000      0x5ca
+ .comment       0x00000000       0x27 obj-WC/Main_cpp.o
+ .comment       0x00000027       0x27 obj-WC/MultiBootBoard_cpp.o
+ .comment       0x0000004e       0x27 obj-WC/SerialBootTask_cpp.o
+ .comment       0x00000075       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+ .comment       0x0000009c       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+ .comment       0x000000c3       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+ .comment       0x000000ea       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+ .comment       0x00000111       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MultiBootCpu_cpp.o)
+ .comment       0x00000138       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(MCF_ArchDefs_cpp.o)
+ .comment       0x0000015f       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Assert_cpp.o)
+ .comment       0x00000186       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+ .comment       0x000001ad       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+ .comment       0x000001d4       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+ .comment       0x000001fb       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+ .comment       0x00000222       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_CyGOS_cpp.o)
+ .comment       0x00000249       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_LinkedList_cpp.o)
+ .comment       0x00000270       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(API_SysLog_cpp.o)
+ .comment       0x00000297       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ .comment       0x000002be       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+ .comment       0x000002e5       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ .comment       0x0000030c       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+ .comment       0x00000333       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ .comment       0x0000035a       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ .comment       0x00000381       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Terminal_cpp.o)
+ .comment       0x000003a8       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+ .comment       0x000003cf       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MCF5445xTask_cpp.o)
+ .comment       0x000003f6       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_WatchDog_cpp.o)
+ .comment       0x0000041d       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_FIFO_cpp.o)
+ .comment       0x00000444       0x27 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(Board_cpp.o)
+ .comment       0x0000046b       0x27 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(BoardFlash_cpp.o)
+ .comment       0x00000492       0x27 C:/BSP-WC-MCF5445x/libBSP-WC-MCF5445x.a(LED_cpp.o)
+ .comment       0x000004b9       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Cache_cpp.o)
+ .comment       0x000004e0       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ .comment       0x00000507       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+ .comment       0x0000052e       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+ .comment       0x00000555       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ .comment       0x0000057c       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_Flash_cpp.o)
+ .comment       0x000005a3       0x27 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)
+
+.debug_ranges   0x00000000      0xf98
+ .debug_ranges  0x00000000       0x30 obj-WC/MultiBootBoard_cpp.o
+ .debug_ranges  0x00000030      0x1c8 obj-WC/SerialBootTask_cpp.o
+ .debug_ranges  0x000001f8       0x18 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_CPU_cpp.o)
+ .debug_ranges  0x00000210       0xd0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Exception_cpp.o)
+ .debug_ranges  0x000002e0       0x70 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_PIT_cpp.o)
+ .debug_ranges  0x00000350       0x40 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_MMU_cpp.o)
+ .debug_ranges  0x00000390      0x198 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_Alloc_cpp.o)
+ .debug_ranges  0x00000528       0xa0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_PrintF_cpp.o)
+ .debug_ranges  0x000005c8       0x58 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_String_cpp.o)
+ .debug_ranges  0x00000620       0x60 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(stdlib_StdLib_cpp.o)
+ .debug_ranges  0x00000680      0x140 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_RTOS_cpp.o)
+ .debug_ranges  0x000007c0       0x68 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Task_cpp.o)
+ .debug_ranges  0x00000828       0x90 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_PrintfTask_cpp.o)
+ .debug_ranges  0x000008b8       0x50 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Debug_cpp.o)
+ .debug_ranges  0x00000908      0x100 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_LedTasks_cpp.o)
+ .debug_ranges  0x00000a08       0x90 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_TaskManager_cpp.o)
+ .debug_ranges  0x00000a98      0x178 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_Serial_cpp.o)
+ .debug_ranges  0x00000c10      0x130 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_DSPI_cpp.o)
+ .debug_ranges  0x00000d40       0x88 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(54455_I2C_cpp.o)
+ .debug_ranges  0x00000dc8       0xb0 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(RTOS_Mutex_cpp.o)
+ .debug_ranges  0x00000e78       0x18 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashM29W128G_cpp.o)
+ .debug_ranges  0x00000e90      0x108 C:/RTOS-MCF5445x/libRTOS-MCF5445x.a(Flash_FlashAMD_cpp.o)

@@ -1,0 +1,1477 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="pragma" content="no-cache" />
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+<title>BRANSON DCX GUI</title>
+<link href="styleDCXSRackMt-v1.css" rel="stylesheet" type="text/css" />
+<!--[if IE 6]><link href="ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if IE 7]><link href="ie7.css" rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if IE 6]>
+<script src="DD_belatedPNGDCXSRackMt-v1.js"></script>
+<script>
+  /* EXAMPLE */
+  DD_belatedPNG.fix('#headerLogo');
+  
+  /* string argument can be any CSS selector */
+  /* .png_bg example is unnecessary */
+  /* change it to what suits you! */
+</script>
+<![endif]-->
+<style type="text/css">
+.labelMF
+{
+    width: 148px;
+	padding: 2px 2px 2px 2px;
+	background: #ffffff;
+	border: solid 1px #CCCCCC;
+	margin: 11px 10px 0px 10px;
+	float: left;
+	text-align: right;    
+}
+</style>
+<script type="text/JavaScript" language="javascript" src="formchange-detectDCXSRackMt-v1.js"></script>
+<script type="text/JavaScript">
+var tab1 = "<li><a href=\"javascript:GetLanguageAndUserID('ip-setup.html')\">IP Setup</a></li>";
+var tab2 = "<li><a  href=\"javascript:GetLanguageAndUserID('weld-preset.html')\">Weld Preset</a></li>";
+var tab3 = "<li><a  href=\"javascript:GetLanguageAndUserID('advanced-preset.html')\">Advanced Preset</a></li>";
+var tab4 = "<li><a  href=\"javascript:GetLanguageAndUserID('diagnostic-IO.html')\">I/O Diagnostics</a></li>";
+var tab5 = "<li><a href=\"javascript:GetLanguageAndUserID('Seek&WeldGraphs.html')\">Seek & </br>Weld Graphs</a></li>";
+var tab6 = "<li><a  href=\"javascript:GetLanguageAndUserID('system-information.html')\">System Information</a></li>";
+var tab7 = "<li><a  href=\"javascript:GetLanguageAndUserID('IO-configuration.html')\">I/O Configuration</a></li>";
+var tab8 = "<li><a  href=\"javascript:GetLanguageAndUserID('event-log.html')\">Event Log</a></li>";
+var tab9 = "<li><a  href=\"javascript:GetLanguageAndUserID('alarm-log.html')\">Alarm Log</a></li>";
+var tab10 = "<li class=\"active\"><a  href=\"#\">Manufacturing</a></li>";
+var tab11 = "<li><a  href=\"javascript:GetLanguageAndUserID('mfboardtest.html')\">Manufacturing Board Test</a></li>";
+var tab12 = "<li><a  href=\"javascript:GetLanguageAndUserID('hornsignature.html')\">Horn <br/> Signature</a></li>";
+var tabBranson = tab1 + tab2 + tab3 + tab4 + tab5 + tab12 + tab6 + tab8 + tab9;
+var tabMf = tabBranson + tab10;
+var tabBoardtest = tab1 + tab2 + tab3 + tab11 + tab4 + tab5 + tab12 + tab6 + tab8 + tab9;
+var SMfTab = tab1 + tab2 + tab3 + tab4 + tab5 + tab12 + tab6 + tab7 + tab8 + tab9 + tab10 ;
+var SBranson = tab1 + tab2 + tab3 + tab4 + tab5 + tab12 + tab6 + tab7 + tab8 + tab9;
+var SBoardTest = tab1 + tab2 + tab3 + tab11 + tab4 + tab5 + tab12 + tab6 + tab7 + tab8 + tab9;
+var TabArr =["", tabBranson, "", tabMf, tabBoardtest];
+var callBackTime = 500;
+var pollTime = 0;
+var pollTimeMF = 2000;
+var pollInterval = 2000;
+var cycTime, sonicOntime, sonicOfftime;
+var timerId = 0;
+var currStat = 0,
+	statNothing = 0,
+	statCompleted = 1,
+	statCycling = 2,
+	statStopped = 3;
+	
+var currentPSOption = 0;
+var testFlag = false;
+	
+var currCmd = 0, cmdTimeOut = 2000,cmdTimer = 0;
+var prevCommandResponded = true;
+var cmdRstAlarmCounters = 1, cmdClearAlarmLog = 2, cmdClearEventLog = 3, cmdRestoreDefaults = 4,
+        cmdSaveResults = 5, cmdStartStop = 6, cmdResetAlarm = 7, cmdViewAlarms = 8, cmdSearch = 9, cmdSaveSystemSetup = 10; 
+        cmdStartTest = 11, cmdSpecialEnter = 12;
+//test states
+var stateError = 0, stateWait = 1,	stateSeek = 2, stateRun = 3;
+//formatted values of min max cycle parameters
+var minCycTimeVal, maxCycTimeVal,minSonicOnTimeVal,maxSonicOnTimeVal, minSonicOffTimeVal, maxSonicOffTimeVal;
+var strRestoreDefault = "Are you sure you want to restore defaults?";
+var cycTimeSetValue;
+function getHTTPObject() {
+  var xmlhttp; 
+  if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+    try {
+      xmlhttp = new XMLHttpRequest();
+    } catch (e) {
+      xmlhttp = false;
+    }
+  }
+  return xmlhttp;
+}
+
+var http = getHTTPObject(); // We create the HTTP Object
+
+function getCookie(c_name)
+{
+if (document.cookie.length>0)
+  {
+  c_start=document.cookie.indexOf(c_name + "=");
+  if (c_start!=-1)
+    {
+    c_start=c_start + c_name.length+1;
+    c_end=document.cookie.indexOf(";",c_start);
+    if (c_end==-1) c_end=document.cookie.length;
+    return unescape(document.cookie.substring(c_start,c_end));
+    }
+  }
+return "";
+}
+
+function GetLanguageAndUserID(hrefpage)
+{
+        var ret;
+        if(IsFormModified(document.form_cycleparam))
+        {
+            ret = confirm(formChangeMessage);
+            if(ret == false)        
+                return;
+        }
+        else if(IsFormModified(document.form_syssetup))
+        {
+            ret = confirm(formChangeMessage);
+            if(ret == false)        
+                return;
+        }
+    
+    if(hrefpage == "index.html")
+        window.location.href = hrefpage;
+    else
+    {    
+        document.getElementById("lang").value= getCookie('LANGUAGE');
+	    document.getElementById("userid1").value= getCookie('USERID');
+	    document.temp_form.action = hrefpage;
+	    document.temp_form.submit();    
+	}
+} 
+
+
+function IsAlphaNumeric(str)
+{	
+    if((str == "") || (str == null))
+        return false;
+	for(var j=0; j<str.length; j++)
+	{
+	  var alphaa = str.charAt(j);
+	  var hh = alphaa.charCodeAt(0);
+	  if((hh > 47 && hh<58) || (hh > 64 && hh<91) || (hh > 96 && hh<123)){}		  
+	  else	
+        return false;
+ 	}
+    return true;
+}
+
+
+
+/*IPAddress Validation function*/
+function validate(inputString)
+{
+ if((inputString == null) || (inputString == ""))
+    return false;
+ var re = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+ if (re.test(inputString)) {
+   var parts = inputString.split(".");
+   if (parseInt(parseFloat(parts[0])) == 0) {
+     return false;
+   }
+   for (var i=0; i<parts.length; i++) {
+     if (parseInt(parseFloat(parts[i])) > 255) {
+       return false;
+     }
+   }
+   return true;
+ }
+ else {
+   return false;
+ }
+}
+
+function ValidateSystemSetup()
+{
+    var validationStr = "";
+    var maxSnLen = 20;
+    var minSnLen = 1;
+    var retVal = true;
+    var validSerialNumber = false;
+    var select = document.getElementById("freqpwroption");
+	var system = document.getElementById("systemtypeoption"); 
+	var systemedp = document.getElementById("systemtypeedp"); 
+	var TempPower = parseInt(document.getElementById("SetupPwrWatt").value);
+    if(select.selectedIndex <= 0)
+    {   
+        retVal = false; 
+        validationStr += "Please select a valid frequency option\n";
+    }
+	 if(system.selectedIndex <= 0)
+    {   
+        retVal = false; 
+        validationStr += "Please select a valid system type\n";
+    }
+	 if(systemedp.selectedIndex <= 0)
+    {   
+        retVal = false; 
+        validationStr += "Please select a valid system EDP type\n";
+    }
+	if(TempPower <= 0 || TempPower > 4000)
+	{
+		retVal = false; 
+        validationStr += "Please Enter a valid Power Value\n";
+	}
+    if(!validate(document.getElementById('ipaddr').value))
+    {
+        retVal = false; 
+        validationStr += "Invalid IP address\n";
+    }
+    
+    if(document.getElementById('snumber').value != "")
+    {
+        var snLen = document.getElementById('snumber').value.length;     
+        if((snLen >= minSnLen) && (snLen <= maxSnLen))
+        {
+            if(IsAlphaNumeric(document.getElementById('snumber').value))
+                validSerialNumber = true;
+        }
+    }
+    if(!validSerialNumber)
+    {
+        retVal = false;
+        validationStr += "Serial number should be alphanumeric and alleast of "+ minSnLen +" chars and not more than " + maxSnLen + " chars\n";
+    }
+    if(retVal == false)
+        alert(validationStr);
+        
+    return retVal;
+}
+
+
+function HandleStartStopCycle()
+{
+    if (http.readyState == 4)
+    {       
+        
+        if(http.responseText == "STARTED") 
+        {
+            document.getElementById("WeldProgress").style.backgroundColor = "green";
+            document.getElementById("stat_2").checked = true;
+            cycTimeSetValue = cycTime;
+            currStat = statCycling;        
+            RefreshAttribute(document.form_cycleparam);   
+        }
+        else if(http.responseText == "STOPPED") 
+        {
+            currStat = 0;        
+            document.getElementById("stat_3").checked = true;
+            document.getElementById("WeldProgress").style.backgroundColor = "red";
+        }
+        else if(http.responseText == "BUSY")
+            alert("System is either busy or in Alarm state");
+        else
+            alert("Error sending Start/Stop command");
+        
+        currCmd = 0;
+        prevCommandResponded = true;
+    }
+   
+}
+
+
+function UpdatePowerInWatts()
+{
+   // var pwrOptions = [0, 1250, 2500, 4000, 1500, 750, 400, 800];    
+    var pwrPercent = parseInt(document.getElementById('pwrval').innerHTML, 10);
+    document.getElementById('pwrwatt').innerHTML = ((currentPSOption * pwrPercent) / 100);
+}
+
+function HandleSaveSysSetup()
+{
+    if (http.readyState == 4)
+    {   
+        if(http.responseText == "OK") 
+        {
+            alert("Setup is changed\n\r IP change will take effect after next powerup");
+            RefreshAttribute(document.form_syssetup);
+            currCmd = 0;
+            prevCommandResponded = true;
+        }
+     }
+}
+
+function OnSaveSysSetup()
+{
+    if(ValidateSystemSetup() == false)
+        return;
+        
+   var select = document.getElementById("freqpwroption"); 
+   var freq , pwr , system;      
+   var str = select.options[select.selectedIndex].text.split("/");
+   freq = str[0];
+   pwr  = parseInt(document.getElementById("SetupPwrWatt").value); 
+   currentPSOption = pwr;
+   var updateurl = "func=19cmd=32?param=freq:";
+   updateurl += parseInt(freq); 
+   updateurl += "&systemtype:" + document.getElementById("systemtypeoption").selectedIndex;
+   updateurl += "&systemtypeedp:" + document.getElementById("systemtypeedp").selectedIndex;
+   updateurl += "&pwr:" + pwr;
+   updateurl += "&ipaddr:" + document.getElementById("ipaddr").value;
+   updateurl += "&snumber:" + document.getElementById("snumber").value;
+   updateurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                        + getCookie('USERID')); 
+   http.open("POST", updateurl, true);
+   http.onreadystatechange = HandleSaveSysSetup;  
+   http.send(null);
+}
+
+
+function OnStartStopCycling()
+{
+   if(ValidateCycleParams() == false)
+    return;    
+   
+   var updateurl = "func=19cmd=30?param=cyctime:";   
+   updateurl += cycTime;   
+   updateurl += ("&sontime:" + sonicOntime);
+   updateurl += ("&sofftime:" + sonicOfftime);  
+   
+   if((sonicOntime == 0) || (sonicOfftime == 0))
+    document.getElementById('stoponalarm').checked = true;
+   
+   updateurl += ("&weldamp:" + document.getElementById('amplitude').value);
+   updateurl += ("&alarmrst:" +  ((document.getElementById('stoponalarm').checked)?"1":"0"));
+   
+   updateurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                        + getCookie('USERID')); 
+
+   http.open("POST", updateurl, true);
+   http.onreadystatechange = HandleStartStopCycle;  
+   http.send(null);
+}
+
+function OnViewAllAlarms()
+{
+    /*alert("TBD");*/
+}
+
+function handleResetResponse()
+{
+  if(http.readyState == 4)
+  {
+    if(http.responseText == "OK")
+    {   
+       prevCommandResponded = true;
+       currCmd = 0;
+    }
+  }
+}
+
+function OnResetAlarm()
+{
+    postUrl = "func=16cmd=0?param=";   
+    postUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                       + getCookie('USERID'));
+                       
+    http.open("POST", postUrl, true);
+    http.onreadystatechange = handleResetResponse;
+    http.send(null);   
+}
+
+function HandleResetAlarmCounters()
+{
+    if (http.readyState == 4)
+    {        
+        if(http.responseText == "OK")
+            GetLanguageAndUserID('manufacturing.html');     
+          
+        prevCommandResponded = true;
+        currCmd = 0;
+    }
+}
+
+function OnResetAlarmCounters()
+{
+    var updateurl = "func=19cmd=29?param=";  
+    updateurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+    http.open("POST", updateurl, true);
+    http.onreadystatechange = HandleResetAlarmCounters;
+    http.send(null);
+}
+
+function HandleClearEventLog()
+{
+    if (http.readyState == 4)
+    {        
+        if(http.responseText == "OK")
+            GetLanguageAndUserID('manufacturing.html');           
+        currCmd = 0;
+        prevCommandResponded = true;
+    }
+}
+
+function OnClearEventLog()
+{ 
+  var updateUrl = "func=19cmd=28?param=";  
+  updateUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+  http.open("POST", updateUrl, true);  
+  http.onreadystatechange = HandleClearEventLog;
+  http.send(null);
+}
+
+function HandleClearAlarmLog()
+{
+    if (http.readyState == 4)
+    {        
+        if(http.responseText == "OK")
+           GetLanguageAndUserID('manufacturing.html');
+        
+        currCmd = 0;
+        prevCommandResponded = true;
+    }
+}
+
+function OnClearAlarmLog()
+{  
+  var updateUrl = "func=19cmd=27?param=";  
+  updateUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+  http.open("POST", updateUrl, true);  
+  http.onreadystatechange = HandleClearAlarmLog;
+  http.send(null);
+}
+
+function HandleRestoreDefaults()
+{
+    if (http.readyState == 4)
+    {        
+        if(http.responseText == "OK")
+           GetLanguageAndUserID('manufacturing.html');
+         
+        currCmd = 0;
+        prevCommandResponded = true;
+    }
+}
+
+function OnRestoreDefaults()
+{
+   var ret = confirm(strRestoreDefault);   
+   if (ret == true)
+   {
+    var updateurl = "func=19cmd=26?param=";  
+    updateurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+    http.open("POST", updateurl, true);
+    http.onreadystatechange = HandleRestoreDefaults;
+    http.send(null);
+   }
+}
+
+function HandleMFTestPoll()
+{
+    if (http.readyState == 4)
+    {   
+        var stopped = false;
+        var result = http.responseText.split(":");     
+        if(result[0] == "MFTESTPOLLRESPONSE")
+        {
+            var stat = parseInt(result[1], 10);
+            if(stat == stateError || stat == stateWait)            
+                stopped = true;
+        }
+        else
+          stopped = true;
+          
+        if(stopped)
+        {
+            testFlag = false;
+            document.getElementById('TestButton').value = "Start Test";
+        }
+    }
+}
+
+function SendMFTestPoll()
+{
+  var updateurl = "func=19cmd=35?param=";  
+  updateurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+  http.open("POST", updateurl, true);
+  http.onreadystatechange = HandleMFTestPoll;
+  http.send(null);
+}
+
+function HandleStartTest()
+{
+    if (http.readyState == 4)
+    {        
+        if(http.responseText == "TESTSTARTED")
+        {
+            document.getElementById('TestButton').value = "Stop Test";
+            testFlag = true;
+        }
+        else if(http.responseText == "TESTSTOPPED")
+        {
+            document.getElementById('TestButton').value = "Start Test";
+            testFlag = false;
+        }
+        else if(http.responseText == "SYSTEMBUSY")
+        {
+            alert("System is either busy or in error state");
+            testFlag = false;
+         }
+        else             
+        {          
+            alert("Command not responded");
+            testFlag = false;
+        }
+         
+        document.getElementById('TestButton').disabled = false;
+            
+        currCmd = 0;
+        prevCommandResponded = true;
+    }   
+}
+
+function OnStartTest()
+{
+    var tstButton = document.getElementById('TestButton');
+    if(tstButton.disabled == true)
+        return;
+    tstButton.disabled = true;
+    var updateurl;
+    if(tstButton.value == "Start Test")
+        updateurl = "func=19cmd=33?param=";  
+    else if(tstButton.value == "Stop Test")
+        updateurl = "func=19cmd=34?param=";  
+    else
+        return;
+    
+    updateurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+    http.open("POST", updateurl, true);
+    http.onreadystatechange = HandleStartTest;
+    http.send(null);
+}
+
+function GetCycleResults(hreflog)
+{
+    document.getElementById("lang").value= getCookie('LANGUAGE');
+	document.getElementById("userid1").value= getCookie('USERID');
+	document.temp_form.action = hreflog;
+	document.temp_form.submit();    
+}
+
+function OnSaveToFile()
+{
+    GetCycleResults('func=19cmd=25?param=.logdownload');
+    
+    currCmd = 0;
+    prevCommandResponded = true;
+}
+
+function handleSearchWelderCmd()
+{
+    if (http.readyState == 4)
+    {
+        var select = document.getElementById("welderlist");
+        ClearDropDown(select);   
+        var res = http.responseText.split("@");            
+        select.options.add(new Option("Select from List of IP/SNs", 0));                         
+        for(i = 1; i < res.length; i++)
+            select.options.add(new Option(res[i], i));     
+            
+       prevCommandResponded = true;
+       currCmd = 0;
+    }
+}
+
+function ClearDropDown(ddl) 
+{
+  var len = ddl.options.length;
+    for (i=0; i<len; i++) {
+       ddl.remove(0); //It is 0 (zero) intentionally 
+    }
+}
+
+function OnSearchCmd()
+{ 
+  var updateurl = "func=19cmd=20?param=";  
+  updateurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+  http.open("POST", updateurl, true);
+  http.onreadystatechange = handleSearchWelderCmd;
+  http.send(null);
+}
+
+function handlePollCmd()
+{
+    if (http.readyState == 4 && http.responseText.length!=0) 
+    { 
+        var i,j,results2,results3;
+        results = http.responseText.split("@");
+        if(results[0] == "OK")
+        {
+           DisableDiv();
+           for(i=1;i<results.length;i++)
+           {            
+                results2 = results[i].split(":");
+                try
+                {
+                    if(results2[1]!=null)
+                    {
+	                    results3 = results2[1].split(",");	            
+	                    if(results3[0] == "S")	     
+                            document.getElementById(results2[0]).innerHTML = results3[1];
+                        else if(results3[0] == "RB") 
+                        {   
+                           currStat = parseInt(results3[1], 10);
+                           if(parseInt(results3[1], 10) > 0)
+                                document.getElementById(results2[0] + '_' + results3[1]).checked = true;                                                    
+                        }
+                    }
+                }catch(err){}
+            }
+            
+            var currCycTime = parseInt(document.getElementById('nhrs').innerHTML, 10);
+            var totalProgressWidth = 500;             
+            var totalCycletime = TotalCycleTimeInMs();           
+            var progressPercent = (currCycTime /totalCycletime) * 100;            
+            var progressWidth = (totalProgressWidth * progressPercent) / 100;                 
+            document.getElementById("WeldProgress").style.width = progressWidth + "Px";
+            if(currStat == statStopped)                
+                document.getElementById("WeldProgress").style.backgroundColor = "red";
+            else
+                document.getElementById("WeldProgress").style.backgroundColor = "green";
+            UpdatePowerInWatts();
+            FormatCycleResults();  
+        } 
+    }  
+}
+
+function TotalCycleTimeInMs()
+{
+    /*var temp = document.getElementById("cyctime").value; 
+    var totalTime = temp.split(":");*/
+    return parseInt(cycTimeSetValue, 10);//((parseInt(totalTime[0]) * 3600000) + (parseInt(totalTime[1]) * 60000)); 
+}
+
+
+function SendPollCommand()
+{
+  var updateurl = "func=19cmd=31?param=";  
+  updateurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+  http.open("POST", updateurl, true);
+  http.onreadystatechange = handlePollCmd;
+  http.send(null);
+}
+
+function handleMFPoll()
+{
+    if(http.readyState == 4)
+    { 
+        if(http.responseText == "OK")
+            DisableDiv();
+        else if(http.responseText == "BUSY")
+            EnableDiv();
+        else
+            EnableDiv();
+    }
+}
+
+function SendMFPoll()
+{
+  var updateurl = "func=19cmd=0?param=";  
+  updateurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+  http.open("POST", updateurl, true);
+  http.onreadystatechange = handleMFPoll;
+  http.send(null);
+}
+
+function TimerCallBack()
+{
+    if((currCmd > 0)  && (prevCommandResponded == true))
+    {
+        prevCommandResponded = false;
+        cmdTimer = 0;
+        pollTime = 0;        
+        pollTimeMF = 0;
+        switch(currCmd)
+        {
+            case cmdRstAlarmCounters:
+                OnResetAlarmCounters();
+            break;
+            case cmdClearAlarmLog:
+                OnClearAlarmLog();
+            break;
+            case cmdClearEventLog:
+                OnClearEventLog();
+            break;
+            case cmdRestoreDefaults:
+                OnRestoreDefaults();
+            break;
+            case cmdSaveResults:
+                OnSaveToFile();
+            break;
+            case cmdStartStop:
+                OnStartStopCycling();
+            break;
+            case cmdResetAlarm:
+                OnResetAlarm();
+            break;
+            case cmdViewAlarms:
+                //OnViewAllAlarms();
+                prevCommandResponded = true;
+                currCmd = 0;
+            break;
+            case cmdSearch:
+                OnSearchCmd();
+            break;
+            case cmdSaveSystemSetup:
+                OnSaveSysSetup();
+            break;
+            case cmdStartTest:
+                OnStartTest();
+            break;
+            case cmdSpecialEnter:
+                OnSpecialEnter();
+            default:
+            break;
+        }
+    }
+    else if((currStat > statCompleted) &&(currCmd == 0))
+    {
+        pollTime += callBackTime;
+        if(pollTime >= pollInterval)
+        {
+            if(testFlag == true)
+                SendMFTestPoll();
+            else
+                SendPollCommand();
+            pollTime = 0;
+        }
+    }
+    else if((currCmd > 0)  && (prevCommandResponded == false))
+    {
+          cmdTimer += callBackTime;
+          if(cmdTimer > cmdTimeOut)
+          {
+            prevCommandResponded = true;          
+            currCmd = 0; 
+            cmdTimer = 0; 
+            pollTime += callBackTime; 
+          }
+    }
+    else
+    {
+        pollTimeMF += callBackTime;
+        if(pollTimeMF >= pollInterval)
+        {
+            if(testFlag == true)
+                SendMFTestPoll();
+            else
+                SendMFPoll();
+            pollTimeMF = 0;
+        }
+    }
+    
+}
+
+function OnSpecialEnter()
+{	
+	var SpecialPassword = "func=19cmd=45?param=";  
+	SpecialPassword += "&SpecialPassword=" + document.getElementById('SpecialPassword').value;
+	SpecialPassword += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+	http.open("POST", SpecialPassword, true);
+	http.onreadystatechange = HandleSpecialEnter;
+	http.send(null);
+}
+
+function HandleSpecialEnter()
+{
+	if(http.readyState == 4 && http.responseText.length!=0)
+	{
+		alert(http.responseText);
+		currCmd = 0;
+		prevCommandResponded = true;
+	}
+}
+
+function HandleOnClickEvent(cmnd)
+{
+    if(currCmd > 0)
+        return;
+    currCmd = parseInt(cmnd, 10);
+}       
+
+
+/* Removes leading whitespaces*/
+function LTrim( value ) {
+	
+	var re = /\s*((\S+\s*)*)/;
+	return value.replace(re, "$1");
+	
+}
+
+/* Removes ending whitespaces*/
+function RTrim( value ) {
+	
+	var re = /((\s*\S+)*)\s*/;
+	return value.replace(re, "$1");
+	
+}
+
+/* Removes leading and ending whitespaces*/
+function trim( value ) {
+	
+	return LTrim(RTrim(value));
+	
+}
+
+function isInteger(s){    
+    var i;
+    if(s.length <= 0)    
+       return false;
+     
+    for (i = 0; i < s.length; i++){   
+        /* Check that current character is number.*/
+        var c = s.charAt(i);
+        if (((c < "0") || (c > "9"))) 
+            return false;
+    }
+    /* All characters are numbers.*/
+    return true;
+}
+
+function ValidateCycleParams()
+{
+    var retVal = true;
+    var validationStr = "";
+    var time1,time2,minVal,maxVal,currVal,temp;
+    timePat1 = /^(\d{1,2}):(\d{2})/;
+    timePat2 = /^(\d{1,2}).(\d{3})/;
+    
+    var timeStr = document.getElementById('cyctime').value;
+    
+    var matchArray = timeStr.match(timePat1);
+    if(matchArray == null)
+    {
+        retVal = false;
+        validationStr += "CycleTime format should be XX:YY\n";        
+    }
+    else
+    {
+        time1 = parseInt(matchArray[1], 10);//Hrs
+        time2 = parseInt(matchArray[2], 10);//Mins
+        temp = document.getElementById("cyctimeMaxMin").value.split(',');
+        minVal = parseInt(temp[0], 10);
+        maxVal = parseInt(temp[1], 10);        
+        currVal = (time1 * 3600000) + (time2 * 60000);      
+        
+        if(time2 > 59)
+        {
+            retVal = false;
+            validationStr += "Minutes in Cycletime should be less than equal to 59\n"
+        }
+        if((currVal < minVal) || (currVal > maxVal))
+        {
+            retVal = false;            
+            validationStr += "CycleTime should be between "+ minCycTimeVal + " and " + maxCycTimeVal + "\n";
+        }
+        cycTime = currVal;
+    }
+    
+    timeStr = document.getElementById('sonicontime').value;
+    matchArray = timeStr.match(timePat2);
+    if(matchArray == null)
+    {
+        retVal = false;
+        validationStr += "sonic on time format should be XX:YYY\n";        
+    }
+    else
+    {
+        time1 = parseInt(matchArray[1], 10);//Secs
+        time2 = parseInt(matchArray[2], 10);//MSecs
+        temp = document.getElementById("sonicontimeMaxMin").value.split(',');
+        minVal = parseInt(temp[0], 10);
+        maxVal = parseInt(temp[1], 10);
+        currVal = (time1 * 1000) + (time2);
+       
+        if(((currVal < minVal) || (currVal > maxVal)) && (currVal != 0))
+        {
+            retVal = false;            
+            validationStr += "sonic on time should be between "+ minSonicOnTimeVal + " and " + maxSonicOnTimeVal + "\n";
+        }
+        sonicOntime = currVal;
+    }
+    
+    
+    timeStr = document.getElementById('sonicofftime').value;
+    matchArray = timeStr.match(timePat2);
+    if(matchArray == null)
+    {
+        retVal = false;
+        validationStr += "sonic off time format should be XX:YYY\n";        
+    }
+    else
+    {
+        time1 = parseInt(matchArray[1], 10);//Secs
+        time2 = parseInt(matchArray[2], 10);//MSecs
+        temp = document.getElementById("sonicofftimeMaxMin").value.split(',');
+        minVal = parseInt(temp[0], 10);
+        maxVal = parseInt(temp[1], 10);
+        currVal = (time1 * 1000) + (time2);
+       
+        if(((currVal < minVal) || (currVal > maxVal)) && (currVal != 0))
+        {
+            retVal = false;            
+            validationStr += "sonic off time should be between "+ minSonicOffTimeVal + " and " + maxSonicOffTimeVal + "\n";
+        }
+        sonicOfftime = currVal;
+    }
+    
+    currVal = document.getElementById("amplitude").value; 
+    currVal = trim(currVal);
+    document.getElementById("amplitude").value = currVal;    
+    if((currVal.length == 0) || (isInteger(currVal) == false))
+    {
+        retVal = false;
+        validationStr += "amplitude value should be in digits\n";
+    }
+    else
+    {
+        temp = document.getElementById("amplitudeMaxMin").value.split(',');
+        currVal = parseInt(currVal, 10);
+        minVal = parseInt(temp[0], 10);
+        maxVal = parseInt(temp[1], 10);
+        
+        if((currVal < minVal) || (currVal > maxVal))
+        {
+            retVal = false;
+            validationStr += "amplitude should be between "+ minVal + " and " + maxVal + "\n";
+        }
+    }
+    
+    if(!retVal)
+        alert(validationStr);
+        
+   
+     
+    return retVal;
+}
+
+function FormatCycleResults()
+{
+    var Ids = ["nhrs", "crsonicsontime", "crremainingtime"];
+    var temp1,temp2,temp3,indx;
+    for(indx = 0; indx < Ids.length; indx++)
+    {      
+        var temp = parseInt(document.getElementById(Ids[indx]).innerHTML, 10);
+        var Hrs = parseInt(temp/(3600000), 10);
+        var mins = parseInt(temp%(3600000), 10);    
+        mins = parseInt((mins / 60000), 10);
+        
+        if(currStat == statNothing)
+        {
+            Hrs = 0;
+            mins = 0;
+        }
+        temp2 = Hrs.toString();
+        temp3 = mins.toString();
+        
+        if(temp2.length < 2)
+            temp2 = "0" + temp2;
+        if(temp3.length < 2)
+            temp3 = "0" + temp3;
+            
+        document.getElementById(Ids[indx]).innerHTML = temp2 + ":" + temp3;
+    }
+}
+
+
+function FormatMinMaxCycleParam()
+{
+    //cycle time min max
+    var temp, temp2, temp3, Hrs, mins,secs,msecs;
+    var minVal, maxval;
+    temp = document.getElementById("cyctimeMaxMin").value.split(",");
+    minVal = parseInt(temp[0], 10);
+    
+    Hrs = parseInt(minVal/(3600000), 10);
+    mins = parseInt(minVal%(3600000), 10);    
+    mins = parseInt((mins / 60000), 10);
+    
+    temp2 = Hrs.toString();
+    temp3 = mins.toString();
+    
+    if(temp2.length < 2)
+        temp2 = "0" + temp2;
+    if(temp3.length < 2)
+        temp3 = "0" + temp3;
+        
+    minCycTimeVal = temp2 + ":" + temp3;
+    
+    
+    maxVal = parseInt(temp[1], 10);    
+    Hrs = parseInt(maxVal/(3600000), 10);
+    mins = parseInt(maxVal%(3600000), 10);    
+    mins = parseInt((mins / 60000), 10);
+    
+    temp2 = Hrs.toString();
+    temp3 = mins.toString();
+    
+    if(temp2.length < 2)
+        temp2 = "0" + temp2;
+    if(temp3.length < 2)
+        temp3 = "0" + temp3;
+        
+    maxCycTimeVal = temp2 + ":" + temp3;    
+    
+    //sonic on time min max
+    temp = document.getElementById("sonicontimeMaxMin").value.split(",");        
+    minVal = parseInt(temp[0], 10);
+    secs = parseInt(minVal/(1000), 10);
+    msecs = parseInt(minVal%(1000), 10); 
+    
+    temp2 = secs.toString();
+    temp3 = msecs.toString();  
+    
+    if(temp2.length < 2)    
+        temp2 = "0" + temp2;
+    
+    if(temp3.length < 3)
+    {
+        var prefixZ = "";
+        for(indx1 = 0; indx1 < (3- temp3.length);indx1++)
+        prefixZ += "0";
+        
+        temp3 = prefixZ + temp3;
+    }
+    
+    minSonicOnTimeVal = temp2 + "." + temp3;    
+    
+    maxVal = parseInt(temp[1], 10);
+    secs = parseInt(maxVal/(1000), 10);
+    msecs = parseInt(maxVal%(1000), 10); 
+    
+    temp2 = secs.toString();
+    temp3 = msecs.toString();  
+    
+    if(temp2.length < 2)    
+        temp2 = "0" + temp2;
+    
+    if(temp3.length < 3)
+    {
+        var prefixZ = "";
+        for(indx1 = 0; indx1 < (3- temp3.length);indx1++)
+        prefixZ += "0";
+        
+        temp3 = prefixZ + temp3;
+    }
+    
+    maxSonicOnTimeVal = temp2 + "." + temp3;    
+    
+    //sonic offtime min max val
+    temp = document.getElementById("sonicofftimeMaxMin").value.split(",");
+    minVal = parseInt(temp[0], 10);
+    secs = parseInt(minVal/(1000), 10);
+    msecs = parseInt(minVal%(1000), 10); 
+    
+    temp2 = secs.toString();
+    temp3 = msecs.toString();  
+    
+    if(temp2.length < 2)    
+        temp2 = "0" + temp2;
+    
+    if(temp3.length < 3)
+    {
+        var prefixZ = "";
+        for(indx1 = 0; indx1 < (3- temp3.length);indx1++)
+        prefixZ += "0";
+        
+        temp3 = prefixZ + temp3;
+    }
+    
+    minSonicOffTimeVal = temp2 + "." + temp3;    
+    
+    maxVal = parseInt(temp[1], 10);
+    secs = parseInt(maxVal/(1000), 10);
+    msecs = parseInt(maxVal%(1000), 10); 
+    
+    temp2 = secs.toString();
+    temp3 = msecs.toString();  
+    
+    if(temp2.length < 2)    
+        temp2 = "0" + temp2;
+    
+    if(temp3.length < 3)
+    {
+        var prefixZ = "";
+        for(indx1 = 0; indx1 < (3- temp3.length);indx1++)
+        prefixZ += "0";
+        
+        temp3 = prefixZ + temp3;
+    }
+    
+    maxSonicOffTimeVal = temp2 + "." + temp3;
+    
+}
+
+function FormatCycleParams()
+{   
+    var cycParamIds = ["sonicontime", "sonicofftime"];  
+    var temp1,temp2,temp3;
+    var temp = parseInt(document.getElementById('cyctime').value, 10);
+    cycTimeSetValue = parseInt(temp, 10);
+    var Hrs = parseInt(temp/(3600000), 10);
+    var mins = parseInt(temp%(3600000), 10);    
+    mins = parseInt((mins / 60000), 10);
+    
+    temp2 = Hrs.toString();
+    temp3 = mins.toString();
+    
+    if(temp2.length < 2)
+        temp2 = "0" + temp2;
+    if(temp3.length < 2)
+        temp3 = "0" + temp3;
+    document.getElementById('cyctime').value = temp2 + ":" + temp3;
+    
+     
+    for(indx = 0; indx < cycParamIds.length; indx++)
+    {    
+        temp = parseInt(document.getElementById(cycParamIds[indx]).value, 10);
+        var secs = parseInt(temp/(1000), 10);
+        var msecs = parseInt(temp%(1000), 10); 
+        
+        temp2 = secs.toString();
+        temp3 = msecs.toString();  
+        
+        if(temp2.length < 2)    
+            temp2 = "0" + temp2;
+        
+        if(temp3.length < 3)
+        {
+            var prefixZ = "";
+            for(indx1 = 0; indx1 < (3- temp3.length);indx1++)
+            prefixZ += "0";
+            
+            temp3 = prefixZ + temp3;
+        }
+        
+        document.getElementById(cycParamIds[indx]).value = temp2 + "." + temp3;
+    }
+}
+
+function handleMFOnload()
+{ 
+    
+    if (http.readyState == 4 && http.responseText.length!=0) 
+    {   
+        var i,j,results2,results3;
+        results = http.responseText.split("@");
+		var UserType = results[0].split("/");
+		if(UserType[0] == '2'){
+			tabBranson =  SBranson;
+			tabBoardtest = SBoardTest;	
+			tabMf = SMfTab;
+			TabArr =["", tabBranson, "", tabMf, tabBoardtest];
+		}
+		document.getElementById('tabmenu').innerHTML = TabArr[parseInt(UserType[1])];  
+        if(results[1] == "BUSY")
+            EnableDiv()
+        for(i=2;i<results.length;i++)
+        {            
+            results2 = results[i].split(":");
+              try{
+            if(results2[1]!=null)
+             {
+	            results3 = results2[1].split(",");	            
+	            if(results3[0] == "S")	     
+                    document.getElementById(results2[0]).innerHTML = results3[1];			     
+                else if((results3[0] == "D") || (results3[0] == "B"))  
+                {              
+                    document.getElementById(results2[0]).value = results3[1];			                                         
+                    if(results3.length>2)  
+                    {
+                         document.getElementById(results2[0]+'MaxMin').value = results3[2] + ',' + results3[3];                        
+                    }
+                }
+                else 
+                {
+                    if(results3[0] == "CB")	         
+                       document.getElementById(results2[0]).checked = (results3[1] == "1");
+                    else if(results3[0] == "RB") 
+                    {   
+                        currStat = parseInt(results3[1], 10);
+                        if(parseInt(results3[1], 10) > 0)
+                        document.getElementById(results2[0] + '_' + results3[1]).checked = true;                                                    
+                    }
+                    else if(results3[0] == "DDV")
+                    {
+                        document.getElementById(results2[0]).selectedIndex = parseInt(results3[1], 10);     
+                              
+						//currentPSOption =  parseInt(results3[1], 10);
+                    }
+                }
+            }
+            }catch(err){}
+          
+        } 
+		currentPSOption = parseInt(document.getElementById("SetupPwrWatt").value);
+        FormatCycleParams();    
+        FormatMinMaxCycleParam();
+        FormatCycleResults();  
+        UpdatePowerInWatts();
+        RefreshAttribute(document.form_cycleparam);
+        RefreshAttribute(document.form_syssetup);
+        if(currStat == statCompleted)
+            document.getElementById("WeldProgress").style.width = "500Px";
+        if(!timerId)
+              timerId = setInterval("TimerCallBack()",callBackTime);
+  
+    }  
+    
+}
+
+
+function ManufacturingOnLoad()
+{
+  var updateurl = "func=19cmd=24?param=";  
+  updateurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+  http.open("POST", updateurl, true);
+  http.onreadystatechange = handleMFOnload;
+  http.send(null);
+}
+
+function OnConnectWelder()
+{
+   var select = document.getElementById("welderlist");    
+   if(select.selectedIndex > 0)
+   {   
+       var loc = select.options[select.selectedIndex].text.split("/");
+       alert("Connecting to" + loc[0]);  
+       parent.location = "http://" + loc[0];              
+   }
+}
+
+function EnableDiv()
+{
+     document.getElementById('fade_div').style.display = 'block';
+    document.getElementById('info_div').style.display = 'block';
+    document.getElementById('fade_div').style.width = screen.width - 30;
+    var temp = (parseInt(document.getElementById('fade_div').style.width)
+    - parseInt(document.getElementById('info_div').style.width)) / 2;
+        
+    document.getElementById('info_div').style.left = temp + "Px";
+}
+
+function DisableDiv()
+{
+    document.getElementById('fade_div').style.display = 'none';
+    document.getElementById('info_div').style.display = 'none';
+}
+function GetUserManual(hrefpage)
+{
+    window.open(hrefpage);
+}
+</script>
+</head>
+
+<body onload='ManufacturingOnLoad()'>
+<div id="fade_div" style="width:840px;height:630px;filter:alpha(opacity=50);background-color:#FFFFFF;margin-left:0px;margin-top:210px;z-index:100;display:none;position:absolute">
+<table summary="" border="0" height="600px" width="1100px">
+		<tr><td style="height:600px;width:1100px">&nbsp;</td></tr>
+	</table>
+</div>
+
+<div id="info_div" style="display:none;position:absolute;width:250px;height:80px; z-index:102;left:435px;top:450px;">
+	<table summary="" cellspacing="3" border="0" style="background-color:#000000;width:250px;height:80px;">
+		<tr>
+		<td>
+		<table summary="" cellspacing="0" border="0" style="background-color:#FFFFFF;width:245px;height:80px;">		    
+			<tr><td id="Td1" style="font-weight:bold;font-size:14pt;text-align:center">INFO : System is busy</td></tr>
+		</table>
+		</td>
+		</tr>
+	</table>
+</div>
+<form name="temp_form" method="post" action="ip-setup.html">
+<input type="hidden" name="lang" id="lang" value="" />
+<input type="hidden" name="userid1" id="userid1" value="" />
+</form>
+<div id="wrapper">
+  <div id="header">
+  	<div id="headerNav">
+   	  <div id="headerLogo">
+       	<!-- <img src="images/bransonLogo.png" alt="Branson" /> //-->
+      </div><!-- end headerLogo //-->
+      <div id="headerLinks">
+      	<span class="user" id = "CurrUser">Current User: Manufacturing</span>  <!--<a href="javascript:GetUserManual('DCXManual.pdf')">User Manual</a> | --><a href="javascript:GetLanguageAndUserID('index.html')">Logout</a>
+      </div><!-- end HeaderLinks //-->
+    </div><!-- end headerNav //-->
+    <div id="mainNav">
+    	<ul id = "tabmenu">
+        	<li><a href="javascript:GetLanguageAndUserID('ip-setup.html')">IP Setup</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('weld-preset.html')">Weld Preset</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('advanced-preset.html')">Advanced Preset</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('diagnostic-IO.html')">I/O Diagnostics</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('Seek&WeldGraphs.html')">Seek & </br>Weld Graphs</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('hornsignature.html')">Horn <br/> Signature</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('system-information.html')">System Information</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('IO-configuration.html')">I/O Configuration</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('event-log.html')">Event Log</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('alarm-log.html')">Alarm Log</a></li>
+            <li class="active"><a href="#">Manufacturing</a></li>
+        </ul>
+    </div><!-- end mainNav //-->
+  </div><!-- end header //-->
+  <div id="content" style="margin-left:0px;">
+    <form action ="" name = "form_cycleparam">
+  	<div class="contentBoxWrapper" style="margin-left:0px;width:270px;">
+    	<div class="contentBoxHeader" style="margin-left:0px;">
+    	<h1>Cycle Parameters</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox" style="margin-left:0px;padding-left:2px;padding-right:2px;padding-bottom:53px">
+			<div class="ieDropFix" ><div class="textLabelBigLeft" style="width:150Px;">Cycle Time(hr)</div><!-- end label //--><input name="" type="text" class="textInput" id='cyctime' style="width:70Px;"/><input type="hidden" id="cyctimeMaxMin" name="cyctimeMaxMin"/><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->
+            <div class="ieDropFix"><div class="textLabelBigLeft" style="width:150Px;">Sonics On Time/Cycle(S)</div><!-- end label //--><input name="" type="text" class="textInput" id='sonicontime' style="width:70Px;"/><input type="hidden" id="sonicontimeMaxMin" name="sonicontime"/><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->
+            <div class="ieDropFix"><div class="textLabelBigLeft" style="width:150Px;">Sonics Off Time/Cycle(S)</div><!-- end label //--><input name="" type="text" class="textInput" id='sonicofftime' style="width:70Px;" /><input type="hidden" id="sonicofftimeMaxMin" name="sonicofftimeMaxMin"/><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->
+            <div class="ieDropFix"><div class="textLabelBigLeft" style="width:150Px;">Amplitude</div><!-- end label //--><input name="" type="text" class="textInput" id='amplitude' style="width:70Px;"/><input type="hidden" id="amplitudeMaxMin" name="amplitudeMaxMin"/></div><div class="clearit"></div><!-- end clearit //-->
+            <div class="textLabelBigLeft" style="width:150Px;">Stop on Alarm</div><!-- end label //--><div class="checkbox"><input name="Scan" type="checkbox" value="" id="stoponalarm" style="width:70Px;"/></div><!-- end checkbox //--><div class="clearit"></div><!-- end clearit //-->
+            <br /><br />
+            <div class="ieDropFix"><div class="textLabelBigLeft" style="width:150Px;">Frequency(HZ)</div><!-- end label //--><div class="labelRight" id = "freqval" style="width:70Px;">&nbsp</div><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->
+            <div class="ieDropFix"><div class="textLabelBigLeft" style="width:150Px;">Power(%)</div><!-- end label //--><div class="labelRight" id = "pwrval" style="width:70Px;">&nbsp</div><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->            
+            <div class="ieDropFix"><div class="textLabelBigLeft" style="width:150Px;">Power(W)</div><!-- end label //--><div class="labelRight" id = "pwrwatt" style="width:70Px;">&nbsp</div><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->             
+		</div><!-- end gradientBox //-->		
+    </div><!-- end contentBoxWrapper //-->    
+    </form>
+      	<div class="contentBoxWrapper" style="width:270px;">
+    	<div class="contentBoxHeader" style="margin-left:0px;">
+    	<h1>Cycle Results</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox" style="margin-left:0px;padding-left:2px;padding-right:2px;padding-bottom:47px">
+			<div class="ieDropFix"><div class="textLabelBigLeft">Cycles Run</div><!-- end label //--><div class="labelRight" id = "ncycles" style="width:70Px;">&nbsp</div><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->
+            <div class="ieDropFix"><div class="textLabelBigLeft">Hours run</div><!-- end label //--><div class="labelRight" id = "nhrs" style="width:70Px;">&nbsp</div><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->           
+            <div class="ieDropFix"><div class="textLabelBigLeft">Sonics On time(hr)</div><!-- end label //--><div class="labelRight" id = "crsonicsontime" style="width:70Px;">&nbsp</div><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->           
+            <div class="ieDropFix"><div class="textLabelBigLeft">Alarms</div><!-- end label //--><div class="labelRight" id = "nalarms" style="width:70Px;">&nbsp</div><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->           
+            <div class="ieDropFix"><div class="textLabelBigLeft">Time Remaining(hr)</div><!-- end label //--><div class="labelRight" id = "crremainingtime" style="width:70Px;">&nbsp</div><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->           
+            <br/>
+            <div class="subBoxWrapper">
+            <div class="subBoxHeader">
+            	Status
+           	</div><!-- end subBoxHeader //-->
+           	<div class="subBoxContent">
+            <div class="checkbox" style="padding-left:30px"><input name="resstatus" type="radio" value="" id ="stat_1" disabled ="disabled"/></div><div class="textLabelBigLeft">Completed</div><!-- end label //--><div class="clearit"></div>
+            <div class="checkbox" style="padding-left:30px"><input name="resstatus" type="radio" value="" id ="stat_2" disabled ="disabled"/></div><div class="textLabelBigLeft">Cycling</div><!-- end label //--><div class="clearit"></div>
+            <div class="checkbox" style="padding-left:30px"><input name="resstatus" type="radio" value="" id ="stat_3" disabled ="disabled"/></div><div class="textLabelBigLeft">Stopped</div><!-- end label //--><div class="clearit"></div>            
+            </div>
+            </div>            
+        </div><!-- end gradientBox //-->       
+    </div><!-- end contentBoxWrapper //-->
+    <form action ="" name = "form_syssetup">
+      	<div class="contentBoxWrapper" style="width:270px;">
+    	<div class="contentBoxHeader" style="margin-left:0px;">
+    	<h1>System Setup</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox" style="margin-left:0px;padding-left:2px;padding-right:2px;text-align: center;width:300px">
+			<div class="ieDropFix"><div class="textLabelBigLeft" style="width:100px">Sr. Number</div><!-- end label //--><input name="" type="text" class="textInput" id='snumber' /><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->
+            <div class="ieDropFix"><div class="textLabelBigLeft" style="width:100px">IP Addr</div><!-- end label //--><input name="" type="text" class="textInput" id='ipaddr' /><!-- end labelL //--></div><div class="clearit"></div><!-- end clearit //-->            
+            <div class="ieDropFix"><div class="textLabelBigLeft" style="width:100px">Power Level (W) </div><!-- end label //--><input name="" type="text" class="textInput" id="SetupPwrWatt" /></div><div class="clearit"></div><!-- end clearit //-->
+			<!-- end label //--><input type="hidden"/><!-- end ieDropFix //-->			
+			<div class="dropdown">
+				<select id="freqpwroption" size="1">
+						<option value="ExternalStart">Select Frequency&nbsp&nbsp&nbsp</option>
+						<option>20khz</option>					
+						<option>30khz</option>
+						<option>40khz</option>
+				</select>				
+			</div>
+			<div class="dropdown">
+				<select id="systemtypeoption" size="1" style="width:142px">
+					<option value="ExternalStart">Control Level&nbsp&nbsp&nbsp</option>
+					<option>DCX RM B</option>					
+					<option>DCX S</option>
+					<option>DCX RM S</option>
+				</select>				
+			</div>
+			<div class="dropdown">
+				<select id="systemtypeedp" size="1" style="width:240px">
+					<option value="InternalStart">Select EDP for MI-S Board&nbsp&nbsp&nbsp</option>
+					<option>242-102-945</option>					
+					<option>242-102-1057</option>
+					</select>				
+			</div><div class="clearit"></div><br /><br />
+			<input name="save1" type="button" class="button" value="Save" style="width:180px;" onclick="HandleOnClickEvent('10')"/><br /><br />
+			<input name="rstalarmcounters" type="button" class="button" value="Reset Alarm Counters" style="width:180px;" onclick="HandleOnClickEvent('1')"/><br /><br />
+			<input name="clralarmlog" type="button" class="button" value="Clear Alarm Log" style="width:180px;" onclick="HandleOnClickEvent('2')"/><br /><br />
+			<input name="clreventlog" type="button" class="button" value="Clear Event Log" style="width:180px;" onclick="HandleOnClickEvent('3')"/><br /><br />
+			<input name="restoredefaults" type="button" class="button" value="Restore Weld Presets" style="width:180px;" onclick="HandleOnClickEvent('4')"/><br /><br />
+			<input name="savetofile" type="button" class="button" value="Save Results to File" style="width:180px;" onclick="HandleOnClickEvent('5')"/>	<br /><br />		
+			<input name="password1" type="password" class="textInputSSS" style="width:100px;margin-left:30px;" id="SpecialPassword" />
+            <input name="EnterSpecial" type="button" class="button" value="Special" style="width:110px;" onclick="HandleOnClickEvent(cmdSpecialEnter)"/>	
+		</div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->    
+	</div>
+    </form>
+    <div class="contentBoxWrapper" style="margin-top:0px;width:auto">
+    <table>
+        <tr>
+            <td style="width:250px;text-align:center">                 
+            </td>
+            <td style="width:340px;text-align:center">
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                <input name="testB" type="button" class="button" id = "TestButton" value="Start Test" style="width:180px;" onclick="HandleOnClickEvent('11')"/>
+            </td>
+            <td style="width:340px;text-align:center">
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp                
+            </td>  
+        </tr>
+        <tr>
+            <td style="width:250px;text-align:center">                 
+            </td>
+            <td style="width:340px;text-align:center">               
+            </td>
+            <td style="width:340px;text-align:center">                
+            </td>  
+        </tr>
+        <tr>            
+            <td style="width:250px;text-align:center"> 
+                <input name="startstop" type="button" class="button" value="Start/Stop Cycling" style="width:180px;" onclick="HandleOnClickEvent('6')"/>
+            </td>
+            <td style="width:340px;text-align:center">
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                <input name="resetalarm" type="button" class="button" value="Reset Alarm" style="width:180px;" onclick="HandleOnClickEvent('7')"/>
+            </td>
+            <td style="width:340px;text-align:center">
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                <input name="viewalarm" type="button" class="button" value="View All Alarms" style="width:180px;" onclick="HandleOnClickEvent('8')"/>
+            </td>            
+        </tr>
+        <tr>
+            <td style="width:250px;text-align:center">
+                <input name="search" type="button" class="button" value="Search For Welders" style="width:180px;" onclick="HandleOnClickEvent('9')"/>
+            </td>
+            <td style="width:340px;text-align:center">   
+				<select id="welderlist" style="width:220px;">
+						<option>Select from List of IP/SNs</option>						
+				</select>		
+            </td>
+            <td style="width:340px;text-align:center">
+                 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                 <input name="connectw" type="button" class="button" value="Connect" style="width:180px;" onclick="OnConnectWelder()"/>
+            </td>
+        </tr>
+        </table>
+        <table>
+        <tr>
+            <td style="width:30px">&nbsp</td>
+            <td style="width:500px;">            
+            <div style="border:1px solid black; width:500px; height:20px;">
+			<div id="WeldProgress" style="height:20px; width:0px; background-color:Green;"/>
+			</div>								
+            </td>
+        </tr>
+        </table>
+        </div>
+  <div class="clearit"></div>
+  <div id="footer"><p>©2011 Branson, All Rights Reserved<br />
+    <img src="Emerson-IA.jpg" alt="Emersin Industrial Automation" /></p></div>
+</div>
+<!-- end wrapper //-->
+
+</body>
+</html>

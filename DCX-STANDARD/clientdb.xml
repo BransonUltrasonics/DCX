@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.ibm.magnolia.clientmodel:ClientModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:com.ibm.magnolia.clientmodel="http:///com/ibm/magnolia/clientmodel.ecore">
+  <workItemEditorHistory>
+    <internalContents date="2023-03-13T15:39:43.798-0500" description="10414: Horn Signature, Layout wrong (&quot;Update Graph&quot; and &quot;Export Graph Data&quot;)" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_LauzULhdEe2mG9osXXYOOA"/>
+    </internalContents>
+    <internalContents date="2023-02-28T15:04:29.472-0600" description="10398: Web Page Reload 4" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_a9w-QLerEe2iCtfcGruXAA"/>
+    </internalContents>
+    <internalContents date="2023-02-13T10:44:46.314-0600" description="10275: Web Page Reload 3" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_piQqMKu9Ee2pPPRMlRMqWw"/>
+    </internalContents>
+    <internalContents date="2023-02-13T10:44:01.861-0600" description="10195: Web Page Reload 2" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_2QjFQJg2Ee2jo7Lh2AbX9w"/>
+    </internalContents>
+    <internalContents date="2023-01-06T11:01:49.790-0600" description="10084: Web Page Reload" repository="https://jazz.bucclm.com/ccm/">
+      <workItem itemId="_q9iF4I3jEe2c094F8sI67g"/>
+    </internalContents>
+  </workItemEditorHistory>
+  <queries/>
+  <queryViews/>
+</com.ibm.magnolia.clientmodel:ClientModelRoot>

@@ -1,0 +1,283 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+	<link rel="stylesheet" type="text/css" href="superfishDCXAFRackMt-v1.css" media="screen" />
+	<script type="text/javascript" src="jqueryDCXAFRackMt-v1.js"></script>
+	<script type="text/javascript" src="hoverIntentDCXAFRackMt-v1.js"></script>
+	<script type="text/javascript" src="superfishDCXAFRackMt-v1.js"></script>
+	<script type="text/javascript" language="javascript" src="handlerDCXAFRackMt-v1.js"></script> 
+	<script type="text/JavaScript" language="javascript" src="formchange-detectDCXAFRackMt-v1.js"></script>
+	<title>BRANSON DCX GUI</title>
+	<link href="styleDCXAFRackMt-v1.css" rel="stylesheet" type="text/css" />
+</head>
+<script language="javascript"  type="text/javascript">
+var strRestorePreset = "Are you sure you want to Restore the Selected preset to the Default Preset?";
+var strRecallDefault = "You are about to Recall a preset?";
+var PresetCount = 1, PresetName, PresetSelectedIndex, HornPresetNum,TempTweakEnabled = false;
+var restoreFlag = false, PageRefTo = null, RestoreMsg = "Parameters Restored";
+var PresetData = new Array();
+var http = getHTTPObject(); 
+function HandleModifySpecialpresetOnLoad() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {   
+        var i, j, results2, results3, results;
+        results = http.responseText.split("@");
+        var UserType = results[0].split("/");
+        SetUserType(UserType[0]);
+        SetToken(UserType[1], restoreFlag);
+        SetSystemType(UserType[2]);
+        if (results[1] != UseID("USERPASSCODE").value) {
+            UseID("Level2Msg").innerHTML = "InValid Password";
+            UseID("USERPASSCODE").value = "";
+            EnableDiv();
+            return;
+        }
+        else {
+            DisableDiv();
+        }
+        PresetCount = 1;
+        UseID("SpecialPreset:dd").innerHTML = "";
+        for (i = 2; i < (results.length - 2); i++) {
+            results2 = results[i].split(",");
+            PresetData[i - 2] = new Array();
+            for (j = 0; j < 4; j++) 
+                PresetData[i - 2][j] = results2[j];
+            AddOption("SpecialPreset:dd", results2[0]);
+        }
+        results3 = results[i].split(",");
+        if (results3[0] == "TweakEnabled:CB")
+            if (results3[1] == "1"){
+				UseID("TweakEnabled").checked = true;
+				TempTweakEnabled = true;
+			}
+            else{
+				UseID("TweakEnabled").checked = false;
+				TempTweakEnabled = false;
+			}
+        if (restoreFlag) {
+            alert(RestoreMsg);
+            restoreFlag = false;
+        }
+        UseID("SpecialPreset:dd").selectedIndex = 4;
+        DisplayPresetData();
+    }
+}
+function AddOption(DropID, Element) {
+    var opt = document.createElement("option");
+    opt.text = PresetCount + ". " + Element;
+    opt.value = PresetCount + ". " + Element;
+    PresetCount = PresetCount + 1;
+    UseID(DropID).options.add(opt);
+}
+function DisplayPresetData() {
+    var select = UseID("SpecialPreset:dd");
+    UseID("Date:tt").innerHTML = PresetData[select.selectedIndex][1];
+    UseID("Time:tt").innerHTML = PresetData[select.selectedIndex][2];
+    UseID("HornPreset:tt").innerHTML = PresetData[select.selectedIndex][3];
+}
+function ModifySpecialpresetOnLoad() {
+    window.history.forward(1);    
+    var ModifySpecialpresetOnLoadUrl = "func=" + Func.BransonSpecialPresetGetDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+    ModifySpecialpresetOnLoadUrl += SendCookies();
+    http.open("POST", ModifySpecialpresetOnLoadUrl, true);
+    http.onreadystatechange = HandleModifySpecialpresetOnLoad;
+    http.send(null);
+}
+function ModifySpecialpresetSave() {
+    PresetSelectedIndex = UseID("SpecialPreset:dd").selectedIndex;
+    if (PresetSelectedIndex == -1) {
+        alert("Please Select Preset first");
+        return
+    }
+    HornPresetNum = PresetData[PresetSelectedIndex][3];
+    PresetSelectedIndex++;
+    var SavePresetdata = "func=" + Func.BransonSpecialPresetPostDatahandler + "cmd=" + Command.REQ_SAVE_PRESET + "?param=";
+    SavePresetdata += "Index=" + PresetSelectedIndex;
+    SavePresetdata += "hornpresetno=" + HornPresetNum;
+    SavePresetdata += SendCookies();
+    http.open("POST", SavePresetdata, true);
+    http.onreadystatechange = SaveResposeHandler;
+    http.send(null);
+}
+function TweakSave() {
+    var SavePresetdata = "func=" + Func.BransonSpecialPresetPostDatahandler + "cmd=" + Command.REQ_SAVE + "?param=";
+    SavePresetdata += "TweakEnabled=";
+    SavePresetdata += (UseID('TweakEnabled').checked == true) ? "1" : "0";
+    SavePresetdata += SendCookies();
+    http.open("POST", SavePresetdata, true);
+    http.onreadystatechange = SaveResposeHandler;
+    http.send(null);
+}
+function SaveResposeHandler() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+        if (http.responseText == "TOKENNOTAVAILABLE") {
+            SetToken(0,0);
+            alert(Notoken);
+            return;
+        }
+        else {
+            SetToken(1,0);
+			TempTweakEnabled = UseID("TweakEnabled").checked;
+            alert(http.responseText);
+			if (PageRefTo != null)
+				SubmitForm(PageRefTo);        }
+    }
+}
+function RecallPreset() {
+    var ret = confirm(strRecallDefault);
+    if (ret == true) {
+        PresetSelectedIndex = UseID("SpecialPreset:dd").selectedIndex;
+        PresetSelectedIndex++;
+        var SavePresetdata = "func=" + Func.BransonSpecialPresetPostDatahandler + "cmd=" + Command.REQ_RECALL_PRESET + "?param=";
+        SavePresetdata += "Index=" + PresetSelectedIndex;
+        SavePresetdata += SendCookies();
+        http.open("POST", SavePresetdata, true);
+        http.onreadystatechange = RecallResposeHandler;
+        http.send(null);
+    }
+}
+function RecallResposeHandler() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+        if (http.responseText == "TOKENNOTAVAILABLE") {
+            SetToken(0,0);
+            alert(Notoken);
+            return;
+        }
+        else {
+            SetToken(1,0);
+            alert(http.responseText);
+        }
+    }
+}
+function formvalidate() {
+    var validationstring = "";
+
+    if (UseID("PreSet_1").value.length != 0) {
+        UseID("PreSet_1").value;
+        validationstring += "* PreSet_1 should be Number \n";
+    }
+    else
+        validationstring += "* Please Enter PreSet_1 \n"
+    if (!validationstring)
+        return true;
+    else {
+        alert(validationstring);
+        return false;
+    }
+}
+function ModifySpecialpresetRestore() {
+    var ret = confirm(strRestorePreset);
+    if (ret == true) {
+        window.history.forward(1);
+        var ModifySpecialpresetRestoreUrl = "func=" + Func.BransonSpecialPresetGetDatahandler + "cmd=" + Command.REQ_RESTORE + "?param=";
+		PresetSelectedIndex = UseID("SpecialPreset:dd").selectedIndex;
+        PresetSelectedIndex++;
+		ModifySpecialpresetRestoreUrl += "Index=" + PresetSelectedIndex;
+        ModifySpecialpresetRestoreUrl += SendCookies();
+        http.open("POST", ModifySpecialpresetRestoreUrl, true);
+        restoreFlag = true;
+        http.onreadystatechange = HandleModifySpecialpresetOnLoad;
+        http.send(null);
+    }
+}
+function SubmitForm(hrefpage) {
+	var ret;
+	if (UseID("TweakEnabled").checked != TempTweakEnabled){
+		ret = confirm(formChangeMessage);
+		if (ret == true){
+			PageRefTo = hrefpage;
+			TweakSave();
+			return;
+		}
+	}
+    if (hrefpage == "index.html")
+        location.href = hrefpage;
+    else {
+        SubmitCookies(hrefpage);
+        document.temp_form.submit();
+    }
+}
+jQuery(function () {
+	UseID('header').innerHTML = MainHeader;
+	SetUserType('3');
+	SetTabAttribute(4,6);
+	GetSystemType();
+    jQuery('ul.sf-menu').superfish();
+});
+</script>
+<body>
+<form name="temp_form" method="post" action="SpecialPreset.html">
+<input type="hidden" name="lang" id="lang" />
+<input type="hidden" name="usrid" id="usrid" />
+<input type="hidden" name="passcode" id="passcode" />
+	<input type="hidden" name="uniqueid" id="uniqueid" />	
+</form>
+<div id="wrapper">
+  <div id="header"></div>
+  <div id="PageHeader"></div>
+  <div id="content">
+    <div id="fade_div"></div>
+    <div id="info_div">
+	     <table>
+		        <tr><td id="Level2Lbl">Enter Password</td></tr>
+		        <tr><td id="Level2Msg"></td></tr>
+		        <tr><td><input type="password" class="Level2Pwd" id ="USERPASSCODE" onkeydown="if(event.keyCode == 13)ModifySpecialpresetOnLoad();"/></td></tr>
+	     </table>
+    </div>  
+    <div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">SPECIAL PRESETS</div>
+    	<div class="gradientBox50">
+        <table>
+            <tr><td></td>
+                <td><input id="Save" type="button" value="Save Preset" onclick="ModifySpecialpresetSave()"/></td>
+                <td><input id="Recall" type="button" value="Recall Preset" onclick="RecallPreset()"/></td>
+            </tr>
+            <tr>
+                <td>
+                    <select id="SpecialPreset:dd" size="5" onclick="DisplayPresetData()">
+                    </select>	
+                </td>
+                <td class="tdWidth33">
+                    <div class="textLabelRight">Date</div>
+                    <div class="clearit"></div>
+                    <div class="textLabelRight">Time</div>
+                    <div class="clearit"></div>
+			        <div class="textLabelRight">Horn Preset</div>
+                    <div class="clearit"></div>
+                </td>
+              <td class="tdWidth33">
+                <div class="textLabelBigLeft" id="Date:tt">----------</div>
+                <div class="clearit"></div>
+                <div class="textLabelBigLeft" id="Time:tt">----------</div>
+                <div class="clearit"></div>
+                <div class="textLabelBigLeft" id="HornPreset:tt">----------</div>
+                <div class="clearit"></div>
+              </td>
+            </tr>
+          </table>	 
+			<div class="checkboxLeft"><input type="checkbox" id="TweakEnabled"/></div>
+			<div class="textLabelBigLeft" >Tweak Enabled</div>
+            <div class="clearit"></div>
+			<div class="textLabelBigLeft"></div>
+			<input id="SaveId" type="button" class="button" value="Save" onclick="PageRefTo=null;TweakSave();"/> 
+			<div class="textLabel"></div>
+			<input name="Restore Factory Default" type="button" class="button" value="Restore Factory Defaults"  id="RestoreFactoryDefault" onclick="ModifySpecialpresetRestore()"/>
+         </div>
+	</div>
+    <div class="clearit"></div>
+  </div>
+  <div id="footer"></div>
+</div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        EnableDiv();
+    });
+</script>
+</html>

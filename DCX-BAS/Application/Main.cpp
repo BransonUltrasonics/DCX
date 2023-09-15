@@ -1,0 +1,787 @@
+/*
+$Header:   D:/databases/VMdb/archives/DCX/Weld Controller/WC/Application/Main.cpp_v   1.38.1.2   24 Mar 2014 09:26:56   rjamloki  $
+*/
+/****************************************************************************/
+/*                                                                          */
+/*                                                                          */
+/*   Copyright (c) Branson Ultrasonics Corporation, 1995,96, 2009        	*/
+/*   This program is the property of Branson Ultrasonics Corporation      	*/
+/*   Copying of this software is expressly forbidden, without the prior     */
+/*   written consent of Branson Ultrasonics Corporation.                    */
+/*                                                                          */
+/*                                                                          */
+/*                                                                          */
+/*************************                         **************************/
+/*****************************************************************************
+$Log:   D:/databases/VMdb/archives/DCX/Weld Controller/WC/Application/Main.cpp_v  $
+ * 
+ *    Rev 1.38.1.2   24 Mar 2014 09:26:56   rjamloki
+ * Fixed Field Service event Data 1 & Data 2 to write 32 bit number.
+ * 
+ *    Rev 1.38.1.1   13 Mar 2014 15:54:46   rjamloki
+ * FRAM is accessed through pointers. Removed compiler allocation of FRAM
+ * 
+ *    Rev 1.38.1.0   04 Mar 2014 07:49:24   rjamloki
+ * Added Software Upgrade, Digital Tune and Memory Offset.
+ * 
+ *    Rev 1.38   25 Oct 2013 11:59:14   ygupta
+ * Disabled Nagle Algo on http connection, Added JSONStopDCX Data service, Tracker fixes, FinalData State renamed to CycleAbort State.
+ * 
+ *    Rev 1.37   15 Oct 2013 07:42:10   rjamloki
+ * Tracker Fix, JSON Fix, Link Status debouncing configurable from Adv R&D page.
+ * 
+ *    Rev 1.36   08 Oct 2013 06:17:34   rjamloki
+ * Fixed warnings.
+ * 
+ *    Rev 1.35   24 Sep 2013 06:28:42   rjamloki
+ * Watch dog removed.
+ * 
+ *    Rev 1.34   20 Sep 2013 07:00:12   rjamloki
+ * Added changes to build bootloader with same CyGOS.
+ * 
+ *    Rev 1.33   17 Sep 2013 04:14:00   rjamloki
+ * Added Task Manager again and reduced time for WatchDogTimer.
+ * 
+ *    Rev 1.32   03 Sep 2013 12:46:42   ygupta
+ * Moved to tip from 1.30.1.1
+ * 
+ *    Rev 1.30.1.1   26 Aug 2013 09:02:58   amaurya
+ * Fixed issue of load preset at start and tracker issue.
+ * 
+ *    Rev 1.30.1.0   24 Aug 2013 17:14:04   amaurya
+ * Code review and tracker issue fixes.
+ * 
+ *    Rev 1.30   02 Aug 2013 10:55:46   amaurya
+ * Coverty fixes.
+ * 
+ *    Rev 1.28   10 Jul 2013 07:51:26   amaurya
+ * Fixed powerup DCP Event Log issue.
+ * 
+ *    Rev 1.27   08 Jul 2013 08:53:52   amaurya
+ * Fixed tracker issue for Ver3.0y.
+ * 
+ *    Rev 1.26   27 Jun 2013 05:55:46   amaurya
+ * System crash fixes.
+ * 
+ *    Rev 1.25   14 Jun 2013 11:21:08   amaurya
+ * MH1 Round fixes
+ * 
+ *    Rev 1.24   31 May 2013 10:37:16   amaurya
+ * Level II testing fixes.
+ * 
+ *    Rev 1.23   21 May 2013 12:25:52   amaurya
+ * Code review fixes.
+ * 
+ *    Rev 1.22   06 May 2013 09:17:02   amaurya
+ * Changes to use actual frequency.
+ * 
+ *    Rev 1.21   15 Mar 2013 10:50:04   ygupta
+ * Issues Resolved, Requirement Changes
+ * 
+ *    Rev 1.20   11 Mar 2013 03:18:20   ygupta
+ * Issues fixed & Requirement Changes
+ * 
+ *    Rev 1.19   11 Mar 2013 02:26:26   ygupta
+ * Issues Fixed & Requirement Changes
+ * 
+ *    Rev 1.18   18 Feb 2013 03:07:30   ygupta
+ * FieldBus Changes
+ * 
+ *    Rev 1.17   29 Jan 2013 02:20:32   ygupta
+ * WebPages CleanUp, Code Review and CleanUp
+ * 
+ *    Rev 1.16   16 Jan 2013 06:27:24   ygupta
+ * Level2 Code with Profibus
+ * 
+ *    Rev 1.15   11 Jan 2013 02:51:44   ygupta
+ * Level2 Requirement Changes
+ * 
+ *    Rev 1.14   18 Dec 2012 07:37:40   ygupta
+ * Changes for Multiple Overload alarm in case of 15V lost
+ * 
+ *    Rev 1.13   14 Dec 2012 05:26:54   ygupta
+ * Alarms Implemented
+ * 
+ *    Rev 1.12   13 Dec 2012 00:10:26   ygupta
+ * Changes related to Issues
+ * 
+ *    Rev 1.11   24 Nov 2012 08:02:08   amaurya
+ * Added changes for 40KHz supply.
+ * 
+ *    Rev 1.10   05 Nov 2012 08:57:04   amaurya
+ * State Machine changes
+ * 
+ *    Rev 1.9   29 Oct 2012 02:55:02   rjamloki
+ * Printfs disbaled and changes in website
+ * 
+ *    Rev 1.8   26 Oct 2012 02:36:24   rjamloki
+ * Website Related files Added
+ * 
+ *    Rev 1.6   10 Sep 2012 03:12:08   rjamloki
+ * Modbus changed implementation with unions and code cleanup
+ * 
+ *    Rev 1.5   29 Aug 2012 13:27:56   rjamloki
+ * WC Modbus checkin and related changes
+ * 
+ *    Rev 1.3   02 Jul 2012 13:04:10   ygupta
+ * Code cleanup for meeting coding standard. and updates after review. All varibles name in upper case. 
+ * 
+ *    Rev 1.2   29 Jun 2012 12:15:10   ygupta
+ * First Compilable code, First check in after review, Needs more clanup
+ * 
+ *    Rev 1.1   20 Jun 2012 10:13:12   ygupta
+ * Added creation of more tasks. Need to fix code compilation problem.
+ *
+*/
+
+#include "CyGOS.h"
+#include "LED.h"
+#include "InputTask.h"
+#include "DebugNew.h"
+#include "stdio.h"
+#include "Board.h"
+#include "MIATask.h"
+#include "WCTask.h"
+#include "FUNC.h"
+#include "Log.h"
+#include "SysConfig.h"
+#include "Website.h"
+#include "UploadFirmWareTask.h"
+#include "GLOBALS.h"
+#include "CpuDefs.h"
+#include "FirmWareUpgrade.h"
+#include "ModBusRcvTask.h"
+#include "ModBusSendTask.h"
+#include "NRTModbusTask.h"
+#include "FieldbusTask.h"
+#include "PasscodeConfig.h"
+#include "portable.h"
+#include "WelderSearchTask.h"
+#include "TaskManager.h"
+#include "ReceiveCommandHandler.h"
+#include "RTOS.h"
+#include "ShutDownTask.h"
+#include "ExternalStatusTask.h"
+#include "ProfiBus.h"
+#include "FEC.h"
+#include "MII.h"
+#include "DcxManagerHandler.h"
+
+UINT16 CompressedWebPageCRC = 0;
+extern bool PrintHighestTaskLoad;
+extern bool PrintCurrentTaskLoad;
+extern TaskIntLoadCallBack LoadLogCallBack;
+void SetLeds(int slow, int fast)
+{
+   LED::Set(1, slow);
+   LED::Set(2, fast);
+}
+
+/*-------------------------------------------------------------------------*/
+/*                                                                         */
+/*  Lookup Tables.  The "hardware" method of computing CRCs involves bit   */
+/*  manipulations, which is very inefficient for a software computation.   */
+/*  Instead of computing the CRC bit-by-bit, a 256-element lookup table    */
+/*  can be used to perform the equivalent of 8 bit operations at a time.   */
+/*  (This is described in "Byte-wise CRC Calculations" in IEEE Micro,      */
+/*  June 1983, pp. 40-50.)  For a CRC-16, the lookup table consists of 256 */
+/*  2-byte WORDs (see below, or the CRC16.PAS unit for the actual table,   */
+/*  or the CRCTable program for computation of the lookup table for the    */
+/*  x16 + x15 + x2 + 1 generator polynomial):                              */
+/*                                                                         */
+/*-------------------------------------------------------------------------*/
+const UINT16 CRCTable[256] =
+ {0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0, 0x0280, 0xC241, 0xC601, 0x06C0,
+  0x0780, 0xC741, 0x0500, 0xC5C1, 0xC481, 0x0440, 0xCC01, 0x0CC0, 0x0D80, 0xCD41,
+  0x0F00, 0xCFC1, 0xCE81, 0x0E40, 0x0A00, 0xCAC1, 0xCB81, 0x0B40, 0xC901, 0x09C0,
+  0x0880, 0xC841, 0xD801, 0x18C0, 0x1980, 0xD941, 0x1B00, 0xDBC1, 0xDA81, 0x1A40,
+  0x1E00, 0xDEC1, 0xDF81, 0x1F40, 0xDD01, 0x1DC0, 0x1C80, 0xDC41, 0x1400, 0xD4C1,
+  0xD581, 0x1540, 0xD701, 0x17C0, 0x1680, 0xD641, 0xD201, 0x12C0, 0x1380, 0xD341,
+  0x1100, 0xD1C1, 0xD081, 0x1040, 0xF001, 0x30C0, 0x3180, 0xF141, 0x3300, 0xF3C1,
+  0xF281, 0x3240, 0x3600, 0xF6C1, 0xF781, 0x3740, 0xF501, 0x35C0, 0x3480, 0xF441,
+  0x3C00, 0xFCC1, 0xFD81, 0x3D40, 0xFF01, 0x3FC0, 0x3E80, 0xFE41, 0xFA01, 0x3AC0,
+  0x3B80, 0xFB41, 0x3900, 0xF9C1, 0xF881, 0x3840, 0x2800, 0xE8C1, 0xE981, 0x2940,
+  0xEB01, 0x2BC0, 0x2A80, 0xEA41, 0xEE01, 0x2EC0, 0x2F80, 0xEF41, 0x2D00, 0xEDC1,
+  0xEC81, 0x2C40, 0xE401, 0x24C0, 0x2580, 0xE541, 0x2700, 0xE7C1, 0xE681, 0x2640,
+  0x2200, 0xE2C1, 0xE381, 0x2340, 0xE101, 0x21C0, 0x2080, 0xE041, 0xA001, 0x60C0,
+  0x6180, 0xA141, 0x6300, 0xA3C1, 0xA281, 0x6240, 0x6600, 0xA6C1, 0xA781, 0x6740,
+  0xA501, 0x65C0, 0x6480, 0xA441, 0x6C00, 0xACC1, 0xAD81, 0x6D40, 0xAF01, 0x6FC0,
+  0x6E80, 0xAE41, 0xAA01, 0x6AC0, 0x6B80, 0xAB41, 0x6900, 0xA9C1, 0xA881, 0x6840,
+  0x7800, 0xB8C1, 0xB981, 0x7940, 0xBB01, 0x7BC0, 0x7A80, 0xBA41, 0xBE01, 0x7EC0,
+  0x7F80, 0xBF41, 0x7D00, 0xBDC1, 0xBC81, 0x7C40, 0xB401, 0x74C0, 0x7580, 0xB541,
+  0x7700, 0xB7C1, 0xB681, 0x7640, 0x7200, 0xB2C1, 0xB381, 0x7340, 0xB101, 0x71C0,
+  0x7080, 0xB041, 0x5000, 0x90C1, 0x9181, 0x5140, 0x9301, 0x53C0, 0x5280, 0x9241,
+  0x9601, 0x56C0, 0x5780, 0x9741, 0x5500, 0x95C1, 0x9481, 0x5440, 0x9C01, 0x5CC0,
+  0x5D80, 0x9D41, 0x5F00, 0x9FC1, 0x9E81, 0x5E40, 0x5A00, 0x9AC1, 0x9B81, 0x5B40,
+  0x9901, 0x59C0, 0x5880, 0x9841, 0x8801, 0x48C0, 0x4980, 0x8941, 0x4B00, 0x8BC1,
+  0x8A81, 0x4A40, 0x4E00, 0x8EC1, 0x8F81, 0x4F40, 0x8D01, 0x4DC0, 0x4C80, 0x8C41,
+  0x4400, 0x84C1, 0x8581, 0x4540, 0x8701, 0x47C0, 0x4680, 0x8641, 0x8201, 0x42C0,
+  0x4380, 0x8341, 0x4100, 0x81C1, 0x8081, 0x4040};
+
+UINT16 ByteCRC(UINT8 * Ptr, UINT32 Length)
+/*****************************************************************************/
+/*                                                                           */
+/*   The following is a little cryptic (but executes very quickly).          */
+/*   The algorithm is as follows:                                            */
+/*   1. exclusive-or the input byte with the low-order byte of               */
+/*      the CRC register to get an INDEX                                     */
+/*   2. shift the CRC register eight bits to the right                       */
+/*   3. exclusive-or the CRC register with the contents of                   */
+/*      Table[INDEX]                                                         */
+/*   4. repeat steps 1 through 3 for all bytes}                              */
+/*                                                                           */
+/*****************************************************************************/
+{
+   UINT16 CRCRegister = 0;
+   UINT8  Index;
+   while(Length-- > 0){
+      Index = (UINT8)((CRCRegister ^ * Ptr++) & 0xff);
+      CRCRegister = CRCRegister >> 8;
+      CRCRegister = CRCRegister ^ CRCTable[Index];
+   }
+   return(CRCRegister);
+}
+
+/*   void SetDHCPServerIPDefaults(void)
+ *
+ *   Purpose:
+ *		This function sets the defaults for DHCP server IP setup.
+ *		It fixes the static IP of WC on DCP interface.
+ *    	This function is called from SetSystemConfigurationDefaults () and ColdStart() function.
+ *
+ *   Entry condition:
+ *		None.
+ *
+ *   Exit condition:
+ *		None.
+ */
+void SetDHCPServerIPDefaults(void)
+{
+	DhcpServerConfiguration Config;
+	memset(&Config, 0, sizeof(Config));
+	memcpy(Config.id, "DHSV", DEFDHCPSERVERID_LEN);
+	Config.length = sizeof(Config);
+	Config.poolSize  = DEFAULTPOOLSIZE;
+	Config.poolStart = MakeIP(DEFAULTPOOLSTARTDHCPSERVER);
+	Config.netmask   = ClassC();
+	Config.gateway   = MakeIP(DEFAULTGATEWAYDHCPSERVER);
+	Config.wins = 0;
+	Config.dns  = MakeIP(DEFAULTIPDHCPSERVER);
+	Config.leaseTime   = DEFAULTLEASETIME;
+	Config.renewTime   = DEFAULTRENEWTIME;
+	Config.rebindTime  = DEFAULTREBINDTIME;
+	Sysconfig->SystemIP = MakeIP(DEFAULTIPDHCPSERVER);
+	Sysconfig->DhcpConfig.dns = MakeIP(DEFAULTIPDHCPSERVER);
+	//Save It in FRAM
+	memcpy(&Sysconfig->DhcpConfig, &Config, sizeof(Config));
+}
+
+/*   void SetStaticIPDefaults(void)
+ *
+ *   Purpose:
+ *		It fixes the static IP of WC on DCP interface.
+ *     	This function is called from SetSystemConfigurationDefaults () and ColdStart() function.
+ *
+ *   Entry condition:
+ *		None.
+ *
+ *   Exit condition:
+ *		None.
+ */
+void SetStaticIPDefaults(void)
+{
+	Sysconfig->CurrNetworkConfig = configStatic;
+	CyGOS::WriteSystemEvent(EVENT_IPCONFIG_CHANGED, __LINE__,Sysconfig->CurrNetworkConfig, (('M' << 24) | ('a' << 16) | ('i' << 8) | ('n')), true);
+	Sysconfig->SystemIPStatic.addr =  MakeIP(DEFAULTIPSTATIC);
+	Sysconfig->Gw.addr =  MakeIP(DEFAULTGATEWAYSTATIC);
+	Sysconfig->Netmask.addr =  MakeIP(DEFAULTNETMASK);
+}
+
+/*	void SetStaticIPDefaultsOnDCPInterface(void)
+ *
+ *   Purpose:
+ *		It fixes the static IP of WC on DCP interface
+ *     	This function is called from Main() at every power up.
+ *
+ *   Entry condition:
+ *		None.
+ *
+ *   Exit condition:
+ *		None.
+ */
+void SetStaticIPDefaultsOnDCPInterface(void)
+{
+	Sysconfig->IPDCP.addr = MakeIP(IPDCPINTERFACE);
+	Sysconfig->GwDCP.addr = MakeIP(GATEWAYDCPINTERFACE);
+	Sysconfig->NetmaskDCP.addr =  MakeIP(DEFAULTNETMASK);
+}
+
+void SetFBStaticIPDefaults(void)
+{
+   Sysconfig->FBCurrNetworkConfig = configStatic;
+   Sysconfig->FBSystemIP.addr = MakeIP(DEFAULTIPSTATIC);
+   Sysconfig->FBGw.addr = MakeIP(DEFAULTGATEWAYSTATIC);
+   Sysconfig->FBNetmask.addr = MakeIP(DEFAULTNETMASK);
+}
+
+/*	void SetSystemConfigurationDefaults(void)
+ *
+ *  Purpose:
+ *		This function is called from Main() function if the CRC of SystemConfiguration structure is not correct.
+ *	 	It initializes the default values in the global FRAM object.
+ *
+ *  Entry condition:
+ *		None.
+ *
+ *  Exit condition:
+ *		None.
+ */
+void SetSystemConfigurationDefaults(void)
+{
+	SetDHCPServerIPDefaults();
+	SetStaticIPDefaults();
+	SetFBStaticIPDefaults();
+	Sysconfig->Dateformat = DFormat1;
+	Sysconfig->Timeformat = TFormat1;
+	Sysconfig->WeldHistorySampleStoreRate = DEFAULT_WELDHISTORYSAMPLERATE;
+	Sysconfig->SystemConfigurationValidCheckSum = SYSTEMCONFIGVALIDCHECKSUM;
+///////////
+	Sysconfig->Externalstatus = FALSE;
+	Sysconfig->ErrorFlag = FALSE;
+	Sysconfig->AlarmFlag = FALSE;
+	Sysconfig->PbAddress = PB_DEFAULT_ADDR;
+	if(Sysconfig->RFSwitch.RFSwitchingType == RFSWITCHING_DIO)
+	//If RF Switching is ON then External preset recall will be set and user will not be allowed to change it.
+		Sysconfig->ExternalPresetFlag = TRUE;
+	else
+		Sysconfig->ExternalPresetFlag = FALSE;
+///////////
+}
+
+/*  void InitializeDhcpServerConfiguration(SINT32 intf, int &priority)
+ *
+ *   Purpose:
+ *		This function creates the DHCP server task on given interface with given priority.
+ *		This The IP address of DHCP server task must already initialized in system configuration structure.
+ *
+ *   Entry condition:
+ *		intf:
+ *		priority:
+ *
+ *   Exit condition:
+ *		None.
+ */
+void InitializeDhcpServerConfiguration(SINT32 Intf, int &Priority)
+{
+	//Set pool start address to first address on the subnet defined by first three octest of IP address
+	Sysconfig->DhcpConfig.poolStart.addr = (Sysconfig->SystemIP.addr & Sysconfig->DhcpConfig.netmask.addr) + htonl(1);
+	CyGOS::SetupAddress(Intf, Sysconfig->SystemIP.addr, Sysconfig->DhcpConfig.netmask.addr);	 // to setup address of DHCP server.
+	CyGOS::SetGW(Intf, Sysconfig->DhcpConfig.gateway.addr);									 // to set gateway.
+	CyGOS::CreateDhcpServerTask(Intf, Sysconfig->DhcpConfig, Priority); 						 // to crate DhcpServer task
+}
+
+/*  BOOLEAN CheckForColdStart(void)
+ *
+ *   Purpose:
+ *		This function is called once at power up from Main() function to check the jumper between digital input 4
+ *	 	and digital output 4.
+ *	 	//TODO: Which digital input and output should be used for jumper detection.
+ *
+ *   Entry condition:
+ *		None.
+ *
+ *   Exit condition:
+ *		Returns TRUE if jumper is found between Digital input 4 and Digital output 4 else return FALSE.
+ */
+BOOLEAN CheckForColdStart(void)
+{
+	/*Note - Digital output 4 is represented by the 4th bit of value written to memory mapped IO.
+     	     Digital input 4 is represented by the 4th bit of  value read from memory mapped IO.
+     	     The address is defined in UserIO section.
+     	     The address of memory mapped IO is defined in UserIO section.*/
+	SINT32 Indx;
+	BOOLEAN  ColdStart = FALSE;
+	UINT8    ToggleCount = 0,
+			OpStatus = 0,//Set 0 for all outputs by default
+			OpStatusTemp = 0;
+
+	UINT8    OutBitDefs[NUM_DOUT] =  {0, DOUT1_BIT , DOUT2_BIT, DOUT3_BIT, DOUT4_BIT, DOUT5_BIT,
+			DOUT6_BIT, DOUT7_BIT, DOUT8_BIT};
+
+	volatile SINT32 DelayCnt;
+	for(Indx = 1; Indx < NUM_DOUT; Indx++){
+		////functions is assigned and function is active{
+		if((USERIOConfig->DigOutUse[Indx] > 0) && (USERIOConfig->DigOutUseStatus[Indx] == TRUE)){
+			if((USERIOConfig->DigOutUse[Indx] > 0) && ((USERIOConfig->DigOutUse[Indx] < USERDEFINED_DIGOUTPUTFUNCEND))){
+				if(UserIO::GetDigitaloutputActivityStatus(USERIOConfig->DigOutUse[Indx]) == LOW)
+					OpStatus |= OutBitDefs[Indx];//set high if output is configured active low so that it doesn't go active
+				else if(UserIO::GetDigitaloutputActivityStatus(USERIOConfig->DigOutUse[Indx]) == HIGH)
+					OpStatus &= ~OutBitDefs[Indx];//set low if output is configured active high so that it doesn't go active
+			}
+		}
+	}
+	OpStatusTemp = OpStatus;
+	for(Indx = 0;  Indx < N_COLDSTART_SEQUENCE_CHECK; Indx++){
+		OpStatus |= DOUT4_BIT;
+		DIGITAL_IO_WRITEADDR = AdvanceConfigData->Advrnd.RevDigitalOP?~OpStatus:OpStatus;	// Set the The digital output 4 to logic 1 don't worry about others
+		//insert some random delay before reading back
+		for(DelayCnt = 0; DelayCnt < 10000; DelayCnt++);
+		//Read the digital input 4
+		if(DIGITAL_IO_READADDR & ((UINT8)DIN4_BIT))		// If read 1
+			ToggleCount++;
+		OpStatus &= ~DOUT4_BIT;
+		DIGITAL_IO_WRITEADDR = AdvanceConfigData->Advrnd.RevDigitalOP?~OpStatus:OpStatus;	// Set the The digital output 4 to logic 0 don't worry about others
+		//insert some random delay before reading back
+		for(DelayCnt = 0; DelayCnt < 10000; DelayCnt++);
+		if(!(DIGITAL_IO_READADDR & ((UINT8)DIN4_BIT)))	// If read 0
+			ToggleCount++;
+	}//for
+
+
+	if(ToggleCount == (N_COLDSTART_SEQUENCE_CHECK  * 2))
+		ColdStart = TRUE;
+
+	//Finally Digital Output 4 should also be set to reverse of whatever configured
+	DIGITAL_IO_WRITEADDR = AdvanceConfigData->Advrnd.RevDigitalOP?~OpStatusTemp:OpStatusTemp;
+
+	return ColdStart;
+}
+
+void ClearAllCounters(void)
+{
+	SysCounters->LifeTimeCycleCount = 0;
+	SysCounters->PowerOnHours = 0;
+	SysCounters->SonicsOnHours = 0;
+	SysCounters->GeneralAlarmCount = 0;
+}
+
+/*   void ColdStart(void)
+ *
+ *   Purpose:
+ *		This function is called from Main()function.It restores factory settings of preset parameters, clears Alarm and Event log
+ *  	Log, Restore UserIO, Alarm, Passcode and other configuration parameters to default.
+ *		This function is also called from ReceiveCommandHandler Task when default initialization command received from LCD-A.
+ *
+ *   Entry condition:
+ *		None.
+ *
+ *   Exit condition:
+ *		None.
+ */
+void ColdStart(void)
+{
+	UserIO::ResetUserIO();  // to restore default UserIO configuration.
+	Log::ResetLog(); 		// to clear Log data.
+	//Note Add other function calls to restore factory defaults as more modules gets added in code.
+	//SetDefaultMACCHIPRWData();
+	SetDefaultPasscodeConfiguration();
+	SetColdStartPresetValues();
+	SetDefaultAdvRnd();
+	ClearAllCounters();
+	SetDefaultAlarms();
+	SetFBStaticIPDefaults();
+}
+
+/*  void SetupEportForSensingPowerDown(void)
+*
+*  Purpose:
+*     This function sets up edge port module registers to sense 24 Volt
+*     i.e the power for WC board(From External Source)
+*     The sensing line for 24V is connected external interrupt 7 pin of CPU
+*     The registers setting are done to read the port bit and not configured
+*     as an interrupt.
+*     This function is called by Main() function.
+*
+*  Entry condition: None.
+*
+*  Exit condition: None.
+*/
+void SetupEportForSensingPowerDown(void)
+{
+      //Eport data direction register settings
+      MCF_EPORT_EPDDR &= ~(MCF_EPORT_EPDR_EPD7);      // configure as input
+      //Eport interrupt enable register settings
+      MCF_EPORT_EPIER &= ~(MCF_EPORT_EPIER_EPIE7); // disable interrupts
+}
+/*  void SetupLCDBoardSensor(void)
+*
+*  Purpose:
+*     This function sets up timer module registers to sense 5 Volt
+*     i.e the LCD Board BDCOM Signal.
+*     The sensing line for 5V is connected to Timer/Interrupt 2 pin of CPU
+*     The registers setting are done to read the port bit and not configured
+*     as an interrupt.
+*     This function is called by Main() function.
+*
+*  Entry condition: None.
+*
+*  Exit condition: None.
+*/
+void SetupLCDBoardSensor(void)
+{
+    MCF_GPIO_PDDR_TIMER |= (MCF_GPIO_PDDR_TIMER_PDDR_TIMER0);
+
+    //5V sensing for LCD board presence
+    MCF_PAD_PAR_TIMER &= ~(MCF_PAD_PAR_TIMER_PAR_T2IN(3));
+    //Send Reset signal to LCD Board to restart.
+    // Activate Reset Signal.(Active Low).
+    MCF_GPIO_PCLRR_TIMER &= ~(MCF_GPIO_PCLRR_TIMER_PCLRR_TIMER0 );
+    //wait for 5ms before Setting the reset signal to LCD.
+    RTOS::DelayMs(5);
+    // Deactivate Reset Signal.(Active Low).
+    MCF_GPIO_PPDSDR_TIMER |= (MCF_GPIO_PPDSDR_TIMER_PPDSDR_TIMER0 );
+}
+
+TestPoints TPointsRam;
+//void UpdateTPVal(int PointIndex){
+//	if((PointIndex >=0) && (PointIndex < 300))
+//		TPoints.TTP[PointIndex]++;
+//}
+
+//void UpdateITPVal(int PointIndex){
+//	if((PointIndex >=0) && (PointIndex < 300))
+//		TPoints.ITP[PointIndex]++;
+//}
+
+//void UpdateTPVal2(int PointIndex, unsigned int val){
+////	if((PointIndex >=0) && (PointIndex < 300)){
+////		if(val > 0)
+////			DebugSection->TPoints.TTP[PointIndex] = val;
+////		else
+////		    DebugSection->TPoints.TTP[PointIndex]++;
+////	}
+//}
+unsigned int CrashBufferRam[4131];
+void CheckAndPrintTPs()
+{
+	if(DebugSection->TPoints.TPChkSum == 0xAA11F065){
+		TPointsRam = DebugSection->TPoints;
+	}
+	memset(&DebugSection->TPoints, 0, sizeof(DebugSection->TPoints));
+	DebugSection->TPoints.TPChkSum = 0xAA11F065;
+	memcpy(CrashBufferRam, DebugSection->CrashBuffer, sizeof(DebugSection->CrashBuffer));
+
+//	pprintf("\n RAM TPs Loaded from FRAM on PowerUp");
+//	int i;
+//	for(i = 0; i < 300; i++){
+//		pprintf("\n Indx %d TTP %u", i , TPointsRam.TTP[i]);
+//	}
+//	for(i = 0; i < 300; i++){
+//		pprintf("\n Indx %d ITP %u", i , TPointsRam.ITP[i]);
+//	}
+}
+
+void TaskManCallbackEvent(bool log){
+
+	int timeHigh = 0;
+	int time = 0;
+	for (int i = 0; i < prioTotal; i++)
+	{
+		time = CyGOS::GetTaskTime(i);
+		timeHigh = CyGOS::GetTaskTimeHighest(i);
+		if(time || timeHigh){
+			if(log)
+				CyGOS::WriteSystemEvent(EVENT_TASKLOAD, time, timeHigh, i, true);
+
+			DebugSection->TPoints.TTP[i * 2] = time;
+			DebugSection->TPoints.TTP[(i * 2) + 1] = timeHigh;
+		}
+	}
+
+	for (int i = 0; i < 256; i++)
+	{
+		time = CyGOS::GetIntrTime(i);
+		timeHigh = CyGOS::GetIntrTimeHighest(i);
+		if(time || timeHigh){
+			if(log)
+			CyGOS::WriteSystemEvent(EVENT_INTLOAD, time, timeHigh, i, true);
+
+			DebugSection->TPoints.ITP[i * 2] = time;
+			DebugSection->TPoints.ITP[(i * 2) + 1] = timeHigh;
+		}
+	}
+
+}
+void TaskManCallback()
+{
+	TaskManCallbackEvent(false);
+	int timeHigh = 0;
+	static int SkipFirstFewSec = FALSE;
+	if((PrintCurrentTaskLoad == TRUE)||(PrintHighestTaskLoad == TRUE))
+		printf("    Time Priority Name:\n");
+	for (int i = 0; i < prioTotal; i++)
+	{
+		int time = CyGOS::GetTaskTime(i);
+		if(SkipFirstFewSec > 5)
+		   timeHigh = CyGOS::GetTaskTimeHighest(i);
+		if ((PrintCurrentTaskLoad == TRUE) && time)
+			printf("C %7d %3d %s\n", time, i, CyGOS::GetTaskName(i));
+		if((PrintHighestTaskLoad == TRUE) && timeHigh)
+			printf("H %7d %3d %s\n", timeHigh, i, CyGOS::GetTaskName(i));
+	}
+	timeHigh = 0;
+	if((PrintCurrentTaskLoad == TRUE)||(PrintHighestTaskLoad == TRUE))
+		printf("    Time Vector Counts:\n");
+	for (int i = 0; i < 256; i++)
+	{
+		int time = CyGOS::GetIntrTime(i);
+		int ints = CyGOS::GetIntCount(i);
+		if(SkipFirstFewSec > 5){
+			timeHigh = CyGOS::GetIntrTimeHighest(i);
+		}
+		if((PrintCurrentTaskLoad == TRUE)&&(time || ints))
+			printf("C %7d %3d %9d\n", time, i, ints);
+		if((PrintHighestTaskLoad == TRUE) && (timeHigh || ints))
+			printf("H %7d %3d\n", timeHigh, i);
+	}
+	if(	SkipFirstFewSec <= 5)
+		SkipFirstFewSec++;
+//	printf("\n\n");
+}
+
+extern UINT8 CrashFBRecvBuffer[MAX_FBEXCHANGESIZE];
+extern unsigned char CrashMailBoxbuff[1596];
+extern UINT8 CrashSerialRecBuff[RXBUFSIZE];
+extern UINT8 CrashMBRcvPktbuf[MB_UDP_BUF_SIZE];
+
+void StoreInfoAtCrash()
+{
+	pprintf("\n Crashed");
+	DebugSection->CrashValid = CrashValid;
+	memcpy(DebugSection->TaskName, TaskName,sizeof(TaskName));
+	memcpy(DebugSection->CrashBuffer, CrashBuffer,sizeof(CrashBuffer));
+	DebugSection->CurrStackPtr = CurrStackPtr;
+	DebugSection->Stackbegin = Stackbegin;
+	DebugSection->StackEnd = StackEnd;
+	DebugSection->CrashBuffPrintLen = CrashBuffPrintLen;
+	DebugSection->MMUAR = MMUAR;
+	memcpy(DebugSection->FRAMCrashFBRecvBuffer,CrashFBRecvBuffer,sizeof(CrashFBRecvBuffer));
+	memcpy(DebugSection->FRAMCrashMailBoxbuff,CrashMailBoxbuff,sizeof(CrashMailBoxbuff));
+	memcpy(DebugSection->FRAMCrashSerialRecBuff,CrashSerialRecBuff,sizeof(CrashSerialRecBuff));
+	memcpy(DebugSection->FRAMCrashMBRcvPktbuf,CrashMBRcvPktbuf,sizeof(CrashMBRcvPktbuf));
+}
+
+/*   int main()
+ *
+ *   Purpose:
+ *		This is the entry point of WC Application code. This function is called by startup assempbly routines.
+ *
+ *   Entry condition:
+ *		None.
+ *
+ *   Exit condition:
+ *		Never returns.
+ */
+int main()
+{
+	int Priority = 0;
+	BYTE MacAddr[MAC_ADDRESS_LEN];
+	BOOLEAN JumperFlag = FALSE;
+	//In this sequence, all WC initialization work shall take place.
+	CyGOS::Init();// for basic tasks initialization
+	pprintf(" PowerUpInitialization ");
+	PowerUpInitialization();
+	CyGOS::RegisterTaskLoadLogCallback(TaskManCallbackEvent);
+	CyGOS::RegisterAppCrashCallback(StoreInfoAtCrash);
+	SetupEportForSensingPowerDown();
+	SetupLCDBoardSensor();
+	JumperFlag = CheckForColdStart();	   // to check for jumper between  digital input 4 and digital output 4 from MI-A board.
+	if(JumperFlag == TRUE){
+		pprintf("\n JumperFlag = TRUE \n");
+		LogData2 = LOG_CLEARED_BY_USER_IO_JUMPER_AT_POWER_UP;
+		ColdStart();
+		SetStaticIPDefaults();
+		SetStaticIPDefaultsOnDCPInterface();
+	}
+	CyGOS::CreateTaskManager(Priority, 4096, TaskManCallback);
+	CyGOS::CreateTask(new InputTask(), Priority);
+
+	//Initialize WCTask , MIATask  and FieldBus Task
+	MIATask * MIA = new MIATask();
+	WCTask  * WC  = new WCTask(MIA);
+
+	CyGOS::CreateTask(MIA, Priority);
+	if((MacchipData.CurrSystemType == SYSTEM_BAS) || (MacchipData.CurrSystemType == SYSTEM_FIELDBUS) || ((MacchipData.CurrSystemType == SYSTEM_FIELDBUS_HD))){
+		FieldBus * fbPt = FindFieldBusType();// to Detect the Hilscher FieldBus card and the supported FieldBus protocol.
+		if(fbPt)
+			CyGOS::CreateTask(new FieldbusTask(fbPt) , Priority);
+		else
+		   AlarmQueueWrite(CF03);
+	}
+
+	TcpIp * TcpIPTask = new TcpIp();
+	SetStaticIPDefaultsOnDCPInterface();
+	memcpy(MacAddr, (UINT8*)"\x12\xC6\x05\xDC\x1C\x02", MAC_ADDRESS_LEN);
+	CyGOS::AddTcpInterface(ETHERNET_INTERFACE_WCTODCP, Priority, MacAddr);
+	CyGOS::SetupAddress(ETHERNET_INTERFACE_WCTODCP, Sysconfig->IPDCP.addr, Sysconfig->NetmaskDCP.addr); // to assign IP to Ethernet interface 0.
+	CyGOS::SetGW(ETHERNET_INTERFACE_WCTODCP, Sysconfig->GwDCP.addr);	 				// to assign gateway to Ethernet interface 0;
+	//Initialize ModbusSend  and ModBusReceive Tasks on Ethernet Interface 0.(TBD)
+	CyGOS::CreateTask(new ModBusRcvTask(ETHERNET_INTERFACE_WCTODCP), Priority);
+	CyGOS::CreateTask(new ModBusSendTask(ETHERNET_INTERFACE_WCTODCP), Priority);
+	CyGOS::CreateTask(new NRTModbus(), Priority);
+	CyGOS::CreateTask(WC, Priority);
+	ReadMACAddressFromMacChip(MacAddr);
+	CyGOS::CreateTask(new ReceiveCommandHandler(),Priority);
+	CyGOS::CreateTask(TcpIPTask, Priority);
+	CyGOS::AddTcpInterface(ETHERNET_INTERFACE_WCTOWEB, Priority, MacAddr); // to Initialize Ethernet related task and
+   //Check the system configuration checksum and IP configuration to be applied (i.e. static, dhcp client , dhcp server or default) on Ethernet Interface 1,
+   //from the sysConfig variable saved in FRAM and initialize DHCP related Tasks accordingly.
+   if(Sysconfig->SystemConfigurationValidCheckSum == SYSTEMCONFIGVALIDCHECKSUM){
+      pprintf("\n Sysconfig->CurrNetworkConfig %d \n",Sysconfig->CurrNetworkConfig);
+      if(Sysconfig->CurrNetworkConfig == configDhcpClient){
+         pprintf("\n Setting as DHCP Client");
+         CyGOS::SetupInterface(ETHERNET_INTERFACE_WCTOWEB, TRUE, TRUE);       // to initialize DHCP client on Ethernet Interface 1;
+      }
+      else if(Sysconfig->CurrNetworkConfig == configStatic){
+         pprintf("Setting as Static IP");
+         CyGOS::SetupAddress(ETHERNET_INTERFACE_WCTOWEB, Sysconfig->SystemIPStatic.addr, Sysconfig->Netmask.addr);  // to set IP on Ethernet interface 1;
+         CyGOS::SetGW(ETHERNET_INTERFACE_WCTOWEB, Sysconfig->Gw.addr);         // to assign gateway on Ethernet Interface 1.
+      }
+      else if(Sysconfig->CurrNetworkConfig == configDhcpServer){
+         pprintf("Setting as DHCP Server");
+         InitializeDhcpServerConfiguration(ETHERNET_INTERFACE_WCTOWEB, Priority);// to initialize Dhcp server configuration on etherner interface 1;
+      }
+   }
+   else{
+      pprintf("Setting default network config");
+      Log::WriteEventLog(EVENT_CRC_ERROR, SYSTEMCONFIGVALIDCHECKSUM, Sysconfig->SystemConfigurationValidCheckSum, CRC_ERROR_SYSCONFIG);
+      SetSystemConfigurationDefaults();
+      CyGOS::SetupAddress(ETHERNET_INTERFACE_WCTOWEB, Sysconfig->SystemIPStatic.addr, Sysconfig->Netmask.addr);  // to Initialize static configuration with default static IP on Ethernet Interface 1;
+      CyGOS::SetGW(ETHERNET_INTERFACE_WCTOWEB, Sysconfig->Gw.addr);
+   }
+   CyGOS::CreateTask(new ShutDownTask(), Priority);
+   CyGOS::CreateHttpServerTask(ETHERNET_INTERFACE_WCTOWEB, DCXWEBSITE_PORT, Priority); // to Initialize HTTP Server task on Ethernet interface 1 required for website communication.
+   CyGOS::CreateTftpClientTask(ETHERNET_INTERFACE_WCTOWEB, Priority);
+	CyGOS::InitFileSystems(Priority);
+	CyGOS::CreateBlockDevice(CreateRamDisk(), "A", Priority);
+	RegisterTarFS(Priority, Priority + 1);
+	Priority += 2;
+	UINT32 ResLenght = ReadTarRegionFlash(0, (unsigned char *)__TAR_START, (int)__TAR_SIZE);
+	CompressedWebPageCRC = ByteCRC((UINT8 *)__TAR_START, ResLenght);
+	printf("Compressed page crc %d", CompressedWebPageCRC);
+	//Create and Register FRAM file system and initialize FRAMDisk task to enable reading FRAM as a file.
+	CyGOS::CreateBlockDevice(CreateFRAMDisk(), "B", Priority);
+	RegisterFRAMFS(Priority, Priority + 1);
+	Priority += 2;
+	CyGOS::InitDriveImage(1 , (void*)FRAM_BASEADDRESS, FRAM_SIZE);
+  // CyGOS::CreateTask(new TaskManager(), Priority);
+   CyGOS::CreateTask(new UploadFirmware(), Priority);       // to create Upload Firmware task to deal with code download through website.
+   CyGOS::CreateTask(new FirmWareUpgradeTask(ETHERNET_INTERFACE_WCTODCP), Priority);  // to create FirmwareUpgarde task which deals with firmware file transfer from WC to DCP and LCD.
+ //  CyGOS::CreateTask(new InputTask(), Priority);	//test only!!!!!!!
+   CyGOS::CreateTask(new ExternalStatusTask(), Priority);
+   CyGOS::CreateTask(new WelderSearchTask(ETHERNET_INTERFACE_WCTOWEB), Priority);
+   WebSite::InitWebSite(ETHERNET_INTERFACE_WCTOWEB, DCXWEBSITE_PORT);
+   DcxMangerHandler::InitDcxMangerHandler(ETHERNET_INTERFACE_WCTOWEB, DCXWEBSITE_PORT);
+   CyGOS::SetEthernetLinkDebouncing(AdvanceConfigData->Advrnd.Flag3);
+   RTOS::DelayMs(1000);
+   //CyGOS::InstallTimer(TIMERINTERRUPT_INTERVALUS, TimerInterruptCallback, 1);    // to initialize and register timer interrupt.
+   CheckAndPrintTPs();
+   //pprintf("\n Resetting MII chip LAN8701");
+   //CyGOS::GetNetworkInterface(0)->driver->mii->WriteSMIRegister(0, 0x8000);
+   pprintf("\n sizeof(DcxPs) %d size of Pascode preset %d"
+  		   "reg count %d" , sizeof(DcxPreset), sizeof(PassCodeConfiguration) , PRESET_REGCOUNT);
+   //Board::InitDMATimer(1);
+   pprintf("\n CyGOS::Start\n");
+   CyGOS::Start(10000);// to start CyGOS with tick value 10000 us(fix for now).
+}
+

@@ -1,0 +1,822 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="pragma" content="no-cache" />
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+<title>BRANSON DCX GUI</title>
+<link href="styleDCXSRackMt-v1.css" rel="stylesheet" type="text/css" />
+<!--[if IE 6]><link href="ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if IE 7]><link href="ie7.css" rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if IE 6]>
+<script src="DD_belatedPNGDCXSRackMt-v1.js"></script>
+<script>
+  /* EXAMPLE */
+  DD_belatedPNG.fix('#headerLogo');
+  
+  /* string argument can be any CSS selector */
+  /* .png_bg example is unnecessary */
+  /* change it to what suits you! */
+</script>
+<![endif]-->
+
+</head>
+<script type="text/JavaScript">
+var userbranson = "1", usermf1 = "3", usermf2 = "4";
+var tab1 = "<li><a href=\"javascript:GetLanguageAndUserID('ip-setup.html')\">IP Setup</a></li>";
+var tab2 = "<li><a  href=\"javascript:GetLanguageAndUserID('weld-preset.html')\">Weld Preset</a></li>";
+var tab3 = "<li><a  href=\"javascript:GetLanguageAndUserID('advanced-preset.html')\">Advanced Preset</a></li>";
+var tab4 = "<li class=\"active\"><a  href=\"#\">I/O Diagnostics</a></li>"
+var tab5 = "<li><a href=\"javascript:GetLanguageAndUserID('Seek&WeldGraphs.html')\">Seek & </br>Weld Graphs</a></li>";
+var tab6 = "<li><a  href=\"javascript:GetLanguageAndUserID('system-information.html')\">System Information</a></li>";
+var tab7 = "<li><a  href=\"javascript:GetLanguageAndUserID('IO-configuration.html')\">I/O Configuration</a></li>";
+var tab8 = "<li><a  href=\"javascript:GetLanguageAndUserID('event-log.html')\">Event Log</a></li>";
+var tab9 = "<li><a  href=\"javascript:GetLanguageAndUserID('alarm-log.html')\">Alarm Log</a></li>";
+var tab10 = "<li><a  href=\"javascript:GetLanguageAndUserID('manufacturing.html')\">Manufacturing</a></li>";
+var tab11 = "<li><a  href=\"javascript:GetLanguageAndUserID('mfboardtest.html')\">Manufacturing Board Test</a></li>";
+var tab12 = "<li><a  href=\"javascript:GetLanguageAndUserID('hornsignature.html')\">Horn <br/> Signature</a></li>";
+var tabBranson = tab1 + tab2 + tab3 + tab4 + tab5 + tab12 + tab6 + tab8 + tab9;
+var tabMf = tabBranson + tab10;
+var tabBoardtest = tab1 + tab2 + tab3 + tab11 + tab4 + tab5 + tab12 + tab6 + tab8 + tab9;
+var SMfTab = tab1 + tab2 + tab3 + tab4 + tab5 + tab12 + tab6 + tab7 + tab8 + tab9 + tab10 ;
+var SBranson = tab1 + tab2 + tab3 + tab4 + tab5 + tab12 + tab6 + tab7 + tab8 + tab9;
+var SBoardTest = tab1 + tab2 + tab3 + tab11 + tab4 + tab5 + tab12 + tab6 + tab7 + tab8 + tab9;
+var TabArr =["", tabBranson, "", tabMf, tabBoardtest];
+var UserArr=["", "Current User: Branson", "","Current User: Manufacturing","Current User: Manufacturing"];
+
+var missedCount = 0;
+var missedCountMax = 20;
+var SysType;
+var FreqOutFlag;
+
+</script>
+<script language="javascript"  type="text/javascript">
+
+function getHTTPObject() {
+  var xmlhttp; 
+  if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+    try {
+      xmlhttp = new XMLHttpRequest();
+    } catch (e) {
+      xmlhttp = false;
+    }
+  }
+  return xmlhttp;
+}
+
+var http = getHTTPObject(); // We create the HTTP Object
+var formatOP = false;
+
+var timerid = 0;
+var state = 0;
+var DIAG_START = 1, WAIT_DIAG_START = 2, DIAG_POLL = 3, WAIT_DIAG_POLL = 4, DIAG_POLL_TIMEOUT = 5;
+var DIAG_LB_START = 6, WAIT_DIAG_LB_START = 7, DIAG_LB_POLL = 8, WAIT_DIAG_LB_POLL = 9 , DIAG_POLL_LB_TIMEOUT = 10; 
+var DIAG_IO_POLL = 11, WAIT_DIAG_IO_POLL = 12, DIAG_IO_POLL_TIMEOUT = 13, DIAG_STOP = 14, WAIT_DIAG_STOP = 15;
+var DiagIOTimeOut = 2;
+var DiagStartTimeOut = 6;
+var DiagPollTimeout = 2;
+var LoopBackStartTimeout = 6;
+var LoopBackPollTimeout = 2;
+var DiagStopTimeout = 6;
+var nAouts = 2;
+var aouts = [0 , 0];
+
+var msCount;
+function TimerCallBack()
+{   
+   switch(state)
+   {
+    case DIAG_START:
+        msCount = DiagStartTimeOut;
+        state = WAIT_DIAG_START;
+        break;
+    case WAIT_DIAG_START:
+        if(--msCount <= 0)
+           TimeOutAlert("Diagnostic Start Command Not responded");
+        break;
+     case DIAG_POLL:
+         SendDiagnosticPoll();
+         mscount = DiagPollTimeout;
+         state = WAIT_DIAG_POLL;
+     break;
+     case WAIT_DIAG_POLL:
+         if(--msCount <= 0)
+         {
+            missedCount++;
+            if(missedCount >= missedCountMax)
+            {
+                missedCount = 0;
+                TimeOutAlert("Diagnostic Poll Command Not responded");
+                EnableDiv();
+            }      
+            else   
+               state = DIAG_POLL;
+         }
+     break;
+     case DIAG_POLL_TIMEOUT:
+         if(--msCount <= 0)      
+            state = DIAG_POLL;    
+     break;
+     case DIAG_LB_START:
+        msCount = LoopBackStartTimeout;
+        state = WAIT_DIAG_LB_START;
+        break;
+    case WAIT_DIAG_LB_START:
+        if(--msCount <= 0)
+           TimeOutAlert("LoopBack Start Command Not responded");
+        break;
+     case DIAG_LB_POLL:
+         SendDiagnosticLBPoll();
+         mscount = LoopBackPollTimeout;
+         state = WAIT_DIAG_LB_POLL;
+     break;
+     case WAIT_DIAG_LB_POLL:
+         if(--msCount <= 0)
+         {
+            missedCount++;
+            if(missedCount >= missedCountMax)
+            {
+                missedCount = 0;
+                TimeOutAlert("LoopBack Poll Command Not responded");
+                EnableDiv();
+            }      
+            else   
+                state = DIAG_LB_POLL;
+         }
+     break;
+     case DIAG_POLL_LB_TIMEOUT:
+         if(--msCount <= 0)      
+            state = DIAG_LB_POLL;    
+     break;     
+     case DIAG_IO_POLL: 
+        msCount = DiagIOTimeOut;
+        SendDiagnosticPoll();
+        state = WAIT_DIAG_IO_POLL;       
+     break;
+     case WAIT_DIAG_IO_POLL:
+        if(--msCount <= 0) 
+        {     
+           missedCount++
+           if(missedCount >= missedCountMax)
+           {
+                EnableDiv();
+                state = DIAG_IO_POLL;
+                msCount = DiagIOTimeOut;  
+                missedCount = 0;                     
+           }
+           else
+             state = DIAG_IO_POLL_TIMEOUT;
+        }
+     break;
+     case DIAG_IO_POLL_TIMEOUT:  
+     if(--msCount <= 0) 
+        state = DIAG_IO_POLL;   
+     break;
+     case DIAG_STOP:
+        msCount = DiagStopTimeout;
+        state = WAIT_DIAG_STOP;
+        break;
+     case WAIT_DIAG_STOP:
+      if(--msCount <= 0)
+            TimeOutAlert("Stop Command Not responded");
+        break;
+   }
+}
+
+function handleDiagIOSaveResponse()
+{
+	if (http.readyState == 4) 
+	{ 
+        if(http.responseText=="OK")
+		{
+		   state = DIAG_POLL;
+		   missedCount = 0;
+		   document.getElementById("bstopdiag").disabled = false;		 
+		}
+	    else
+		    TimeOutAlert("Error");
+	}
+}
+
+function handleDiagIOStopResponse()
+{
+    if (http.readyState == 4) 
+	{ 
+	     var results = http.responseText.split("@");
+	     if(results[0] == "OK")  
+         {           
+		   TimeOutAlert("Diagnostic Stopped");
+		   UpdateIOs(results , 1);
+		   FormatAnalogValues(false);
+		   formatOP = false;
+		   /*document.getElementById("bstopdiag").disabled = true;*/
+		 }
+	     else
+		    TimeOutAlert("Error");
+	}
+}
+
+function UpdateIOs(results, indx)
+{
+    var i,j,results2,results3;              
+    var aoNo = 1;    
+    for(i=indx; i<results.length;i++)
+    {   
+        results2 = results[i].split(":");
+        try{
+        if(results2[1]!=null)
+         {
+            results3 = results2[1].split(",");	 	               
+            if(results3[0] == "S")	
+            {  
+                if(results3.length > 2)
+                {                 
+                      document.getElementById(results2[0]).innerHTML = /*"J3-" +results2[0]+ " "+*/ results3[2];
+                      if((results3[1]  == 'DI') &&(results3[2] != 'Unassigned') && (results3[2] != 'Inactivated'))
+                      {	                        
+                        if(results3[3] == 1)
+                            document.getElementById(results2[0]+ "_IMG").src = 
+                            "greenDot.gif";
+                        if(results3[3] == 0)
+                            document.getElementById(results2[0]+ "_IMG").src = 
+                            "greyDot.gif";
+                       	                        
+                      }
+                      if((results3[1]  == 'DO')&&(results3[2] != 'Unassigned') &&(results3[2] != 'Inactivated'))
+                      {
+                        if(results3[3] == 1)
+                            document.getElementById(results2[0]+ "_CB").checked = true;
+                        if(results3[3] == 0)
+                            document.getElementById(results2[0]+ "_CB").checked = false;	                                
+                       
+                      }
+                      if((results3[1]  == 'AI')&&(results3[2] != 'Unassigned') && (results3[2] != 'Inactivated'))
+                      {	                    
+                        document.getElementById(results2[0]).innerHTML = results3[2]+" (V)";   
+                        document.getElementById(results2[0]+ "_VALUE").innerHTML = results3[3];
+                      }
+                      if((results3[1]  == 'AO')&&(results3[2] != 'Unassigned') && (results3[2] != 'Inactivated'))
+                      {
+                        document.getElementById(results2[0]).innerHTML = results3[2]+" (V)";    
+                        formatOP = true;
+                        //f_sliderOnLoadSetValue(results3[3], true, aoNo);
+                        document.getElementById(results2[0]+ "_VALUE").value = results3[3];
+                        aoNo++;
+                      }	                   
+                }
+                else	                
+                 document.getElementById(results2[0]).innerHTML = results3[1];			                         
+            }
+			else if((results3[0] == "Sys")){
+				SysType = results3[1];
+				FreqOutFlag = results3[2];
+				if((SysType == '0')&&(FreqOutFlag == '0'))
+					document.getElementById("PIN25_VALUE").maxLength = "6";
+				
+			}
+            else if((results3[0] == "D") || (results3[0] == "B"))
+            {
+                document.getElementById(results2[0]).value = results3[1];			     
+                if(results3.length>2)
+                {
+                    document.getElementById(results2[0]+'MaxMin').value = results3[2] + ',' + results3[3];			     
+                }
+            }
+            else if(results3[0] == "CB")	         
+               document.getElementById(results2[0]).checked = (results3[1] == "true");
+            else if(results3[0] == "RB")                            
+                document.getElementById(results2[0] + '_' + results3[1]).checked = results3[2];                  
+        }
+        }catch(err){}
+    }
+	EnablePinDisplay();
+	if(SysType != '1')
+		UpdatePinNumber();
+       
+}
+
+var HeaderBoxesArr =[	"PINNO1", "PINNO2", "PINNO3", "PINNO4",
+						"PINNO7", "PINNO8", "PINNO9", "PINNO10", "PINNO19", 
+						"PINNO17", "PINNO18", "PINNO24", "PINNO25"];
+
+var PinNoArray = [	"J3-5", "J3-6", "J3-13", "J3-4",
+					"J3-2", "J3-9", "J3-4", "J3-1", "J3-12",
+					"J3-15", "J3-12", "J3-10", "J3-14"];
+var FreqPinNoArray = ["J3-5", "J3-6", "J3-13", "J3-4",
+					"J3-2", "J3-9", "J3-4", "J3-1", "J3-12",
+					"J3-15", "J3-12", "J3-10", "J3-1"];
+
+function UpdatePinNumber(){
+	var indx;
+	if((SysType == '0') && (FreqOutFlag == '0')){
+		for(indx = 0; indx < HeaderBoxesArr.length; indx++)
+			document.getElementById(HeaderBoxesArr[indx]).innerHTML = FreqPinNoArray[indx];
+	}
+	else{	
+		for(indx = 0; indx < HeaderBoxesArr.length; indx++)
+			document.getElementById(HeaderBoxesArr[indx]).innerHTML = PinNoArray[indx];
+	}
+		
+}
+function EnablePinDisplay(){
+	switch(SysType){
+		case "0":
+			document.getElementById('PIN18_DISP').style.display = "inline";
+			break;
+		case "1":
+			document.getElementById('PIN4_DISP').style.display = "inline";
+			document.getElementById('PIN10_DISP').style.display = "inline";
+			document.getElementById('PIN18_DISP').style.display = "inline";
+			break;
+		case "2":
+			document.getElementById('PIN10_DISP').style.display = "inline";
+			document.getElementById('PIN19_DISP').style.display = "inline";
+		break;
+		default:
+		break;
+	}
+}
+
+function handleDiagIOPollResponse()
+{ 
+    
+    if (http.readyState == 4) 
+	{
+	     msCount = DiagIOTimeOut;
+	     var results = http.responseText.split("@");
+	     if(results[0] == "OK")
+	     {	        
+	        missedCount = 0;
+	        DisableDiv();        
+            UpdateIOs(results , 1);
+            if(formatOP) 
+                FormatAnalogValues(false);                
+            else
+                FormatAnalogValues(true);
+            formatOP = false;
+	     }
+	     else if(results[0] == "NOTOK")	    
+	     {
+	        missedCount = 0;
+	        EnableDiv();	    
+	     }
+	     else
+	        alert("no response");
+	     
+	     state = DIAG_IO_POLL_TIMEOUT;
+	}
+}
+
+function handleDiagLBPollResponse()
+{    
+    if (http.readyState == 4) 
+	{	   
+	     var results = http.responseText.split("@");
+	     if(results[0] == "OK")
+	     {
+	        UpdateIOs(results , 1);
+	        FormatAnalogValues(true);
+	        formatOP = false;
+	        msCount = LoopBackPollTimeout;
+	        missedCount = 0;
+	        state = DIAG_POLL_LB_TIMEOUT;	       
+	     }	     
+	}
+}
+
+function handleDiagIOLoopBackResponse()
+{
+	if (http.readyState == 4) 
+	{ 
+        if(http.responseText == "OK")
+        {
+		    state = DIAG_LB_POLL;
+		    missedCount = 0;
+		    document.getElementById("bstopdiag").disabled = false;
+		}
+	    else
+		    TimeOutAlert("Loopback Failed");
+	}
+}
+
+function ResetControls()
+{
+    document.getElementById("bloopback").disabled = false;
+    document.getElementById("bstartdiag").disabled = false;
+    document.getElementById("bstopdiag").disabled = true;
+}
+
+function TimeOutAlert(msg)
+{
+    ResetControls();
+    state = DIAG_IO_POLL_TIMEOUT;
+    missedCount = 0;
+/*    if(timerid)
+        clearInterval(timerid);
+    alert(msg);*/
+    
+}
+/*TODO: fix the pin numbers*/
+var updateOutPutsarr = ['PIN7_CB','PIN8_CB','PIN9_CB','PIN10_CB','PIN19_CB'];
+//,'PIN24_VALUE', 'PIN25_VALUE'];
+function onDiagIOSave()
+{
+    if(ValidateAnalogOutputs())
+    {
+        document.getElementById("bloopback").disabled = true;
+        document.getElementById("bstartdiag").disabled = true;
+	    var Updateurl = "func=10cmd=13?param=";
+	    var indx;
+	    for(indx = 0; indx < updateOutPutsarr.length; indx++)
+	    {
+	        var id = updateOutPutsarr[indx];
+	        var res = id.search('_CB');	    
+	        if(res != -1)	    
+	            Updateurl += (((document.getElementById(updateOutPutsarr[indx]).checked == true)?'1':'0') +
+	             ',');	    	      
+	    }    
+	    /*update analog*/
+	    for(indx = 0; indx < nAouts; indx++)
+	      Updateurl += (aouts[indx] + ','); 
+	    
+	    Updateurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                        + getCookie('USERID'));
+        
+        state = DIAG_START;
+	    http.open("POST", Updateurl, true);
+	    http.onreadystatechange = handleDiagIOSaveResponse;
+	    /*timerid = setInterval("TimerCallBack()", 500);*/
+	    http.send(null);
+	}
+}
+/*stop diag/loopback*/
+function onDiagIOCancel()
+{   
+    var Updateurl = "func=10cmd=14?param=";      
+	Updateurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+                    
+    state = DIAG_STOP;
+	http.open("POST", Updateurl, true);	
+	http.onreadystatechange = handleDiagIOStopResponse;
+	http.send(null);
+}
+
+function onLoopBack() 
+{   
+    document.getElementById("bstartdiag").disabled = true; 
+    document.getElementById("bloopback").disabled = true;   
+    var loopBackurl = "func=10cmd=16?param=";
+    loopBackurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+
+    state = DIAG_LB_START;                   
+	http.open("POST", loopBackurl, true);
+	http.onreadystatechange = handleDiagIOLoopBackResponse;
+	/*timerid = setInterval("TimerCallBack()", 500);*/
+	http.send(null);
+}
+
+function SendDiagnosticPoll() 
+{   
+    var loopBackurl = "func=10cmd=15?param=";
+    loopBackurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+	http.open("POST", loopBackurl, true);
+	http.onreadystatechange = handleDiagIOPollResponse;
+	http.send(null);
+}
+
+function SendDiagnosticLBPoll() 
+{ 
+    
+    var loopBackurl = "func=10cmd=19?param=";
+    loopBackurl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+	http.open("POST", loopBackurl, true);
+	http.onreadystatechange = handleDiagLBPollResponse;
+	http.send(null);
+}
+    
+var AMP_SLD = 0;
+var PWR_SLD = 0;         
+
+function handleDiagIOLoadResponse()
+{
+  if (http.readyState == 4 && http.responseText.length!=0) 
+  {  
+    if (http.readyState == 4) 
+    {
+        var results = http.responseText.split("@");
+		var UserType = results[0].split("/");
+		if(UserType[0] == '2'){
+			tabBranson =  SBranson;
+			tabBoardtest = SBoardTest;	
+			tabMf = SMfTab;
+			TabArr =["", tabBranson, "", tabMf, tabBoardtest];	
+		}
+		if((UserType[1] == userbranson) || (UserType[1] == usermf1) ||(UserType[1] == usermf2))
+		{ 
+			document.getElementById('tabmenu').innerHTML = TabArr[parseInt(UserType[1])];					       
+			document.getElementById("CurrUser").innerHTML = UserArr[parseInt(UserType[1])];       
+		}
+        else
+        {
+            if(UserType[0] == '2')
+				document.getElementById('tabmenu').children[6].style.display = "inline";
+			document.getElementById('bloopback').style.visibility="hidden";
+            document.getElementById("CurrUser").innerHTML = "Current User: " + getCookie('USERID');
+         }       
+            
+        UpdateIOs(results, 2);
+        FormatAnalogValues(false);
+        formatOP = false;
+        if(results[1] == "READY")
+            DisableDiv();
+        else if(results[1] == "NOTREADY")
+            EnableDiv();
+        else
+            EnableDiv();
+        
+        state = DIAG_IO_POLL;
+        if(!timerid)
+            timerid = setInterval("TimerCallBack()", 500); 
+            
+         
+        document.getElementById("bstartdiag").disabled = false;    	
+    	document.getElementById("bloopback").disabled = false;
+               
+    }
+  }
+  else if(http.readyState == 4)
+    EnableDiv();  
+}
+
+function EnableDiv()
+{
+    document.getElementById('fade_div').style.display = 'block';
+    document.getElementById('info_div').style.display = 'block';
+    document.getElementById('fade_div').style.width = screen.width - 30;
+    var temp = (parseInt(document.getElementById('fade_div').style.width)
+    - parseInt(document.getElementById('info_div').style.width)) / 2;
+        
+    document.getElementById('info_div').style.left = temp + "Px";
+}
+
+function DisableDiv()
+{
+    document.getElementById('fade_div').style.display = 'none';
+    document.getElementById('info_div').style.display = 'none';
+}
+
+function onDiagIOLoad()
+{     
+ 	window.history.forward(1); 
+    var DiagIOOnLoadUrl = "func=6cmd=0?param=";   
+    DiagIOOnLoadUrl += ("&lang=" + getCookie('LANGUAGE') + "&userid1="
+                    + getCookie('USERID'));
+	http.open("POST", DiagIOOnLoadUrl, true);
+	http.onreadystatechange = handleDiagIOLoadResponse;
+	http.send(null);
+}
+
+
+function getCookie(c_name)
+{
+if (document.cookie.length>0)
+  {
+  c_start=document.cookie.indexOf(c_name + "=");
+  if (c_start!=-1)
+    {
+    c_start=c_start + c_name.length+1;
+    c_end=document.cookie.indexOf(";",c_start);
+    if (c_end==-1) c_end=document.cookie.length;
+    return unescape(document.cookie.substring(c_start,c_end));
+    }
+  }
+return "";
+}
+
+function GetLanguageAndUserID(hrefpage)
+{
+    document.getElementById("lang").value= getCookie('LANGUAGE');
+	document.getElementById("userid1").value= getCookie('USERID');
+	document.temp_form.action = hrefpage;
+	document.temp_form.submit();        
+} 
+
+function FormatAnalogValues(inonly)
+{  		
+    var analogInParamIds = ["PIN17_VALUE","PIN18_VALUE"];
+    var analogOutParamIds = ["PIN24_VALUE","PIN25_VALUE"];
+    var temp1,temp2,volt1,volt2;
+    var index;
+    for(index = 0; index < analogInParamIds.length; index++)
+    {
+        var temp = parseInt(document.getElementById(analogInParamIds[index]).innerHTML, 10);       
+        volt1 = parseInt(temp/1000, 10);
+        volt2 = Math.abs(parseInt(temp % 1000, 10));
+       
+        temp1 = volt1.toString();
+        temp2 = volt2.toString();     
+        if(temp1.length == 1)
+            temp1 = "0" + temp1;
+        if(temp2.length == 1)
+            temp2 = "00";/*resolution only up to two decimal places*/
+        if(temp2.length >= 3)
+            temp2 = temp2.substr(0, 2);/*no rounding*/
+        document.getElementById(analogInParamIds[index]).innerHTML = temp1 + "." + temp2;
+    }
+    if(inonly == false)
+    {
+        for(index = 0; index < analogOutParamIds.length; index++)
+        {
+            var temp = parseInt(document.getElementById(analogOutParamIds[index]).value, 10);
+                       
+            volt1 = parseInt(temp/1000, 10);
+            volt2 = Math.abs(parseInt(temp%1000, 10));            
+           
+            temp1 = volt1.toString();
+            temp2 = volt2.toString();
+           
+			if(temp1.length == 1)
+                temp1 = "0" + temp1;
+			if((temp < 0)&& (temp1.length == 2))
+				temp1 = "-"+"0"+(-1)*temp1;
+				
+            if(temp2.length == 1)
+                temp2 = "00";/*resolution only up to two decimal places*/
+            if(temp2.length >= 3)
+                temp2 = temp2.substr(0, 2);/*no rounding*/
+            document.getElementById(analogOutParamIds[index]).value = temp1 + "." + temp2;
+        }
+    }
+    
+}
+
+function ValidateAnalogOutputs()
+{
+    var index,currVal;
+    var validationStr = "";
+    var retVal = true;
+    timePat1 = /(\d{2}).(\d{2})/;
+    analogOutParamIds = ["PIN24_VALUE","PIN25_VALUE"];
+    var volt1,volt2;
+    for(index = 0; index < analogOutParamIds.length; index++)
+    {
+        voltStr = document.getElementById(analogOutParamIds[index]).value
+        var matchArray = voltStr.match(timePat1);
+        if(matchArray == null)
+        {
+            retVal = false;
+            validationStr += "Analog output voltage " + (index + 1) + " format should be XX.YY\n";        
+        }
+        else
+        {			
+			volt1 = parseInt(matchArray[1], 10);//Volt
+            volt2 = parseInt(matchArray[2], 10) * 10;//mv           			
+            currVal = volt1 * 1000 + volt2; 
+			if(voltStr < 0)
+				currVal = (-1)* currVal;
+            aouts[index] = currVal; 
+            if(currVal > 10000)
+            {
+                retVal = false;
+				if((SysType == '0')&&(FreqOutFlag == '0')&&(index == 1))
+					validationStr += "Analog output "+(index + 1)+" should be between -10.00 and 10.00\n"
+				else
+					validationStr += "Analog output "+(index + 1)+" should be between 00.00 and 10.00\n"
+            } 
+			else if((SysType == '0')&&(FreqOutFlag == '0')&&(currVal < -10000)&&(index == 1)){
+					retVal = false;
+					validationStr += "Analog output "+(index + 1)+" should be between -10.00 and 10.00\n"
+			}
+        }
+        
+    }
+    if(retVal == false)
+        alert(validationStr);
+    return retVal;
+}
+function GetUserManual(hrefpage)
+{
+    window.open(hrefpage);
+}
+</script>
+<body onload="onDiagIOLoad()">
+<div id="fade_div" style="width:840px;height:630px;filter:alpha(opacity=50);background-color:#FFFFFF;margin-left:0px;margin-top:210px;z-index:100;display:none;position:absolute">
+<table summary="" border="0" height="600px" width="1100px">
+		<tr><td style="height:600px;width:1100px">&nbsp;</td></tr>
+	</table>
+</div>
+
+<div id="info_div" style="display:none;position:absolute;width:250px;height:80px; z-index:102;left:435px;top:450px;">
+	<table summary="" cellspacing="3" border="0" style="background-color:#000000;width:250px;height:80px;">
+		<tr>
+		<td>
+		<table summary="" cellspacing="0" border="0" style="background-color:#FFFFFF;width:245px;height:80px;">		    
+			<tr><td id="Td1" style="font-weight:bold;font-size:14pt;text-align:center">INFO : System is busy</td></tr>
+		</table>
+		</td>
+		</tr>
+	</table>
+</div>
+<form>
+<div id="wrapper">
+  <div id="header">
+  	<div id="headerNav">
+   	  <div id="headerLogo">
+       	<!-- <img src="images/bransonLogo.png" alt="Branson" /> //-->
+      </div><!-- end headerLogo //-->
+      <div id="headerLinks">
+        <span class="user" id = "CurrUser">Current User: </span><a href="javascript:GetLanguageAndUserID('index.html')">Logout</a>
+      </div><!-- end HeaderLinks //-->
+    </div><!-- end headerNav //-->
+    <div id="mainNav">
+    	<ul id = "tabmenu">
+            <li><a  href="javascript:GetLanguageAndUserID('ip-setup.html')">IP Setup</a></li>		
+	        <li><a  href="javascript:GetLanguageAndUserID('weld-preset.html')">Weld Preset</a></li>	
+	        <li class="active"><a  href="#">I/O Diagnostics</a></li>	
+            <li><a href="javascript:GetLanguageAndUserID('Seek&WeldGraphs.html')">Seek & </br>Weld Graphs</a></li>
+            <li><a href="javascript:GetLanguageAndUserID('hornsignature.html')">Horn <br/> Signature</a></li>
+	        <li><a  href="javascript:GetLanguageAndUserID('system-information.html')">System Information</a></li>
+			<li style="display: none"><a id="IOConfigTab"  href="javascript:GetLanguageAndUserID('IO-configuration.html')">I/O Configuration</a></li>
+	        <li><a href="javascript:GetLanguageAndUserID('alarm-log.html')">Alarm Log</a></li>
+        </ul>
+    </div><!-- end mainNav //-->
+  </div><!-- end header //-->
+  <div id="content">
+  	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>Digital Inputs</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox">
+               	  <div class="checkbox"><img id="PIN1_IMG" src="greyDot.gif" alt="Off" /></div><!-- end checkbox //--><div class="textLabel" id = "PINNO1">J3-1</div><!-- end labelSmall //--><div class="textLabelBigLeft" id = "PIN1"></div><!-- end label //--><div class="clearit"></div><!-- end clearit //-->
+   				  <div class="checkbox"><img id="PIN2_IMG" src="greyDot.gif" alt="Off" /></div><!-- end checkbox //--><div class="textLabel" id = "PINNO2">J3-2</div><!-- end labelSmall //--><div class="textLabelBigLeft" id = "PIN2"></div><!-- end label //--><div class="clearit"></div><!-- end clearit //-->
+                  <div class="checkbox"><img id="PIN3_IMG" src="greyDot.gif" alt="Off" /></div><!-- end checkbox //--><div class="textLabel" id = "PINNO3">J3-3</div><!-- end labelSmall //--><div class="textLabelBigLeft" id = "PIN3"></div><!-- end label //--><div class="clearit"></div><!-- end clearit //-->
+                  <div class="ieDropFix"  id="PIN4_DISP" style="display:none"><div class="checkbox"><img id="PIN4_IMG" src="greyDot.gif" alt="Off" /></div><!-- end checkbox //--><div class="textLabel" id = "PINNO4">J3-4</div><!-- end labelSmall //--><div class="textLabelBigLeft" id = "PIN4"></div><!-- end label //--></div><div class="clearit"></div><!-- end clearit //-->
+                  
+            </div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->
+      	<div class="contentBoxWrapper" id = "digoutDiv">
+    	<div class="contentBoxHeader">
+    	<h1>Digital Outputs</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox" style="padding-bottom:20px">
+       	  <div class="ieDropFix"><div class="checkbox"><input name="" type="checkbox" value="" id = "PIN7_CB"/></div><!-- end checkbox //--><div class="textLabel" id = "PINNO7">J3-7</div><!-- end labelSmall //--><div class="textLabelBigLeft" id ="PIN7"></div><!-- end label //--></div><!-- end isDropFix //--><div class="clearit"></div><!-- end clearit //-->
+   		  <div class="ieDropFix"><div class="checkbox"><input name="" type="checkbox" value="" id = "PIN8_CB"/></div><!-- end checkbox //--><div class="textLabel" id = "PINNO8">J3-8</div><!-- end labelSmall //--><div class="textLabelBigLeft" id ="PIN8"></div><!-- end label //--></div><!-- end isDropFix //--><div class="clearit"></div><!-- end clearit //-->
+          <div class="ieDropFix"><div class="checkbox"><input name="" type="checkbox" value="" id = "PIN9_CB"/></div><!-- end checkbox //--><div class="textLabel" id = "PINNO9">J3-9</div><!-- end labelSmall //--><div class="textLabelBigLeft" id ="PIN9"></div><!-- end label //--></div><!-- end isDropFix //--><div class="clearit"></div><!-- end clearit //-->
+          <div class="ieDropFix" id="PIN10_DISP" style="display:none"><div class="checkbox"><input name="" type="checkbox" value="" id = "PIN10_CB"/></div><!-- end checkbox //--><div class="textLabel" 
+		  id = "PINNO10">J3-10</div><!-- end labelSmall //--><div class="textLableAuto" 
+		  id ="PIN10"></div><!-- end label //--></div><!-- end isDropFix //--><div class="clearit"></div><!-- end clearit //-->
+		  <div class="ieDropFix" id="PIN19_DISP" style="display:none"><div class="checkbox"><input name="" type="checkbox" value="" id = "PIN19_CB"/></div><!-- end checkbox //--><div class="textLabel" 
+		  id = "PINNO19">J3-11</div><!-- end labelSmall //--><div class="textLableAuto" 
+		  id ="PIN19"></div><!-- end label //--></div><!-- end isDropFix //--><div class="clearit"></div>
+        </div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //--><div class="clearit"></div><!-- end clearit //-->
+	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>Analog Inputs</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox">
+			<div class="ieDropFix"><div class="textLabel" id = "PINNO17">J3-17</div><!-- end labelSmall //--><div class="textLabelBigLeft" id="PIN17"></div><!-- end label //--><div class="textLabelS" id="PIN17_VALUE" ></div><!-- end labelSmall //--></div><!-- end isDropFix //--><div class="clearit"></div><!-- end clearit //-->
+   			<div class="ieDropFix" id="PIN18_DISP" style="display:none"><div class="textLabel" id = "PINNO18">J3-18</div><!-- end labelSmall //--><div class="textLabelBigLeft" id="PIN18"></div><!-- end label //--><div class="textLabelS" id="PIN18_VALUE"></div><!-- end labelSmall //--></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+        </div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->
+    
+    <div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>Analog Outputs</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox">			            	
+            <div class="ieDropFix"><div class="textLabel" id = "PINNO24">J3-24</div><!-- end labelSmall //--><div class="textLabelBigLeft" id ="PIN24"></div><!-- end label //--><input class="labelSmall" style ="padding-top:0px;" value = "0" id="PIN24_VALUE" type="Text" maxlength="5"/><!-- end labelSmall //--></div><!-- end isDropFix //--><div class="clearit"></div><!-- end clearit //-->               			         	
+            <div class="ieDropFix"><div class="textLabel" id = "PINNO25">J3-25</div><!-- end labelSmall //--><div class="textLabelBigLeft" id ="PIN25"></div><!-- end label //--><input class="labelSmall" style ="padding-top:0px;" value = "0" id="PIN25_VALUE" type="Text" maxlength="5"/><!-- end labelSmall //--></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->                       
+        </div><!-- end gradientBox //-->
+    </div><!-- end contentBoxWrapper //-->
+    
+     <div class="clearit"></div><!-- end clearit //-->
+    <div id="contentButtonBank">
+        <input name="Save" type="button"  class="button" id = "bstartdiag" value="Refresh Outputs" onclick="onDiagIOSave()"/>
+    	<input name="Cancel" type="button" disabled="disabled" class="button" id = "bstopdiag" value="Stop" onclick="onDiagIOCancel()"/>
+    	<input name="LoopBack" type="button" disabled="disabled" class="button" id = "bloopback" value="LoopBack" onclick="onLoopBack()"/>    	
+    </div>
+    
+    <div class="clearit"></div><!-- end clearit //-->
+  </div><!-- end content //-->
+  <div class="clearit"></div>
+  <div id="footer"><p>©2011 Branson, All Rights Reserved<br />
+    <img src="Emerson-IA.jpg" alt="Emersin Industrial Automation" /></p></div><!-- end clearit //-->
+</div>
+</form>
+ <form name="temp_form" method="post" action="diagnostic-IO.html">
+<input type="hidden" name="lang" id="lang" value="" />
+<input type="hidden" name="userid1" id="userid1" value="" />
+</form>
+<!-- end wrapper //-->
+
+</body>
+</html>

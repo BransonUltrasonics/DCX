@@ -1,0 +1,561 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+    <link rel="stylesheet" type="text/css" href="superfishDCXAF-v1.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="styleDCXAF-v1.css" />
+    
+    <script type="text/javascript" language="javascript" src="jqueryDCXAF-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="hoverIntentDCXAF-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="superfishDCXAF-v1.js"></script>
+    <script type="text/JavaScript" language="javascript" src="formchange-detect.js"></script>
+    <script type="text/javascript" language="javascript" src="handlerDCXAF-v1.js"></script>
+    
+    <title>BRANSON DCX GUI</title>
+<script language="javascript"  type="text/javascript">
+var FileUploadType, uploadInitiated = false, uploadInProgress = false, reqCmd = 0, restoreFlag = false, pageRefresh = false, RestoreMsg = "Parameters Restored";
+var PageRefTo = null, CurrDate, CurrTime, CurrAMPM, timerid = 0;
+var MaxFileNameLen = 200, ActuatorPresent = 0,LastReqAns = true;
+var http = getHTTPObject(); 
+function HandleModifySystemOnLoad() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+        var i, j,results, SingleVal, GroupVal;
+		results = http.responseText.split("@");
+		var UserType = results[0].split("/");
+		SetUserType(UserType[0]);
+		SetToken(UserType[1], restoreFlag);
+		SetSystemType(UserType[2]);
+		for (i = 1; i < results.length - 1; i++) {
+			GroupVal = results[i].split(":");
+			try {
+				SingleVal = GroupVal[1].split(",");
+				switch(SingleVal[0]){
+					case "CB": UseID(GroupVal[0]).checked = (SingleVal[1] == "1");
+						if (GroupVal[0] == "Externalstatus")
+							EnableOtherFlags();
+						break;
+					case "TT": UseID(GroupVal[0]).value = SingleVal[1];
+						if (SingleVal.length > 2)
+							UseID(GroupVal[0] + 'MaxMin').value = SingleVal[2] + ',' + SingleVal[3];
+						break;
+					case "DD": UseID(GroupVal[0] + ":dd").selectedIndex = parseInt(SingleVal[1]) - 1;
+						break;
+					case "AP": ActuatorPresent = parseFloat(SingleVal[1]);
+						break;
+					default: break;
+				}                        
+			}catch (err) { }
+		}
+		if (restoreFlag) {
+			alert(RestoreMsg);
+			restoreFlag = false;
+		}
+		RefreshAttribute(document.main_form);
+    }
+	if (!timerid)
+		timerid = setInterval("GetDateTime()", 900);
+}
+function EnableOtherFlags() {
+    if (UseID('Externalstatus').checked == true) {
+        UseID('ErrorFlag').disabled = false;
+        UseID("AlarmFlag").disabled = false;
+    }
+    else {
+        UseID("ErrorFlag").checked = 0;
+        UseID("ErrorFlag").disabled = true;
+        UseID("AlarmFlag").checked = 0;
+        UseID("AlarmFlag").disabled = true;
+    }
+}
+function GetDateTime(){
+	if (LastReqAns == true){
+		var GetDateTimeUrl = "func=" + Func.ConfigurationSystemGetDatahandler + "cmd=" + Command.REQ_DATETIME + "?param=";
+		GetDateTimeUrl += SendCookies();
+		LastReqAns = false;
+		http.open("POST", GetDateTimeUrl, true);
+		http.onreadystatechange = HandleGetDateTime;
+		http.send(null);
+	}
+}
+function HandleGetDateTime() {
+	if ((http.readyState == 4) && (http.responseText.length != 0)) {
+        var i,GroupVal, SingleVal;
+		UseID("SysDate").value = "";
+		GroupVal = http.responseText.split("@");
+        for (i = 0; i < GroupVal.length; i++) {
+            SingleVal = GroupVal[i].split(",");
+			if(SingleVal[0] == "Date"){
+				UseID("SysDate").value = pad2(SingleVal[2]) + '-' + pad2(SingleVal[3]) + '-' + pad2(SingleVal[4]);
+				FormatDateOnDDChange("SysDate",SingleVal[1]);
+			}
+			else if(SingleVal[0] == "Time"){
+				UseID( "SysTime").value = pad2(SingleVal[2]) + ':' + pad2(SingleVal[3]) + ':' + pad2(SingleVal[4]);
+				FormatTimeOnDDChange("SysTime",SingleVal[1]);
+			}
+		}
+		UseID("SysDate").value = UseID("SysDate").value + "  " + UseID("SysTime").value;
+		LastReqAns = true;
+	}
+}
+function FormatDateOnDDChange(ElementID,Format) {
+    var Day, Month, Year;
+    if (UseID(ElementID).value) {
+        var TempDate = UseID(ElementID).value.split("-");
+        Year = TempDate[2];
+        if (Format == 0) {
+            Day = TempDate[1];
+            Month = TempDate[0];
+			UseID(ElementID).value = pad2(Day) + '-' + pad2(Month) + '-' + pad2(Year);
+        }
+        else if (Format == 1) {
+            Day = TempDate[0];
+            Month = TempDate[1];
+            UseID(ElementID).value = pad2(Month) + '-' + pad2(Day) + '-' + pad2(Year);
+        }
+    }
+}
+function FormatTimeOnDDChange(ElementID,Format) {
+    var Hours, Minutes, Seconds, AMPM;
+    if (UseID(ElementID).value) {
+        var TempTime = UseID(ElementID).value.split(":");
+        Hours = TempTime[0];
+        Minutes = TempTime[1];
+        Seconds = parseInt(TempTime[2]);
+        AMPM = (TempTime[2].slice(TempTime[2].length - 2, TempTime[2].length)).toUpperCase();
+        UseID(ElementID).value = "";
+        if (Format == 0) {
+            if (Hours >= 12) {
+                Hours = Hours % 12;
+                AMPM = " PM";
+            }
+            else 
+                AMPM = " AM";
+            if (Hours == 0) Hours = "12";
+            UseID(ElementID).value = pad2(Hours) + ':' + pad2(Minutes) + ':' + pad2(Seconds) + AMPM;
+        }
+        else {
+            if (AMPM == "PM")
+                Hours = parseFloat(Hours) + 12;
+            UseID(ElementID).value = pad2(Hours) + ':' + pad2(Minutes) + ':' + pad2(Seconds);
+        }
+    }
+}
+function OnclickDisable(DateID, TimeID) {
+    var currentDate = new Date();
+    var currentTime = new Date();
+    var Day = currentDate.getDate();
+    var Month = currentDate.getMonth() + 1;
+    var Year = currentDate.getFullYear();
+    var Hours = currentTime.getHours();
+    var Minutes = currentTime.getMinutes();
+    var Seconds = currentTime.getSeconds();
+    var AMPM;
+    if (UseID(DateID).selectedIndex == 0)
+        UseID("Date:tt").value = pad2(Day) + '-' + pad2(Month) + '-' + pad2(Year);
+    else
+        UseID("Date:tt").value = pad2(Month) + '-' + pad2(Day) + '-' + pad2(Year);
+    if (UseID(TimeID).selectedIndex == 0) {
+        if (Hours >= 12) {
+            Hours = Hours % 12;
+            AMPM = " PM";
+        }
+        else
+            AMPM = " AM";
+        if (Hours == 0) Hours = "12";
+        UseID("Time:tt").value = pad2(Hours) + ':' + pad2(Minutes) + ':' + pad2(Seconds) + AMPM;
+    }
+    else 
+        UseID("Time:tt").value = pad2(Hours) + ':' + pad2(Minutes) + ':' + pad2(Seconds);
+}
+function ModifySystemOnLoad() {
+    window.history.forward(1);
+    var ModifySystemOnLoadUrl = "func=" + Func.ConfigurationSystemGetDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+    ModifySystemOnLoadUrl += SendCookies();
+    http.open("POST", ModifySystemOnLoadUrl, true);
+    http.onreadystatechange = HandleModifySystemOnLoad;
+    http.send(null);
+}
+function HandleModifySystemSave() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+        if (http.responseText == "OK") {
+            alert("Saved");
+            SetToken(1,0);
+            RefreshAttribute(document.main_form);
+			if (PageRefTo != null)
+				SubmitForm(PageRefTo);
+        }
+        else {
+            SetToken(0,0);
+            alert(Notoken);
+            return;
+        }
+		if (!timerid)
+			timerid = setInterval("GetDateTime()", 900);
+    }
+}
+function ModifySystemSave() {
+    var cmd = Command.REQ_NONE;
+    var DateFormat, TimeFormat;
+    if ((UseID("Date:tt").value.length > 0) || (UseID("Time:tt").value.length > 0)) {
+        cmd = Command.REQ_SAVE;
+        DateFormat = ValidateDateFormat();
+        TimeFormat = ValidateTimeFormat();
+        if (DateFormat == false || TimeFormat == false)
+            return;
+    }
+    cmd = Command.REQ_SAVE;
+    var SaveString = "func=" + Func.ConfigurationSystemPostDatahandler + "cmd=" + cmd + "?param=";
+    SaveString += "&Externalstatus=" + (UseID('Externalstatus').checked ? "1" : "0");
+    SaveString += "&ErrorFlag=" + (UseID('ErrorFlag').checked ? "1" : "0");
+    SaveString += "&AlarmFlag=" + (UseID('AlarmFlag').checked ? "1" : "0");
+    SaveString += "&ExtPreset=" + (UseID('ExtPreset').checked ? "1" : "0");
+    SaveString += "&DateFormat=" + (UseID('FormatDate:dd').selectedIndex + 1);
+    SaveString += "&TimeFormat=" + (UseID('FormatTime:dd').selectedIndex + 1);
+    SaveString += DateFormat + TimeFormat;
+    SaveString += SendCookies();
+    http.open("POST", SaveString, true);
+    http.onreadystatechange = HandleModifySystemSave;
+    http.send(null);
+}
+function ValidateDateFormat() {
+    var retstr,Index = UseID("FormatDate:dd").selectedIndex ;
+	CurrDate = UseID("Date:tt").value;
+	if (Index == 0 && isDate(Index) == false) {
+		alert("Date format should be DD-MM-YYYY\n");
+		retstr = false;
+	}
+	else if (Index == 1 && isDate(Index) == false) {
+		alert("Date format should be MM-DD-YYYY\n");
+		retstr = false;
+	}
+	else
+		retstr = CurrDate;
+	return retstr;
+}
+function ValidateTimeFormat() {
+    var retstr,Index = UseID("FormatTime:dd").selectedIndex;
+	CurrTime = UseID("Time:tt").value;
+	if (isTime(Index) == false) {
+		if (UseID("FormatTime:dd").selectedIndex == 0)
+			alert("Time(s) format should be HH:MM:SS AM/PM \n");
+		else
+			alert("Time(s) format should be HH:MM:SS \n");
+		retstr = false;
+	}
+	else
+		retstr = CurrTime;
+	return retstr;
+}
+function isDate(Index) {
+	var retstr = true;
+    if (CurrDate == '')
+        retstr = false;
+	else{
+		var DatePattern = /^(\d{1,2})(-)(\d{1,2})(-)(\d{4})$/;
+		var dtArray = CurrDate.match(DatePattern); 
+		if (dtArray == null)
+			retstr = false;
+		else{
+			if (Index == 0) {
+				dtDay = dtArray[1];
+				dtMonth = dtArray[3];
+				dtYear = dtArray[5];
+			}
+			else if (Index == 1) {
+				dtMonth = dtArray[1];
+				dtDay = dtArray[3];
+				dtYear = dtArray[5];
+			}
+			if (dtMonth < 1 || dtMonth > 12)
+				retstr = false;
+			else if (dtDay < 1 || dtDay > 31)
+				retstr = false;
+			else if ((dtMonth == 4 || dtMonth == 6 || dtMonth == 9 || dtMonth == 11) && dtDay == 31)
+				retstr = false;
+			else if (dtMonth == 2) {
+				var isleap = (dtYear % 4 == 0 && (dtYear % 100 != 0 || dtYear % 400 == 0));
+				if (dtDay > 29 || (dtDay == 29 && !isleap))
+					retstr = false;
+			}
+			CurrDate = "DD:" + dtDay + "MM:" + dtMonth + "YY:" + dtYear;
+		}
+	}
+	return retstr;
+}
+function isTime(Index) {
+    var retstr = true,TimePattern;
+    if (CurrTime == '')
+        retstr = false;
+	else{
+		if (UseID("FormatTime:dd").selectedIndex == 1)
+			TimePattern = /^(\d{1,2})[:](\d{1,2})[:](\d{1,2})$/;
+		else if (UseID("FormatTime:dd").selectedIndex == 0)
+			TimePattern = /^(\d{1,2})[:](\d{1,2})[:](\d{1,2})[ ][APap][Mm]$/;
+		var dtArray = CurrTime.match(TimePattern); 
+		if (dtArray == null)
+			retstr = false;
+		else{
+			var dtHour = dtArray[1];
+			var dtMin = dtArray[2];
+			var dtSec = dtArray[3];
+			CurrAMPM = (CurrTime.slice(CurrTime.length - 2, CurrTime.length)).toUpperCase();
+			if ((Index == 0) && (dtHour < 1 || dtHour > 12))
+				retstr = false;
+			else if ((Index == 1) && (dtHour < 0 || dtHour > 23))
+				retstr = false;
+			else if (dtMin < 0 || dtMin > 59)
+				retstr = false;
+			else if (dtSec < 0 || dtSec > 59)
+				retstr = false;
+			else{
+				if (CurrAMPM == "PM" && parseFloat(dtHour) != 12) 
+					dtHour = parseFloat(dtHour) + 12;
+				CurrTime = "HH:" + dtHour + "MIN:" + dtMin + "SS:" + dtSec;
+			}
+		}
+	}
+	return retstr;
+}
+function ModifySystemCancel() {
+    pageRefresh = true;
+    SubmitForm('System.html');
+}
+function ModifySystemRestore() {
+    var ret = confirm(strRestoreDefault);
+    if (ret == true) {
+        window.history.forward(1);
+        var ModifyWeldRestoreUrl = "func=" + Func.ConfigurationSystemGetDatahandler + "cmd=" + Command.REQ_RESTORE + "?param=";
+        ModifyWeldRestoreUrl += SendCookies();
+        http.open("POST", ModifyWeldRestoreUrl, true);
+        restoreFlag = true;
+        http.onreadystatechange = HandleModifySystemOnLoad;
+        http.send(null);
+    }
+}
+function SubmitForm(hrefpage) {
+    if (pageRefresh == false) {
+        var ret;
+        if (IsFormModified(document.main_form)) {
+            ret = confirm(formChangeMessage);
+            if (ret == true){
+				PageRefTo = hrefpage;
+				ModifySystemSave();
+				return;
+			}
+        }
+    }
+    if (hrefpage == "index.html")
+        location.href = hrefpage;
+    else 
+		GetFramCfg(hrefpage);
+}
+function GetFramCfg(hreflog) {
+    SubmitCookies(hreflog);
+    document.temp_form.submit();
+	if (!timerid)
+	timerid = setInterval("GetDateTime()", 900);
+}
+function OnClickBackupSystem() {
+    var action = "func=" + Func.First + "cmd=" + Command.REQ_DOWNLOAD_FRAM_CONFIGURATION + "?param=.dcxfiledownload";
+    reqCmd = 0;
+    GetFramCfg(action);
+}
+function SendFileUploadInitiateCommand(UploadType) {
+    reqCmd = 0;
+	var indx,AlertWarning;
+    if (uploadInitiated != true){
+		FileUploadType = UploadType;
+		var extMatched = false;
+		if (UseID("file").value == "")
+			alert("Please select a file to upload");
+		else{
+			var fileExt = UseID("file").value.split(".");
+			var ext = "cfg";
+			try {
+				if (fileExt[1] == ext) 
+					extMatched = true;
+			}
+			catch (err) { };
+			if (extMatched){
+				var fileLen = UseID("file").value;
+				if (fileLen.length >= MaxFileNameLen)
+					alert("FileName including path should be less than 200 characters");
+				else{
+					if(FileUploadType == 'CopySystem')
+						AlertWarning = "Are you sure? You are about to overwrite power supply settings.";
+					else if(FileUploadType == 'RestoreSystem')
+						AlertWarning = "Are you sure? You are about to restore this power supply to a previous state.";
+					ret = confirm(AlertWarning);
+					if(ret == true){
+						uploadInitiated = true;
+						UseID(FileUploadType).disabled = true;
+						var SystemInfoUrl = "func=" + Func.First + "cmd=" + Command.REQ_NONE + "?param=.dcxfileupload";
+						SystemInfoUrl += SendCookies();
+						http.open("POST", SystemInfoUrl, true);
+						http.onreadystatechange = HandleFileUploadInitiateCommand;
+						http.send(null);
+					}
+				}
+			}
+			else
+				alert("Only .cfg file is supported");
+		}
+		if (!timerid)
+			timerid = setInterval("GetDateTime()", 900);
+	}
+}
+function SendFileUploadStartCommand(){
+    if (uploadInProgress != true){
+		uploadInProgress = true;
+		UseID(FileUploadType).disabled = true;
+		fileLen = UseID("file").value.split("\\");
+		UseID("file_upload_form").action = FileUploadType;
+		UseID("file_upload_form").submit();
+	}
+}
+function HandleFileUploadInitiateCommand() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+        if (http.responseText == "READY") 
+            SendFileUploadStartCommand();
+        else {
+            UseID(FileUploadType).disabled = false;
+            uploadInitiated = false;
+            alert("File upload not initiated");
+			if (!timerid)
+				timerid = setInterval("GetDateTime()", 900);
+        }
+    }
+}
+function GetTokenFunc(cmd) {
+    clearInterval(timerid);
+    timerid = 0;
+	reqCmd = cmd;
+	GetToken("Loc");
+}
+function GetTokenResponseHandlerLoc() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+        var Token = parseFloat(http.responseText);
+        if (Token) {
+            SetToken(1,0);
+            switch (reqCmd) {
+                case 1: OnClickBackupSystem(); break;
+                case 2: SendFileUploadInitiateCommand('CopySystem'); break;
+                case 3: SendFileUploadInitiateCommand('RestoreSystem'); break;
+				case 4: ModifySystemSave(); break;
+				case 5: ModifySystemCancel(); break;
+				case 6: ModifySystemRestore(); break;
+            }
+        }
+        else {
+            SetToken(0,0);
+            alert(NotokenWait);
+        }
+    }
+}
+jQuery(function () {
+	UseID('header').innerHTML = MainHeader;
+	SetTabAttribute(3,1);
+   	jQuery('ul.sf-menu').superfish();
+});
+</script>
+</head>
+<body onload="ModifySystemOnLoad()">
+<form name="temp_form" method="post" action="System.html">
+<input type="hidden" name="lang" id="lang"  />
+<input type="hidden" name="usrid" id="usrid"  />
+<input type="hidden" name="passcode" id="passcode"  />
+<input type="hidden" name="uniqueid" id="uniqueid" />	
+</form>
+<form name="main_form">
+</form>
+<div id="wrapper">
+  <div id="header"></div>
+  <div id="PageHeader"></div>
+  <div id="content">
+  	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">CONFIGURE SYSTEM</div>
+			<div class="gradientBox">
+				<div class="textLableAuto">System Date & Time</div>
+				<input class="textLableAuto" disabled ="disabled" id="SysDate"/>
+				<input type="hidden" class="textInputSS" id="SysTime"/>
+				<div class="clearit"></div>
+				<div class="textLableAuto">Select Date Format </div>
+			    <div class="dropdown"> 
+                    <select id="FormatDate:dd" size="1" onchange="FormatDateOnDDChange('Date:tt',UseID('FormatDate:dd').selectedIndex)" value="ExternalStart">
+					    <option>DD-MM-YYYY </option>					
+					    <option>MM-DD-YYYY </option>
+				    </select>
+                </div>		
+			    <div class="textLabel"></div>
+                <input type="text" class="textInputS" id="Date:tt" maxlength="10"/><br />
+                <div class="textInputSS"></div>
+                <input name="Backup System" type="button" class="button" value="Backup System" onclick="GetTokenFunc(1)"/>
+                <div class="clearit"></div>
+				<div class="textLableAuto">Select Time Format </div>
+			    <div class="dropdown">
+				    <select id="FormatTime:dd" size="1" onchange="FormatTimeOnDDChange('Time:tt',UseID('FormatTime:dd').selectedIndex)" value="ExternalStart">
+						<option>12 Hours&nbsp</option>					
+						<option>24 Hours&nbsp</option>
+				    </select>				
+			    </div>
+				<div class="textInputSS"></div>
+                <input  type="text" class="textInputS" id="Time:tt" maxlength="11"/><br />
+                <div class="textInputSS"></div>
+                <form id ="file_upload_form" method="post" enctype="multipart/form-data" action ="temp">
+                    <input name="file" id="file" size="30" type="file" /><br/><br/>
+                    <iframe id="upload_target" src=""></iframe>
+                </form>
+                <div class="clearit"></div>
+			    <div><div class="textLabel"></div>
+                    <input type="button" class="button" value="Get Time and Date from PC" onclick="OnclickDisable('FormatDate:dd','FormatTime:dd')"/>
+			        <div class="textInputSS"></div>
+                </div>
+                <div class="textLabelBigLeft"></div>
+                <div class="textLabelBigLeft"></div>
+                <div class="textLabelBigLeft"></div>
+				<div class="textLabel"></div>&nbsp&nbsp
+                <input type="button" id = "CopySystem" value="  Copy System  " onclick ="GetTokenFunc(2)"/>
+                <input id="RestoreSystem" type="button" class="button" value="Restore System" onclick="GetTokenFunc(3)"/>
+			    <div class="clearit"></div>
+			    <div class="checkboxLeft">
+                <input  type="checkbox"  id="Externalstatus" onclick = "EnableOtherFlags()"/></div>
+                <div class="textLableAuto">External Status Enabled</div><br/> 
+                <div class="clearit"></div>
+			    <div class="checkboxCenter">
+                <input  type="checkbox"  id="ErrorFlag"  disabled = "disabled"/></div>
+                <div class="textLabelBigLeft" >Trigger - 1</div>
+                <div class="clearit"></div>
+			    <div class="checkboxCenter">
+                <input  type="checkbox"  id="AlarmFlag" disabled = "disabled"/></div>
+                <div class="textLabelBigLeft">Alarm - 3</div>
+			    <div class="clearit"></div>
+		   	    <div class="checkboxLeft">
+                <input  type="checkbox"  id="ExtPreset"/></div>
+                <div class="textLabelBigLeft">Load Preset on Start</div>
+                <div class="clearit"></div>
+	        </div>
+        </div>
+    </div>
+ 	<div class="clearit"></div>
+	<div id="contentButtonBank">
+    	<input name="Save" type="button" class="button" value="Save" onclick="PageRefTo=null;GetTokenFunc(4)"/>
+    	<input name="Cancel" type="button" class="button" value="Cancel" onclick="GetTokenFunc(5)"/>
+    	<input name="RestoreDefaults" type="button" class="button" value="Restore Defaults" onclick="GetTokenFunc(6)"/>
+	</div>
+    <div class="clearit"></div>
+    <div id="footer"></div>
+</div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitStickyFooter();
+    });
+</script>
+</html>

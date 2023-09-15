@@ -1,0 +1,45 @@
+/* IO function strings*/
+/*Digital Input Function Strings*/
+100:S,External Reset
+101:S,External Seek
+102:S,External Start
+103:S,External Test
+104:S,Memory Clear
+105:S,Ext Horn Scan
+106:S,Display Lock
+107:S,Cable Detect
+108:S,Stack Adjustment
+/*Digital Output Function Strings*/
+200:S,Ready
+201:S,Sonics Active
+202:S,General Alarm
+203:S,OverLoad Alarm
+204:S,Stack Adj/Seek/Scan Out
+/*Analog Input Function Strings*/
+300:S,Frequency Offset
+301:S,Amplitude In
+302:S,Energy In Range 250J
+303:S,Energy In Range 1K
+304:S,Energy In Range 10K
+/*Analog Output Function Strings*/
+400:S,Power Out
+401:S,Amplitude Out
+402:S,Memory Out
+403:S,Frequency Out
+404:S,Current Out
+405:S,Energy Out
+406:S,Power Out-400 Watts
+407:S,Power Out-750 Watts
+408:S,Power Out-800 Watts
+409:S,Power Out-1100 Watts
+410:S,Power Out-1250 Watts
+411:S,Power Out-1500 Watts
+412:S,Power Out-1600 Watts
+413:S,Power Out-2200 Watts
+414:S,Power Out-2400 Watts
+415:S,Power Out-2500 Watts
+416:S,Power Out-3000 Watts
+417:S,Power Out-3300 Watts
+418:S,Power Out-4000 Watts
+
+

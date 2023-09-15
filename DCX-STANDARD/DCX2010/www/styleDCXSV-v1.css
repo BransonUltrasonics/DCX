@@ -1,0 +1,370 @@
+@charset "UTF-8";
+/* CSS Document */
+
+/* CSS Reset Styles */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+
+/* Main Template Styles */
+body {
+	margin: 0px;
+	padding: 0px;
+	font-family: Arial, Helvetica, sans-serif;
+	color: #333333;
+	font-size: 13px;
+	line-height: 1;
+	background-color: #EBEBEC;
+	background-image:url(bodyBkgDCXSV-v1.jpg);
+	background-repeat: repeat-x;
+}
+#wrapper {
+	padding: 0px;
+	width: 960px;
+	margin: 0px auto;
+	background-color: #EBEBEC;
+}
+.clearit {
+	clear: both;
+}
+
+
+/* HEADER styles */
+#header {
+	height: 165px;
+	width: 960px;
+	background-image: url(headerBkgDCXSV-v1.jpg);
+	background-repeat: no-repeat;
+}
+#headerTexture {
+	height: 209px;
+	width: 960px;
+	background-image: url(headerBkgTextureDCXSV-v1.jpg);
+	background-repeat: no-repeat;
+}
+#headerNav {
+	height: 55px;
+	width: 1000px;
+}
+#mainNav {
+	height: 35px;
+	text-align: center;
+	margin: 62px 0px 0px 10px;
+}
+#mainNav li {
+	display: inline;
+	list-style: none;
+}
+#mainNav a {
+	width: 75px;   /* 93          */
+	background-image: url(mainNavBtnBkgDCXSV-v1.jpg);
+	background-repeat: no-repeat;
+	float: left;
+	text-decoration: none;
+	color: #999999;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	padding: 5px 0px;
+	height: 35px;
+}
+#mainNav a:hover {
+	width: 75px;       /* 93          */
+	background-image: url(mainNavBtnBkg-rollDCXSV-v1.jpg);
+	background-repeat: no-repeat;
+	float: left;
+	text-decoration: none;
+	color: #333333;
+}
+#mainNav .active a {
+	background-image: url(mainNavBtnBkg-rollDCXSV-v1.jpg);
+	color: #333333;
+}
+#headerLogo {
+	padding: 0px;
+	float: left;
+	background-image: url(bransonLogo.png);
+	background-repeat: no-repeat;
+	height: 29px;
+	width: 161px;
+	margin-top: 12px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 20px;
+}
+#headerLinks {
+	padding: 0px;
+	float: right;
+	margin-top: 19px;
+	margin-right: 20px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #777777;
+	font-weight: bold;
+}
+#headerLinks a {
+	color: #777777;
+	text-decoration: none;
+}
+#headerLinks a:hover {
+	color: #990000;
+}
+.user {
+	margin-right: 20px;
+}
+
+/* CONTENT styles */
+#content {
+	padding: 0px;
+	width: 870px;
+	margin: 0px 60px 0px 60px;
+}
+#content p {
+	margin: 10px;
+}
+.contentBoxWrapper {
+	float: left;
+	width: 375px;
+	margin-top: 30px;
+	margin-right: 0px;
+	margin-bottom: 30px;
+	margin-left: 30px;
+}
+.contentBoxHeader {
+	height: 30px;
+}
+.contentBoxHeader h1 {
+	font-weight: normal;
+	font-size: 22px;
+	margin: 0px;
+	padding: 0px;
+	text-transform: uppercase;
+}
+.gradientBoxAdvPreset {
+	background: #EEEEEE; /* for non-css3 browsers */
+	height: 300px;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FEFEFE', endColorstr='#EEEEEE'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#FEFEFE), to(#EEEEEE)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #fefefe,  #eeeeee); /* for firefox 3.6+ */
+	border-top: solid 1px #CCCCCC;
+	border-bottom: solid 1px #CCCCCC;
+	float: left;
+	padding-top: 30px;
+	padding-right: 30px;
+	padding-bottom: 20px;
+	padding-left: 20px;
+}
+.subBoxHeader {
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 10px;
+	font-weight: bold;
+}
+.subBoxContent {
+	border: 1px solid #CCCCCC;
+	padding: 0px 0px 10px 0px;
+}
+.subBoxWrapper {
+	margin: 0px 0px 10px 10px;
+}
+.gradientBox {
+	background: #EEEEEE; /* for non-css3 browsers */
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FEFEFE', endColorstr='#EEEEEE'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#FEFEFE), to(#EEEEEE)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #fefefe,  #eeeeee); /* for firefox 3.6+ */
+	
+	border-top: solid 1px #CCCCCC;
+	border-bottom: solid 1px #CCCCCC;
+	padding: 30px 30px 20px 20px;
+}
+.IPgradientBox {
+	background: #EEEEEE; /* for non-css3 browsers */
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FEFEFE', endColorstr='#EEEEEE'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#FEFEFE), to(#EEEEEE)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #fefefe,  #eeeeee); /* for firefox 3.6+ */
+	
+	border-top: solid 1px #CCCCCC;
+	border-bottom: solid 1px #CCCCCC;
+	padding: 10px 30px 20px 20px;
+}
+.textInput {
+	width: 135px;
+	margin: 12px 0px 0px 0px;
+	float: left;
+}
+.textInputS {
+	width: 110px;
+	margin: 12px 10px 0px 0px;
+	float: left;
+}
+.textInputSS {
+	width: 70px;
+	margin: 12px 10px 0px 0px;
+	float: left;
+}
+.label {
+	width: 130px;
+	padding: 2px 10px 2px 10px;
+	background: #ffffff;
+	border: solid 1px #CCCCCC;
+	margin: 11px 10px 0px 10px;
+	float: left;
+	text-align: right;
+}
+.labelRight {
+	width: 135px;
+	padding: 2px;
+	background: #ffffff;
+	border: solid 1px #CCCCCC;
+	margin: 11px 10px 0px 0px;
+	float: left;
+	text-align: center;
+}
+
+.labelLeft {
+	width: 135px;
+	padding: 2px;
+	background: #ffffff;
+	border: solid 1px #CCCCCC;
+	margin: 9px 10px 0px 20px;
+	float: left;
+	text-align: left;
+}
+
+.labelSmall {
+	padding: 2px 5px;
+	background: #ffffff;
+	border: solid 1px #CCCCCC;
+	margin: 11px 0px 0px 4px;
+	float: left;
+	text-align: center;
+	width: 40px;
+}
+.textLabel {
+	padding: 2px 5px;
+	margin: 11px 0px 0px 4px;
+	float: left;
+	text-align: left;
+	width: 40px;
+}
+.textLabelCenter {
+	padding: 2px 5px;
+	margin: 11px 0px 0px 4px;
+	float: left;
+	text-align: center;
+	width: 85px;
+}
+.textLabelS {
+	padding: 2px 5px;
+	margin: 11px 0px 0px 4px;
+	float: left;
+	text-align: left;
+	width: 20px;
+}
+.textLabelBigLeft {
+	padding: 2px 5px;
+	margin: 11px 0px 0px 0px;
+	float: left;
+	text-align: left;
+	width: 135px;
+}
+.textLabelBigRight {
+	padding: 2px 5px;
+	margin: 11px 0px 0px 4px;
+	float: left;
+	text-align: right;
+	width: 135px;
+}
+.textLabelBigCenter {
+	padding: 2px 5px;
+	margin: 11px 0px 0px 4px;
+	float: left;
+	text-align: center;
+	width: 135px;
+}
+.warningText {
+	font-size: 10px;
+	color: #666666;
+	margin: 2px 0px 0px 20px;
+}
+.checkbox {
+	float: left;
+	margin: 10px 0px 0px 0px;
+	padding: 0px;
+	font-size: 7px;
+}
+.checkboxLeft {
+	float: left;
+	margin: 10px 0px 0px 10px;
+	padding: 0px;
+	font-size: 7px;
+}
+.dropdown {
+	float: left;
+	margin: 10px 0px 0px 5px;
+	padding: 0px;
+	font-size: 7px;
+}
+.ieDropFix {
+	margin: 0px;
+	padding: 0px;
+	float: left;
+}
+#contentButtonBank {
+	text-align: center;
+	padding: 0px;
+	width: 870px;
+	margin: 0px 0px 20px 0px;
+}
+#contentButtonBank .button {
+	margin: 0px 10px;
+	width: 135px;
+}
+
+/* FOOTER styles */
+#footer {
+	text-align: center;
+	margin: 10px 0px 0px 0px;
+	padding: 0px;
+	height: 135px;
+	width: 960px;
+	font-size: 10px;
+	color: #999999;
+	border-top: solid 1px #CCCCCC;
+}
+#footer p {
+	margin: 5px 10px 0px 0px;
+}
+
+/* Content Box Styles */
+.buttonInGradient {
+	text-align: center;
+	margin: 10px 0px;
+	padding: 0px;
+}
+.slider {
+	text-align: left;
+	margin-top: 10px;
+	margin-right: 10px;
+	margin-bottom: 0px;
+	margin-left: 10px;
+	background-color: #FFFFFF;
+}

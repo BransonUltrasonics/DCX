@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+  <meta http-equiv="cache-control" content="max-age=0" />
+  <meta http-equiv="expires" content="0" />
+  <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+  <meta http-equiv="pragma" content="no-cache" />
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+<title>BRANSON DCX GUI</title>
+<link href="styleDCXSV-v1.css" rel="stylesheet" type="text/css" />
+<!--[if IE 6]><link href="ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if IE 7]><link href="ie7.css" rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if IE 6]>
+<script src="DD_belatedPNGDCXSV-v1.js"></script>
+<script>
+  /* EXAMPLE */
+  DD_belatedPNG.fix('#headerLogo');
+  
+  /* string argument can be any CSS selector */
+  /* .png_bg example is unnecessary */
+  /* change it to what suits you! */
+</script>
+<![endif]-->
+<style>
+.labelUserID {
+	width: 130px;
+	padding: 2px 10px 2px 10px;	
+	border: solid 0px #CCCCCC;
+	margin: 14px 10px 0px 10px;
+	float: left;
+	text-align: right;
+}
+</style>
+<script language="javascript"  type="text/javascript">
+
+function setCookie(c_name,value,expiredays)
+{
+    var exdate=new Date();
+    exdate.setDate(exdate.getDate()+expiredays);
+    document.cookie=c_name+ "=" +escape(value)+
+    ((expiredays==null) ? "" : ";expires="+exdate.toUTCString());
+}
+
+function getHTTPObject() {
+  var xmlhttp; 
+  if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+    try {
+      xmlhttp = new XMLHttpRequest();
+    } catch (e) {
+      xmlhttp = false;
+    }
+  }
+  return xmlhttp;
+}
+
+var http = getHTTPObject(); // We create the HTTP Object
+
+function HomeOnload()
+{
+    window.history.forward(1);
+    document.getElementById("USERID").focus();
+}
+
+function handleLangResponse()
+{
+    if (http.readyState == 4) 
+	{
+	   if(http.responseText=="OK")
+	   {	   
+	        setCookie('LANGUAGE', "0"/*document.getElementById('LANGOPT').selectedIndex*/, 365); 
+	        setCookie('USERID', document.getElementById('USERID').value, 365); 
+	        document.getElementById("lang").value= "0";/*document.getElementById('LANGOPT').selectedIndex;*/
+	        document.getElementById("userid1").value=document.getElementById('USERID').value;
+	        document.temp_form.submit();	        
+	   }
+	   else
+	       alert(" Login command not responded ");
+	}
+}
+
+
+function isInteger(s){    
+    var i;
+    if(s.length <= 0)    
+       return false;
+     
+    for (i = 0; i < s.length; i++){   
+        /* Check that current character is number.*/
+        var c = s.charAt(i);
+        if (((c < "0") || (c > "9"))) 
+            return false;
+    }
+    /* All characters are numbers.*/
+    return true;
+}
+
+var max32bitNumber = 4294967295;
+
+function VerifyLoginID(loginID)
+{
+    var validLogIn = false;
+    if(isInteger(loginID))
+    {
+        var str = parseInt(loginID , 10);        
+        if(str <= max32bitNumber)        
+            validLogIn = true;
+    }
+    return validLogIn;
+}
+
+function OnLogIn()
+{
+  var logInID = "";
+  var SetLangUrl="func=2cmd=0?param=lang=";
+  SetLangUrl += "0";/*document.getElementById('LANGOPT').selectedIndex;*/
+  SetLangUrl += "&userid1=";
+  logInID = document.getElementById('USERID').value;
+  
+  if(VerifyLoginID(logInID) == false)
+  {
+    alert("User ID should be a valid number");
+    return;
+  }
+    
+  SetLangUrl += document.getElementById('USERID').value;  
+  http.open("POST", SetLangUrl, true);
+  http.onreadystatechange = handleLangResponse;
+  http.send(null);
+}
+function GetUserManual(hrefpage)
+{
+    window.open(hrefpage);
+}
+</script>
+</head>
+
+<body onload="HomeOnload()">
+<form name="temp_form" method="post" action="ip-setup.html">
+<input type="hidden" name="lang" id="lang" value="" />
+<input type="hidden" name="userid1" id="userid1" value="" />
+</form>
+<div id="wrapper">
+  <div id="header">
+  	<div id="headerNav">
+   	  <div id="headerLogo">
+       	<!-- <img src="images/bransonLogo.png" alt="Branson" /> //-->
+      </div><!-- end headerLogo //-->
+      <div id="headerLinks">
+      	<span class="user"><!--Current User: 13482--></span><!--<a href="javascript:GetUserManual('DCXManual.pdf')">User Manual</a> | <a href="index.html">Logout</a>-->
+      </div><!-- end HeaderLinks //-->
+    </div><!-- end headerNav //-->
+    <div id="mainNav">
+    	<ul>
+        	<li><a href="index.html">IP Setup</a></li>
+            <li><a href="index.html">Weld Preset</a></li>
+     <!--   <li><a href="index.html">Advanced <br/>Preset</a></li>-->
+            <li><a href="index.html">I/O Diagnostics</a></li>
+            <li><a href="index.html">Seek & </br>Weld Graphs</a></li>
+            <li><a href="index.html">Horn <br/> Signature</a></li>
+            <li><a href="index.html">System <br/>Information</a></li>
+            <li><a href="index.html">I/O Configuration</a></li>
+	<!--    <li><a href="index.html">Event Log</a></li>-->
+            <li><a href="index.html">Alarm Log</a></li>
+        </ul>
+    </div><!-- end mainNav //-->
+  </div><!-- end header //-->
+  <div id="content">
+  	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">
+    	<h1>LOGIN</h1>
+    	</div><!-- end contentBoxHeader //-->
+    	<div class="gradientBox">
+    		<div class="ieDropFix"><div class="labelUserID">User ID #</div><!-- end label //--><input name="" type="password" class="textInput" id = "USERID" /></div><!-- end ieDropFix //--><div class="clearit"></div><!-- end clearit //-->
+	 	</div><!-- end gradientBox //-->
+        <div class="buttonInGradient"><input name="login" type="submit" class="button" value="Log In" onclick="OnLogIn()"/></div><!-- end buttonInGradient //-->
+	</div><!-- end contentBoxWrapper //-->
+  </div><!-- end content //-->
+  <div class="clearit"></div><!-- end clearit //-->
+  <div id="footer"><p>©2011 Branson, All Rights Reserved<br />
+    <img src="Emerson-IA.jpg" alt="Emersin Industrial Automation" /></p>
+  </div><!-- end clearit //-->
+</div>
+<!-- end wrapper //-->
+
+</body>
+</html>

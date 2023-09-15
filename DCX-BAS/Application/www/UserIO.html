@@ -1,0 +1,686 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+    <link rel="stylesheet" type="text/css" href="superfishDCXAF-v1.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="styleDCXAF-v1.css" />
+    
+    <script type="text/javascript" language="javascript" src="jqueryDCXAF-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="hoverIntentDCXAF-v1.js"></script>
+    <script type="text/javascript" language="javascript" src="superfishDCXAF-v1.js"></script>
+    <script type="text/JavaScript" language="javascript" src="formchange-detect.js"></script>
+    <script type="text/javascript" language="javascript" src="handlerDCXAF-v1.js"></script>
+    
+    <title>BRANSON DCX GUI</title>
+<script language="javascript" type="text/javascript">
+var missedCount = 0, reqCmd = 0, missedCountMax = 20;
+var http = getHTTPObject(); 
+var formatOP = false, timerid = 0, state = 0;
+var DIAG_START = 1, WAIT_DIAG_START = 2, DIAG_POLL = 3, WAIT_DIAG_POLL = 4, DIAG_POLL_TIMEOUT = 5;
+var DIAG_LB_START = 6, WAIT_DIAG_LB_START = 7, DIAG_LB_POLL = 8, WAIT_DIAG_LB_POLL = 9, DIAG_POLL_LB_TIMEOUT = 10;
+var DIAG_IO_POLL = 11, WAIT_DIAG_IO_POLL = 12, DIAG_IO_POLL_TIMEOUT = 13, DIAG_STOP = 14, WAIT_DIAG_STOP = 15;
+var DiagIOTimeOut = 2, DiagStartTimeOut = 6, DiagPollTimeout = 2, LoopBackStartTimeout = 6, LoopBackPollTimeout = 2, DiagStopTimeout = 6, nAouts = 2, aouts = [0, 0], msCount,FanStatusFlag = 0, FanStatus = [" FAN ON ", " FAN OFF "];
+var analogOutParamIds = ["PIN24_VALUE", "PIN25_VALUE"];
+function TimerCallBack() {
+    switch (state) {
+        case DIAG_START:
+            msCount = DiagStartTimeOut;
+            state = WAIT_DIAG_START;
+            break;
+        case WAIT_DIAG_START:
+            if (--msCount <= 0)
+                TimeOutAlert("Diagnostic Start Command Not responded");
+            break;
+        case DIAG_POLL:
+            SendDiagnosticPoll();
+            mscount = DiagPollTimeout;
+            state = WAIT_DIAG_POLL;
+            break;
+        case WAIT_DIAG_POLL:
+            if (--msCount <= 0) {
+                missedCount++;
+                if (missedCount >= missedCountMax) {
+                    missedCount = 0;
+                    TimeOutAlert("Diagnostic Poll Command Not responded");
+                    EnableDiv();
+                }
+                else
+                    state = DIAG_POLL;
+            }
+            break;
+        case DIAG_POLL_TIMEOUT:
+            if (--msCount <= 0)
+                state = DIAG_POLL;
+            break;
+        case DIAG_LB_START:
+            msCount = LoopBackStartTimeout;
+            state = WAIT_DIAG_LB_START;
+            break;
+        case WAIT_DIAG_LB_START:
+            if (--msCount <= 0)
+                TimeOutAlert("LoopBack Start Command Not responded");
+            break;
+        case DIAG_LB_POLL:
+            SendDiagnosticLBPoll();
+            mscount = LoopBackPollTimeout;
+            state = WAIT_DIAG_LB_POLL;
+            break;
+        case WAIT_DIAG_LB_POLL:
+            if (--msCount <= 0) {
+                missedCount++;
+                if (missedCount >= missedCountMax) {
+                    missedCount = 0;
+                    TimeOutAlert("LoopBack Poll Command Not responded");
+                    EnableDiv();
+                }
+                else
+                    state = DIAG_LB_POLL;
+            }
+            break;
+        case DIAG_POLL_LB_TIMEOUT:
+            if (--msCount <= 0)
+                state = DIAG_LB_POLL;
+            break;
+        case DIAG_IO_POLL:
+            msCount = DiagIOTimeOut;
+            SendDiagnosticPoll();
+            state = WAIT_DIAG_IO_POLL;
+            break;
+        case WAIT_DIAG_IO_POLL:
+            if (--msCount <= 0) {
+                missedCount++
+                if (missedCount >= missedCountMax) {
+                    EnableDiv();
+                    state = DIAG_IO_POLL;
+                    msCount = DiagIOTimeOut;
+                    missedCount = 0;
+                }
+                else
+                    state = DIAG_IO_POLL_TIMEOUT;
+            }
+            break;
+        case DIAG_IO_POLL_TIMEOUT:
+            if (--msCount <= 0)
+                state = DIAG_IO_POLL;
+            break;
+        case DIAG_STOP:
+            msCount = DiagStopTimeout;
+            state = WAIT_DIAG_STOP;
+            break;
+        case WAIT_DIAG_STOP:
+            if (--msCount <= 0)
+                TimeOutAlert("Stop Command Not responded");
+            break;
+    }
+}
+function handleDiagIOSaveResponse() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+        if (http.responseText == "OK") {
+            state = DIAG_POLL;
+            missedCount = 0;
+            UseID("bstopdiag").disabled = false;
+        }
+        else
+            TimeOutAlert("Error");
+    }
+}
+function handleDiagIOStopResponse() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+        var results = http.responseText.split("@");
+        if (results[0] == "OK") {
+            TimeOutAlert("Diagnostic Stopped");
+            UpdateIOs(results, 1);
+            FormatAnalogValues(false);
+            formatOP = false;
+        }
+        else
+            TimeOutAlert("Error");
+    }
+}
+function UpdateIOs(results, indx) {
+    var i, j, results2, results3;
+    var aoNo = 1;
+    for (i = indx; i < results.length; i++) {
+        results2 = results[i].split(":");
+        try {
+            results3 = results2[1].split(",");
+            if (results3[0] == "S") {
+                if (results3.length > 2) {
+                    UseID(results2[0]).innerHTML = results3[2];
+					switch(results3[1]){
+						case 'DI':
+							if ((results3[2] != 'Unassigned') && (results3[2] != 'Inactivated')) {
+								UseID(results2[0] + "_IMG").src = ((results3[3] == 1)? "greenDot.gif": "greyDot.gif") ;
+								UseID(results2[0] + "_lb").innerHTML = ((results3[4] == '0')? "  Low  ":"  High ");
+							}
+							else
+								UseID(results2[0] + "_lb").innerHTML = "  -NA- ";
+							break;
+						case 'DO':
+							if ((results3[2] != 'Unassigned') && (results3[2] != 'Inactivated')) {
+								UseID(results2[0] + "_CB").checked = ((results3[3] == 1)? true : false);
+								UseID(results2[0] + "_lb").innerHTML = ((results3[4] == '0')? "  Low  ":"  High ");
+							}
+							else 
+								UseID(results2[0] + "_lb").innerHTML = "  -NA- ";
+							break;
+						case 'AI':
+							if ((results3[2] != 'Unassigned') && (results3[2] != 'Inactivated')) {
+								UseID(results2[0]).innerHTML = results3[2] + "(V)";
+								UseID(results2[0] + "_VALUE").innerHTML = results3[3];
+							}
+							break;
+						case 'AO':
+							if ((results3[2] != 'Unassigned') && (results3[2] != 'Inactivated')) {
+								UseID(results2[0]).innerHTML = results3[2] + "(V)";
+								formatOP = true;
+								UseID(results2[0] + "_VALUE").value = results3[3];
+								aoNo++;
+							}
+							break;
+						default: break;
+					}
+                }
+                else 
+                    UseID(results2[0]).innerHTML = results3[1];
+            }
+            else if ((results3[0] == "D") || (results3[0] == "B")) {
+                UseID(results2[0]).value = results3[1];
+                if (results3.length > 2) 
+                    UseID(results2[0] + 'MaxMin').value = results3[2] + ',' + results3[3];
+            }
+            else if (results3[0] == "CB")
+                UseID(results2[0]).checked = (results3[1] == "true");
+            else if (results3[0] == "RB")
+                UseID(results2[0] + '_' + results3[1]).checked = results3[2];
+        } catch (err) { }
+    }
+}
+function handleDiagIOPollResponse() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+        var results = http.responseText.split("@");
+        var UserType = results[0].split("/");
+        SetToken(UserType[1],false);
+        SetSystemType(UserType[2]);
+        msCount = DiagIOTimeOut;
+        var result = results[1].split(",");
+        if (result[0] == "FanControl") {
+            FanStatusFlag = parseFloat(result[1]);
+            UseID("FanControl").value = FanStatus[FanStatusFlag];
+        }
+        if (results[1] == "OK") {
+            missedCount = 0;
+            DisableDiv();
+            UpdateIOs(results, 2);
+            if (formatOP)
+                FormatAnalogValues(false);
+            else
+                FormatAnalogValues(true);
+            formatOP = false;
+        }
+        else{
+            missedCount = 0;
+            EnableDiv();
+        }
+        state = DIAG_IO_POLL_TIMEOUT;
+    }
+}
+function handleDiagLBPollResponse() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+        var results = http.responseText.split("@");
+        if (results[0] == "OK") {
+            UpdateIOs(results, 1);
+            FormatAnalogValues(true);
+            formatOP = false;
+            msCount = LoopBackPollTimeout;
+            missedCount = 0;
+            state = DIAG_POLL_LB_TIMEOUT;
+        }
+    }
+}
+function handleDiagIOLoopBackResponse() {
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {
+        if (http.responseText == "OK") {
+            state = DIAG_LB_POLL;
+            missedCount = 0;
+            UseID("bstopdiag").disabled = false;
+        }
+        else
+            TimeOutAlert("Loopback Failed");
+    }
+}
+function ResetControls() {
+    UseID("bloopback").disabled = false;
+    UseID("bstartdiag").disabled = false;
+    UseID("bstopdiag").disabled = true;
+}
+function TimeOutAlert(msg) {
+    ResetControls();
+    state = DIAG_IO_POLL_TIMEOUT;
+    missedCount = 0;
+}
+var updateOutPutsarr = ['PIN7_CB', 'PIN8_CB', 'PIN9_CB', 'PIN10_CB', 'PIN19_CB', 'PIN20_CB', 'PIN21_CB', 'PIN22_CB'];
+function onDiagIOSave() {
+    reqCmd = 0;
+    if (ValidateAnalogOutputs()) {
+        UseID("bloopback").disabled = true;
+        UseID("bstartdiag").disabled = true;
+        var Updateurl = "func=" + Func.DiagnosticUserIOPostDatahandler + "cmd=" + Command.REQ_DIAG_START + "?param=";
+        var indx;
+        for (indx = 0; indx < updateOutPutsarr.length; indx++) {
+            if (updateOutPutsarr[indx].search('_CB') != -1)
+                Updateurl += (((UseID(updateOutPutsarr[indx]).checked == true) ? '1' : '0') + ',');
+        }
+        for (indx = 0; indx < nAouts; indx++)
+            Updateurl += (aouts[indx] + ',');
+        Updateurl += SendCookies();        
+        state = DIAG_START;
+        http.open("POST", Updateurl, true);
+        http.onreadystatechange = handleDiagIOSaveResponse;
+        http.send(null);
+    }
+}
+function Start_stop() {
+    reqCmd = 0;
+    var Updateurl = "func=" + Func.DiagnosticUserIOPostDatahandler + "cmd=" + Command.REQ_DIAG_STOP + "?param=";
+    Updateurl += SendCookies();
+    state = DIAG_STOP;
+    http.open("POST", Updateurl, true);
+    http.onreadystatechange = handleDiagIOStopResponse;
+    http.send(null);
+}
+function onLoopBack() {
+    reqCmd = 0;
+    UseID("bstartdiag").disabled = true;
+    UseID("bloopback").disabled = true;
+    var loopBackurl = "func=" + Func.DiagnosticUserIOPostDatahandler + "cmd=" + Command.REQ_DIAG_LOOPBACK_START + "?param=";
+    loopBackurl += SendCookies();
+    state = DIAG_LB_START;
+    http.open("POST", loopBackurl, true);
+    http.onreadystatechange = handleDiagIOLoopBackResponse;
+    http.send(null);
+}
+function SendDiagnosticPoll() {
+    var loopBackurl = "func=" + Func.DiagnosticUserIOPostDatahandler + "cmd=" + Command.REQ_DIAG_POLL + "?param=";
+    loopBackurl += SendCookies();
+    http.open("POST", loopBackurl, true);
+    http.onreadystatechange = handleDiagIOPollResponse;
+    http.send(null);
+}
+function SendDiagnosticLBPoll() {
+    var loopBackurl = "func=" + Func.DiagnosticUserIOPostDatahandler + "cmd=" + Command.REQ_DIAG_LOOPBACK_POLL + "?param=";
+    loopBackurl += SendCookies();
+    http.open("POST", loopBackurl, true);
+    http.onreadystatechange = handleDiagLBPollResponse;
+    http.send(null);
+}
+function handleDiagIOLoadResponse() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+        var result1;
+        var results = http.responseText.split("@");
+        var UserType = results[0].split("/");
+        SetUserType(UserType[0]);
+        SetToken(UserType[1],0);
+        SetSystemType(UserType[2]);
+        if (UserType[0] != '3')
+            UseID('bloopback').style.visibility = "hidden";
+        UpdateIOs(results, 2);
+        FormatAnalogValues(false);
+        formatOP = false;
+        result1 = results[2].split(',');
+        if (result1[0] == "FanControl") {
+            FanStatusFlag = parseFloat(result1[1]);
+            UseID("FanControl").value = FanStatus[FanStatusFlag];
+        }
+        if (results[1] == "READY")
+            DisableDiv();
+        else if (results[1] == "NOTREADY")
+            EnableDiv();
+        else
+            EnableDiv();
+        state = DIAG_IO_POLL;
+        if (!timerid)
+            timerid = setInterval("TimerCallBack()", 500);
+        UseID("bstartdiag").disabled = false;
+        UseID("bloopback").disabled = false;
+    }
+    else if (http.readyState == 4)
+        EnableDiv();
+}
+function onDiagIOLoad() {
+    window.history.forward(1);
+    var DiagIOOnLoadUrl = "func=" + Func.DiagnosticUserIOGetDatahandler + "cmd=" + Command.REQ_NONE + "?param=";
+    DiagIOOnLoadUrl += SendCookies();
+    http.open("POST", DiagIOOnLoadUrl, true);
+    http.onreadystatechange = handleDiagIOLoadResponse;
+    http.send(null);
+}
+function SubmitForm(hrefpage) {
+    SubmitCookies(hrefpage);
+    document.temp_form.submit();
+}
+function FormatAnalogValues(inonly) {
+    var analogInParamIds = ["PIN17_VALUE", "PIN18_VALUE"];
+    var temp,temp1,index;
+    for (index = 0; index < analogInParamIds.length; index++) {
+        temp = (UseID(analogInParamIds[index]).innerHTML / 1000).toFixed(1);
+		temp1 = parseInt(temp).toString();
+        UseID(analogInParamIds[index]).innerHTML = ((temp1.length == 1)? '0':'') + temp;
+    }
+    if (inonly == false) {
+        for (index = 0; index < analogOutParamIds.length; index++) {
+            temp = (UseID(analogOutParamIds[index]).value / 1000).toFixed(1);
+			temp1 = parseInt(temp).toString();
+			UseID(analogOutParamIds[index]).value = ((temp1.length == 1)? '0':'') + temp;
+        }
+    }
+}
+function ToggleFanControl() {
+    reqCmd = 0;
+    var DiagIOOnLoadUrl = "func=" + Func.DiagnosticUserIOPostDatahandler + "cmd=" + Command.REQ_FANCONTROL + "?param=";
+    FanStatusFlag = (FanStatusFlag) ? 0 : 1;
+    DiagIOOnLoadUrl += "FanControl=" + FanStatusFlag;
+    DiagIOOnLoadUrl += SendCookies();
+    http.open("POST", DiagIOOnLoadUrl, true);
+    http.onreadystatechange = ToggleFanControlResponse;
+    http.send(null);
+}
+function ToggleFanControlResponse() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+        if (http.responseText == "OK") 
+            UseID("FanControl").value = FanStatus[FanStatusFlag];
+        else
+            alert("Server not responded");
+    }
+}
+function ValidateAnalogOutputs() {
+    var index, validationStr = "",volt1, volt2, retVal = true;
+    var timePat1 = /^(\d{1,2})[.](\d{1})$/;
+    for (index = 0; index < analogOutParamIds.length; index++) {
+        voltStr = UseID(analogOutParamIds[index]).value * 10;
+		voltStr = parseInt((voltStr / 10),10) + "." + (voltStr % 10);
+        var matchArray = voltStr.match(timePat1);
+        if (matchArray == null) {
+            retVal = false;
+            validationStr += "Analog output voltage " + (index + 1) + " format should be XX.Y\n";
+        }
+        else {
+            volt1 = parseInt(matchArray[1], 10); 
+            volt2 = parseInt(matchArray[2], 10); 
+            aouts[index] = volt1 * 1000 + volt2 * 100;
+            if (aouts[index] > 10000 || voltStr < 0) {
+                retVal = false;
+                validationStr += "Analog output " + (index + 1) + " should be between 00.0 and 10.0\n"
+            }
+			else
+				UseID(analogOutParamIds[index]).value = ((voltStr < 10)?'0':'') + voltStr;
+        }
+    }
+    if (retVal == false)
+        alert(validationStr);
+    return retVal;
+}
+function GetTokenFunc(cmd) {
+    reqCmd = cmd;   
+    GetToken("Loc");
+}
+function GetTokenResponseHandlerLoc() {
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) {
+        var Token = parseFloat(http.responseText);
+        if (Token) {
+            SetToken(1,0);
+            switch (reqCmd) {
+                case 1: onDiagIOSave(); break;
+                case 2: Start_stop(); break;
+                case 3: onLoopBack(); break;
+                case 4: ToggleFanControl(); break;
+            }
+        }
+        else {
+            SetToken(0,0);
+            alert(NotokenWait);
+        }
+    }
+}
+jQuery(function () {
+	UseID('header').innerHTML = MainHeader;
+	SetTabAttribute(2,3);
+    jQuery('ul.sf-menu').superfish();
+});
+</script>
+</head>
+<body>
+<form name="temp_form" method="post" action="UserIO.html">
+<input type="hidden" name="lang" id="lang"  />
+<input type="hidden" name="usrid" id="usrid"  />
+<input type="hidden" name="passcode" id="passcode"  />
+<input type="hidden" name="uniqueid" id="uniqueid" />	
+</form>
+<form name="main_form">
+<div id="wrapper">
+  <div id="header"></div>
+  <div id="PageHeader"></div>
+  <div id="content">
+    <div id="fade_div"></div>
+    <div id="info_div">
+        <table>		    
+            <tr><td id="Level2Lbl" >INFO : System is busy</td></tr>
+        </table>
+    </div>
+<table>
+<tr>
+<td class="td-top">
+  	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">DIGITAL INPUTS</div>
+    	<div class="gradientBox400">
+            <table>
+            <tr> 
+                <td></td> 
+                <td>
+                    <div class="LblCenter50"> Activity Definition</div> 
+                </td>
+            </tr>
+            <tr>
+			<td>		
+				<div>
+					<div class="checkbox"><img src="greyDot.gif" alt="On" id="PIN1_IMG"/></div>
+					<div class="LblCenter50">J3 - 1</div>
+					<div class="textLableAuto" id="PIN1"> </div>
+					<div class="clearit"></div>
+					<div class="checkbox"><img src="greyDot.gif" alt="On" id="PIN2_IMG"/></div>
+					<div class="LblCenter50">J3 - 2</div>
+					<div class="textLableAuto" id="PIN2"> </div>
+					<div class="clearit"></div>
+					<div class="checkbox"><img src="greyDot.gif" alt="On" id="PIN3_IMG"/></div>
+					<div class="LblCenter50">J3 - 3</div>
+					<div class="textLableAuto" id="PIN3"> </div>
+					<div class="clearit"></div>
+					<div class="checkbox"><img src="greyDot.gif" alt="On" id="PIN4_IMG"/></div>
+					<div class="LblCenter50">J3 - 4</div>
+					<div class="textLableAuto" id="PIN4"> </div>
+					<div class="clearit"></div>
+					<div class="checkbox"><img src="greyDot.gif" alt="On" id="PIN11_IMG"/></div>
+					<div class="LblCenter50">J3 - 11</div>
+					<div class="textLableAuto" id="PIN11">  </div>
+					<div class="clearit"></div>
+					<div class="checkbox"><img src="greyDot.gif" alt="On" id="PIN12_IMG"/></div>
+					<div class="LblCenter50">J3 - 12</div>
+					<div class="textLableAuto" id="PIN12"> </div>
+					<div class="clearit"></div>
+					<div class="checkbox"><img src="greyDot.gif" alt="On" id="PIN13_IMG"/></div>
+					<div class="LblCenter50">J3 - 13</div>
+					<div class="textLableAuto" id="PIN13"></div>
+					<div class="clearit"></div>
+					<div class="checkbox"><img src="greyDot.gif" alt="On" id="PIN16_IMG"/></div>
+					<div class="LblCenter50">J3 - 16</div>
+					<div class="textLableAuto" id="PIN16"></div>
+					<div class="clearit"></div>
+					<div class="checkbox"><img src="greyDot.gif" alt="On" id="PIN23_IMG"/></div>
+					<div class="LblCenter50">J3 - 23</div>
+					<div class="textLableAuto"  id="PIN23"></div>
+				</div>
+            </td>
+            <td>   
+				<div id="ActDef1">
+					<div class="textLabel" id="PIN1_lb"></div>
+					<div class="clearit"></div>
+					<div class="textLabel" id="PIN2_lb"></div>
+					<div class="clearit"></div>
+					<div class="textLabel" id="PIN3_lb"></div>
+					<div class="clearit"></div>
+					<div class="textLabel" id="PIN4_lb"></div>
+					<div class="clearit"></div>
+					<div class="textLabel" id="PIN11_lb"></div>
+					<div class="clearit"></div>
+					<div class="textLabel" id="PIN12_lb"></div>
+					<div class="clearit"></div>
+					<div class="textLabel" id="PIN13_lb"></div>
+					<div class="clearit"></div>
+					<div class="textLabel" id="PIN16_lb"></div>
+					<div class="clearit"></div>
+					<div class="textLabel" id="PIN23_lb"></div>
+					<div class="clearit"></div>
+			   </div>
+            </td>
+            </tr>
+            </table>
+		</div>
+    </div>
+</td>
+<td class="td-top">
+    <div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">DIGITAL OUTPUTS</div>
+		<div class="gradientBox400">
+            <table>
+            <tr>
+                <td></td> 
+                <td> 
+                    <div class="LblCenter50"> Activity Definition</div>
+                </td>
+            </tr>
+            <tr>
+            <td>		
+				<div>
+					<div class="checkboxLeft"><input type="checkbox"  id="PIN7_CB"/></div>
+					<div class="LblCenter50">J3 – 7</div>
+					<div class="textLableAuto" id = "PIN7"></div>
+					<div class="clearit"></div>
+					<div class="checkboxLeft"><input type="checkbox"  id="PIN8_CB"/></div>
+					<div class="LblCenter50">J3 – 8</div>
+					<div class="textLableAuto" id = "PIN8"></div>
+					<div class="clearit"></div>
+					<div class="checkboxLeft"><input type="checkbox"  id="PIN9_CB"/></div>
+					<div class="LblCenter50">J3 – 9</div>
+					<div class="textLableAuto" id = "PIN9"></div>
+					<div class="clearit"></div>
+					<div class="checkboxLeft"><input type="checkbox"  id="PIN10_CB"/></div>
+					<div class="LblCenter50">J3 – 10</div>
+					<div class="textLableAuto" id = "PIN10"></div>
+					<div class="clearit"></div>
+					<div class="checkboxLeft"><input type="checkbox"  id="PIN19_CB"/></div>
+					<div class="LblCenter50">J3 – 19</div>
+					<div class="textLableAuto" id = "PIN19"></div>
+					<div class="clearit"></div>
+					<div class="checkboxLeft"><input type="checkbox"  id="PIN20_CB"/></div>
+					<div class="LblCenter50">J3 – 20</div>
+					<div class="textLableAuto" id ="PIN20"></div>
+					<div class="clearit"></div>
+					<div class="checkboxLeft"><input type="checkbox"  id="PIN21_CB"/></div>
+					<div class="LblCenter50">J3 – 21</div>
+					<div class="textLableAuto" id ="PIN21"></div>
+					<div class="clearit"></div>
+					<div class="checkboxLeft"><input type="checkbox"  id="PIN22_CB"/></div>
+					<div class="LblCenter50">J3 – 22</div>
+					<div class="textLableAuto" id = "PIN22"></div>
+					<div class="clearit"></div>
+					<div ><input type="hidden" /> </div>
+					<div class="clearit"></div>
+					<div class="LblCenter50"></div>
+					<div class="clearit"></div>
+				</div>
+            </td>
+            <td>   
+	            <div id="ActDef2">
+		            <div class="textLabelPB" id = "PIN7_lb"></div>
+		            <div class="clearit"></div>
+                    <div class="textLabelPB" id = "PIN8_lb"></div>
+                    <div class="clearit"></div>
+		            <div class="textLabelPB" id = "PIN9_lb"></div>
+		            <div class="clearit"></div>
+                    <div class="textLabelPB" id = "PIN10_lb"></div>
+                    <div class="clearit"></div>
+		            <div class="textLabelPB" id = "PIN19_lb"></div>
+		            <div class="clearit"></div>
+                    <div class="textLabelPB" id = "PIN20_lb"></div>
+		            <div class="clearit"></div>
+                    <div class="textLabelPB" id = "PIN21_lb"></div>
+		            <div class="clearit"></div>
+                    <div class="textLabelPB" id = "PIN22_lb"></div>
+                </div>
+            </td>
+            </tr>
+            </table>
+	    </div>
+    </div>
+</td>
+</tr>
+<tr>
+<td>
+    <div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">ANALOG INPUTS</div>
+    	<div class="gradientBox400">
+		    <div class="LblCenter50">J3 - 17</div>
+            <div class="textLableAuto" id="PIN17"></div>
+            <div class="LblCenter50" id="PIN17_VALUE"></div>
+            <input type="hidden" id="Lifetime cycles:tt" />
+            <div class="clearit"></div>
+		    <div class="LblCenter50">J3 - 18</div>
+            <div class="textLableAuto" id="PIN18"></div>
+            <div class="LblCenter50" id="PIN18_VALUE"></div>
+            <input type="hidden" id="GeneralAlarms:tt" />
+            <div class="clearit"></div>
+		</div><br/>
+    </div>
+</td>
+<td>
+    <div class="contentBoxWrapper">
+        <div class="contentBoxHeader">ANALOG OUTPUTS</div>
+        <div class="gradientBox400">
+	  	    <div class="LblCenter50">J3 - 24</div>
+            <div class="textLableAuto" id="PIN24"></div>
+            <input type="text" class="LblCenter50" id="PIN24_VALUE" maxlength="4"/>
+            <div class="clearit"></div>
+            <div class="LblCenter50">J3 - 25</div>
+            <div class="textLableAuto" id="PIN25"></div>
+            <input type="text" class="LblCenter50" id="PIN25_VALUE" maxlength="4"/>
+            <div class="clearit"></div>
+		</div>
+    </div>
+ </td>
+ </tr>
+</table>
+    <div id="contentButtonBank">
+        <input name="Refresh Outputs" type="button" class="button" id="bstartdiag" value="Refresh Outputs" onclick="GetTokenFunc(1)"/>
+        <input name="Start/Stop" type="button" class="button"   id = "bstopdiag"   value="Stop" disabled="disabled" onclick="GetTokenFunc(2)"/>
+	    <input name="Loopback" type="button" class="button" id = "bloopback"  value="Loopback" onclick="GetTokenFunc(3)"/>
+	    <input name="Refresh Outputs" type="button" class="button" id="FanControl" value=" FAN ON " onclick="GetTokenFunc(4)"/>
+    </div>
+  </div>
+  <div class="clearit"></div>
+  <div id="footer"></div>
+</div>
+</form>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        onDiagIOLoad();
+    });
+</script>
+</html>

@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="pragma" content="no-cache" />
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+	<link rel="stylesheet" type="text/css" href="superfishDCXAFRackMt-v1.css" media="screen" />
+	<script type="text/javascript" src="jqueryDCXAFRackMt-v1.js"></script>
+	<script type="text/javascript" src="hoverIntentDCXAFRackMt-v1.js"></script>
+	<script type="text/javascript" src="superfishDCXAFRackMt-v1.js"></script>
+	<script type="text/javascript" language="javascript" src="handlerDCXAFRackMt-v1.js"></script>  
+	<script type="text/JavaScript" language="javascript" src="formchange-detectDCXAFRackMt-v1.js"></script>
+	<title>BRANSON DCX GUI</title>
+	<link href="styleDCXAFRackMt-v1.css" rel="stylesheet" type="text/css" />
+<script language="javascript"  type="text/javascript">
+var timerid_boardtest = 0, state = 0, msCount;
+var MFBOARDTEST_POLL = 1, WAIT_MFBOARDTEST_POLL = 2, MFBOARDTEST_POLL_TIMEOUT = 3;
+var responseTimeout = 2, pollTimeout = 2, freqMin = 100, freqMax = 10000;
+var InputIDsArr=["PIN1_IMG" , "PIN27_IMG", "PIN29_IMG","PIN31_IMG" , "PIN33_IMG", "SIGN_IMG",
+ "PIN15_VALUE","PIN17_VALUE","PIN21_VALUE","PIN25_VALUE","PHASE_VALUE"];
+var http = getHTTPObject(); 
+function SubmitForm(hrefpage){
+    if(hrefpage == "index.html") 
+        location.href = hrefpage;    
+    else{
+        SubmitCookies(hrefpage);
+	    document.temp_form.submit();    
+     }
+}
+function ValidateFrequency(){
+    var frqVal = UseID("testFreq").value;
+    var retVal = true;
+    frqVal = trim(frqVal);
+    UseID("testFreq").value = frqVal;    
+    if((frqVal.length == 0) || (isInteger(frqVal) == false))
+     retVal = false
+    else{
+      var intFrq = parseInt(frqVal);
+      if((intFrq < freqMin) || (intFrq > freqMax))
+      retVal = false;
+    }
+    if(retVal == false){   
+      alert("Please enter the frequency between " + freqMin + " and " + freqMax);
+      UseID("testFreq").focus();
+    }
+    return retVal;
+}
+function handleRefreshResponse(){
+if ((http.readyState == 4) && (CheckSession(http.responseText) == true)) {      
+        if(http.responseText == "OK")
+           alert("Refresh Done.");
+		else{
+			SetToken(0,0);
+			alert(Notoken);
+		}
+   }
+}
+function OnRefresh(){
+	if(ValidateFrequency() == false)
+	   return;
+	var idArr =["PIN3_CB", "PIN5_CB", "PIN9_CB","PIN11_CB"];
+	var arrSrvr = ["&olrst:", "&stop:", "&phaseA:" ,"&phaseB:"];	
+	var refreshurl = "func=" + Func.BransonBoardTestPostDatahandler  + "cmd=" + Command.REQ_BOARDTEST_REFRESH + "?param=testFreq:";
+	refreshurl += UseID("testFreq").value;   
+	for(i =0; i < idArr.length; i++){
+		refreshurl += arrSrvr[i];
+		refreshurl += (UseID(idArr[i]).checked?"1":"0");
+	}
+	refreshurl += SendCookies();                    
+	http.open("POST", refreshurl, true);  
+	http.onreadystatechange = handleRefreshResponse;
+	http.send(null);
+}
+function HandleBoardTestOnLoad(){
+if ((http.readyState == 4) && (http.responseText.length != 0) && (CheckSession(http.responseText) == true)) { 
+		var i,j,results2,results3; 		 
+   	    results = http.responseText.split("@");  
+		var UserType = results[0].split("/");
+        SetUserType(UserType[0]);
+        SetToken(UserType[1],0);
+        SetSystemType(UserType[2]);
+		if(results[1] != UseID("USERPASSCODE").value)
+		{
+		    UseID("Level2Msg").innerHTML = "InValid Password";
+			UseID("USERPASSCODE").value = "";
+			EnableDiv();
+			return;
+		}
+		else{
+			DisableDiv();
+		}
+        for(i=2; i < results.length; i++){            
+            var results1;
+            try{
+				results1 = results[i].split(",");
+          		if(results1[0]== "Overload"){
+				   if (results1[1]&(1<<0))
+						UseID("INPUT_1").src = "greenDot.gif";
+				   else
+						UseID("INPUT_1").src = "greyDot.gif";
+				}
+				else if( results1[0]== "Temperature"){
+					if ( results1[1]&(1<<0))
+						UseID("INPUT_2").src = "greenDot.gif";
+					else
+						UseID("INPUT_2").src = "greyDot.gif";
+				 }
+	          else if( results1[0]== "Power" ){ 
+                if ( results1[1]&(1<<0))
+			        UseID("INPUT_3").src = "greenDot.gif";
+	            else
+                    UseID("INPUT_3").src = "greyDot.gif";
+			  }
+	          else if( results1[0]== "RFvoltage" ) 
+				if ( results1[1]&(1<<0))
+					UseID("INPUT_4").src = "greenDot.gif";
+	            else
+					UseID("INPUT_4").src = "greyDot.gif";
+	          else if( results1[0]== "RFcurrent" ) 
+				if ( results1[1]&(1<<0))
+					UseID("INPUT_5").src = "greenDot.gif";
+	            else
+					UseID("INPUT_5").src = "greyDot.gif";
+	          else if( results1[0] == "Powerinput" ) 
+					UseID("ANALOGINPUTS_1").innerHTML =  results1[1];
+			  else if( results1[0]== "InputTemperature" ) 
+					UseID("ANALOGINPUTS_2").innerHTML=  results1[1];
+	          else if( results1[0]== "ActualAmplitude" ) 
+					UseID("ANALOGINPUTS_3").innerHTML =  results1[1];
+	          else if( results1[0] == "DCCurrent" ) 
+					UseID("ANALOGINPUTS_4").innerHTML =  results1[1];
+			  else if( results1[0] == "Phase" ) 
+					UseID("Phase").innerHTML =  results1[1];
+			  else if( results1[0]== "Sign" ) 
+				if ( results1[1]== '1')
+					UseID("sign_cb").src = "greenDot.gif";
+	            else
+					UseID("sign_cb").src = "greyDot.gif";
+	        }catch(err){}
+       	 }
+  }
+}
+function BoardTestOnLoad(){
+   window.history.forward(1);
+   var BoardTestOnLoadUrl = "func=" + Func.BransonBoardTestGetDatahandler +"cmd=" +Command.REQ_NONE   +"?param=";
+   BoardTestOnLoadUrl += SendCookies();
+   http.open("POST",BoardTestOnLoadUrl, true);
+   http.onreadystatechange = HandleBoardTestOnLoad;
+   http.send(null);
+}
+jQuery(function(){
+	UseID('header').innerHTML = MainHeader;
+	SetUserType('3');
+	SetTabAttribute(4,3);
+	GetSystemType();
+	jQuery('ul.sf-menu').superfish();
+});
+</script>
+</head>
+<body>
+<form name="temp_form" method="post" action="BoardTest.html">
+<input type="hidden" name="lang" id="lang" />
+<input type="hidden" name="usrid" id="usrid" />
+<input type="hidden" name="passcode" id="passcode" />
+	<input type="hidden" name="uniqueid" id="uniqueid" />	
+</form>
+<form name="main_form">
+<div id="wrapper">
+  <div id="header"></div>
+  <div id="PageHeader"></div>
+  <div id="content">
+    <div id="fade_div"></div>
+    <div id="info_div">
+        <table>	
+		    <tr><td id="Level2Lbl">Enter Password</td></tr>
+		    <tr><td id="Level2Msg"></td></tr>
+		    <tr><td><input type="password" class="Level2Pwd" id = "USERPASSCODE" onkeydown="if(event.keyCode == 13)BoardTestOnLoad()"/></td></tr>
+	    </table>
+    </div>
+  <table>
+  <tr><td>
+  	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">DIGITAL INPUTS</div>
+    	<div class="gradientBox300px">
+    		<div class="checkbox">
+                <img src="greyDot.gif" alt="On" id = "INPUT_1"/></div>
+            <div class="textLabelBigLeft">J9 - 1 Overload</div>
+            <input type="hidden" id="EnableSeek1:tt"/>
+            <div class="clearit"></div>
+			<div class="checkbox">
+                <img src="greyDot.gif" alt="On" id = "INPUT_2"/></div>
+            <div class="textLabelBigLeft">J9 - 27 Temperature</div>
+            <input type="hidden" id="TimedSeek1:tt"/>
+            <div class="clearit"></div>    		
+			<div class="checkbox">
+                <img src="greyDot.gif" alt="On" id = "INPUT_3"/></div>
+            <div class="textLabelBigLeft">J9 - 29 Power</div>
+            <input type="hidden" id="EnableSeek2:tt"/>
+            <div class="clearit"></div>
+			<div class="checkbox">
+				<img src="greyDot.gif" alt="On" id = "INPUT_4"/></div>
+             <div class="textLabelBigLeft">J9 - 31 RF Voltage</div>
+             <input type="hidden" id="TimedSeek2:tt"/>
+             <div class="clearit"></div>    		
+			<div class="checkbox">
+                <img src="greyDot.gif" alt="On" id = "INPUT_5"/></div>
+            <div class="textLabelBigLeft">J9 - 33 RF Current</div>
+            <input type="hidden" id="EnableSeek3:tt"/>
+            <div class="clearit"></div>
+		</div>
+    </div>
+</td>
+<td>	<div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">DIGITAL OUTPUTS</div>
+    	<div class="gradientBox300px">
+    		<div class="checkboxLeft">
+                <input type="checkbox" id="PIN3_CB"/></div>
+            <div class="textLabelBigLeft">J9 – 3  Overload Reset</div>
+            <input type="hidden" id="EnableSeek5:tt"/>
+            <div class="clearit"></div>
+			<div class="checkboxLeft">
+                <input type="checkbox" id="PIN5_CB"/></div>
+            <div class="textLabelBigLeft">J9 – 5  Stop</div>
+            <input type="hidden" id="TimedSeek:tt4"/>
+            <div class="clearit"></div>    		
+			<div class="checkboxLeft">
+                <input type="checkbox" id="PIN9_CB"/></div>
+            <div class="textLabelBigLeft">J9 – 9  Phase B</div>
+            <input type="hidden" id="EnableSeek4:tt"/>
+            <div class="clearit"></div>
+			<div class="checkboxLeft">
+                <input type="checkbox" id="PIN11_CB"/></div>
+            <div class="textLabelBigLeft">J9 – 11 Phase A</div>
+            <input type="hidden" id="TimedSeek5:tt"/>
+            <div class="clearit"></div><br/><br/>     		
+		</div>
+    </div>
+</td>
+</tr>
+<tr>
+<td>
+    <div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">FREQUENCY</div>
+    	<div class="gradientBox300px">
+			    <div class="textLabelBigLeft">Test Frequency (Hz)</div>
+            <input name='' id="testFreq" class='textInput'/>
+            <input type="hidden"/>
+            <div class="clearit"></div>
+                <div class="textLabelBigLeft">Phase (V)</div>
+            <div class="textLabelBigLeft" id="Phase"></div>
+            <input type="hidden"/>
+            <div class="clearit"></div>
+			    <div class="textLabelBigLeft">Sign</div>
+            <div class="checkbox"><img src="greyDot.gif" alt="On" id = "sign_cb"/></div>
+            <input type="hidden"/>
+            <div class="clearit"></div><br/> <br/> 
+        </div>
+    </div>
+ </td>
+ <td>   <div class="contentBoxWrapper">
+    	<div class="contentBoxHeader">ANALOG INPUTS</div>
+    	<div class="gradientBox300px">
+			    <div class="textLabelBigLeft">J9 - 15  Power (V)</div>
+            <div class="textLabelBigLeft" id="ANALOGINPUTS_1"></div>
+            <input type="hidden"/>
+            <div class="clearit"></div>			
+			    <div class="textLableAuto">J9 - 17 Temperature(V)</div>
+            <div class="textLabelBigLeft" id="ANALOGINPUTS_2"></div>
+            <input type="hidden"/>
+            <div class="clearit"></div>
+			    <div class="textLabelBigLeft">J9 - 21  Amplitude (V)</div>
+            <div class="textLabelBigLeft" id="ANALOGINPUTS_3"></div>
+            <input type="hidden"/>
+            <div class="clearit"></div>
+			    <div class="textLabelBigLeft">J9 - 25 DC Current (V)</div>
+            <div class="textLabelBigLeft" id="ANALOGINPUTS_4"></div>
+            <input type="hidden"/>
+            <div class="clearit"></div>
+		</div>
+    </div>
+</td>
+</tr>
+</table>
+	<div id="contentButtonBank">
+    	<input name="Refresh" type="button" class="button" value="Refresh" onclick="OnRefresh()"/>
+    </div>
+  </div>
+  <div id="footer"></div>
+</div>
+</form>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        EnableDiv();
+        InitStickyFooter();
+    });
+</script>
+</html>
